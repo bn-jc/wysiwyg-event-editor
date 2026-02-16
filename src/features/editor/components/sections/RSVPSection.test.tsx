@@ -40,10 +40,16 @@ describe('RSVPSection', () => {
         expect(screen.getByText('Sim, Eu vou!')).toBeInTheDocument();
     });
 
-    it('has readonly inputs to prevent direct editing', () => {
-        render(<RSVPSection {...defaultProps} />);
+    it('has readonly inputs to prevent direct editing in editor mode', () => {
+        render(<RSVPSection {...defaultProps} readOnly={false} />);
         const nameInput = screen.getByPlaceholderText(/Ex: Maria & João Silva/i);
         expect(nameInput).toHaveAttribute('readonly');
+    });
+
+    it('has interactive inputs in public/preview mode (readOnly=true)', () => {
+        render(<RSVPSection {...defaultProps} readOnly={true} />);
+        const nameInput = screen.getByPlaceholderText(/Ex: Maria & João Silva/i);
+        expect(nameInput).not.toHaveAttribute('readonly');
     });
 
     it('calls onUpdate when title is edited via InlineText', () => {
