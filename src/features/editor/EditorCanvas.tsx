@@ -107,7 +107,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                             // Use container mode to force mobile view if container is small
                             (device === 'mobile' || containerMode === 'mobile') ? "w-[375px]" :
                                 (device === 'tablet' || containerMode === 'compact') ? "w-[768px]" :
-                                    "w-full max-w-6xl"
+                                    layout.globalStyles.layoutMode === 'full' ? "w-full" : "w-full max-w-6xl"
                         )}
                         style={{ minHeight: isPreviewOnly ? '100vh' : '800px' }}
                     >

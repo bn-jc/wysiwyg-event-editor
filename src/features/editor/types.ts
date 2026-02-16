@@ -41,6 +41,7 @@ export interface EventLayout {
         fontFamilyTitle: string;
         fontFamilyBody: string;
         backgroundColor?: string;
+        layoutMode?: 'boxed' | 'full'; // 'boxed' = max-w-6xl mx-auto, 'full' = w-full
     };
     sections: SectionDefinition[];
 }

@@ -23,7 +23,7 @@ export const PublicInvitation: React.FC<PublicInvitationProps> = ({ layout }) =>
             <EffectsOverlay effects={layout.effects} />
 
             {/* Main Content */}
-            <main className="relative z-10 mx-auto w-full max-w-6xl">
+            <main className={`relative z-10 mx-auto w-full ${layout.globalStyles.layoutMode === 'full' ? '' : 'max-w-6xl'}`}>
                 <DynamicRenderer
                     layout={layout}
                     readOnly={true}

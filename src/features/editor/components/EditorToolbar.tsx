@@ -108,6 +108,37 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                             <span className="text-[10px] font-bold text-gray-400 uppercase">Tema</span>
                         </div>
 
+                        {/* Layout Mode Toggle */}
+                        <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+                            <LayoutGrid size={14} className="text-gray-400" />
+                            <div className="flex gap-1">
+                                <button
+                                    onClick={() => onUpdateGlobalStyles({ layoutMode: 'boxed' })}
+                                    className={cn(
+                                        "p-1 rounded transition-all",
+                                        (!globalStyles.layoutMode || globalStyles.layoutMode === 'boxed')
+                                            ? "bg-white text-blue-600 shadow-sm"
+                                            : "text-gray-400 hover:text-gray-600"
+                                    )}
+                                    title="Boxed Layout"
+                                >
+                                    <div className="w-3 h-3 border-2 border-current rounded-sm" />
+                                </button>
+                                <button
+                                    onClick={() => onUpdateGlobalStyles({ layoutMode: 'full' })}
+                                    className={cn(
+                                        "p-1 rounded transition-all",
+                                        globalStyles.layoutMode === 'full'
+                                            ? "bg-white text-blue-600 shadow-sm"
+                                            : "text-gray-400 hover:text-gray-600"
+                                    )}
+                                    title="Full Width Layout"
+                                >
+                                    <div className="w-4 h-3 bg-current rounded-sm opacity-50" />
+                                </button>
+                            </div>
+                        </div>
+
                         {/* Language - Optional for now */}
 
                         <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
