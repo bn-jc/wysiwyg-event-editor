@@ -6,7 +6,8 @@ import { Send, MessageCircle, Heart, User } from 'lucide-react';
 export const GuestbookSection: React.FC<SectionRendererProps> = ({
     section,
     globalStyles,
-    onUpdate
+    onUpdate,
+    readOnly
 }) => {
     const { content } = section;
     const messages = content.messages || [];
@@ -56,12 +57,14 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                             fontFamily: globalStyles.fontFamilyTitle,
                             color: section.styles?.color || globalStyles.primaryColor
                         }}
+                        readOnly={readOnly}
                     />
                     <InlineText
                         tagName="p"
                         value={content.subtitle || 'Partilhe o seu amor e desejos para os noivos.'}
                         onChange={(val) => onUpdate({ subtitle: val })}
                         className="font-light opacity-80"
+                        readOnly={readOnly}
                         style={{ color: section.styles?.color || 'rgb(107 114 128)' }}
                     />
                 </div>
@@ -80,6 +83,7 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                                     tagName="span"
                                     value={content.nameLabel || 'Seu Nome'}
                                     onChange={(val) => onUpdate({ nameLabel: val })}
+                                    readOnly={readOnly}
                                 />
                             </label>
                             <div className="relative group">
@@ -103,6 +107,7 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                                     tagName="span"
                                     value={content.messageLabel || 'Sua Mensagem'}
                                     onChange={(val) => onUpdate({ messageLabel: val })}
+                                    readOnly={readOnly}
                                 />
                             </label>
                             <div className="relative group">
@@ -128,6 +133,7 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                                 tagName="span"
                                 value={content.buttonLabel || 'Publicar Mensagem'}
                                 onChange={(val) => onUpdate({ buttonLabel: val })}
+                                readOnly={readOnly}
                             />
                         </button>
                     </div>
@@ -143,6 +149,7 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                                 value={content.emptyStateText || 'Seja o primeiro a deixar uma mensagem!'}
                                 onChange={(val) => onUpdate({ emptyStateText: val })}
                                 className="font-light opacity-50"
+                                readOnly={readOnly}
                                 style={{ color: section.styles?.color || 'rgb(156 163 175)' }}
                             />
                         </div>

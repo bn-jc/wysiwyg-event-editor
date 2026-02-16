@@ -23,7 +23,8 @@ const getProps = (variant: string) => ({
     onUpdate: vi.fn(),
     readOnly: false,
     globalStyles: mockGlobalStyles,
-    index: 0
+    index: 0,
+    device: 'desktop' as const
 });
 
 describe('SeparatorSection', () => {

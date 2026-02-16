@@ -5,7 +5,8 @@ import { InlineText } from '../common/InlineText';
 export const CountdownSection: React.FC<SectionRendererProps> = ({
     section,
     globalStyles,
-    onUpdate
+    onUpdate,
+    readOnly
 }) => {
     const { content } = section;
     const targetDate = content.targetDate || '2026-12-12T10:00:00';
@@ -67,6 +68,7 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
                         fontFamily: globalStyles.fontFamilyTitle,
                         color: section.styles?.color || globalStyles.primaryColor
                     }}
+                    readOnly={readOnly}
                 />
 
                 {!isFinished ? (
@@ -98,15 +100,17 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
                 )}
 
                 {/* Hidden/Helper for editing target date - Simplified for now */}
-                <div className="pt-4 text-[10px] text-gray-400 opacity-0 hover:opacity-100 transition-opacity">
-                    Data Alvo (ISO):
-                    <InlineText
-                        tagName="span"
-                        value={targetDate}
-                        onChange={(val) => onUpdate({ targetDate: val })}
-                        className="ml-2 font-mono"
-                    />
-                </div>
+                {!readOnly && (
+                    <div className="pt-4 text-[10px] text-gray-400 opacity-0 hover:opacity-100 transition-opacity">
+                        Data Alvo (ISO):
+                        <InlineText
+                            tagName="span"
+                            value={targetDate}
+                            onChange={(val) => onUpdate({ targetDate: val })}
+                            className="ml-2 font-mono"
+                        />
+                    </div>
+                )}
             </div>
         </section>
     );

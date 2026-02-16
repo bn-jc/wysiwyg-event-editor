@@ -7,11 +7,12 @@ A modern, embeddable event editor built with React and TypeScript. This applicat
 - **Versatile Invitation Design**: Create beautiful invitations for broad range of events including weddings, anniversaries, baptisms, graduations, and general parties.
 - **Embedded Component Mode**: Seamlessly integrate the editor directly into your React application as a component.
 - **Editor API**: Control the editor from external applications using the cross-origin PostMessage API.
-- **Public View & HTML Export**: Render invitations in a standalone, read-only mode or export them as a single HTML file.
+- **Public View & Dynamic Rendering**: Render invitations in a standalone, read-only mode with auto-device detection or export them as a single HTML file.
 - **Rich Visual Effects**: Enhance invitations with interactive effects like confetti, sparkles, balloons, and more.
 - **Background Music**: Add atmosphere with built-in music tracks.
 - **RSVP Management**: Built-in functionality to collect and manage guest RSVPs efficiently.
-- **Responsive Experience**: Fully responsive designs that look perfect on desktops, tablets, and mobile phones.
+- **Responsive Experience**: Adaptive editor interface and content rendering that automatically adjusts to Desktop, Tablet, and Mobile layouts.
+- **Auto-Device Detection**: The `DynamicRenderer` component intelligently detects its container size to serve the optimal layout.
 
 ## Getting Started
 
@@ -51,11 +52,11 @@ Open [http://localhost:3000](http://localhost:3000) to view the application in y
 
 ### 1. React Component Embedding
 For React applications, use the direct component integration for best performance and control.
-See [embedding_guide.md](file:///home/bchambule/.gemini/antigravity/brain/d95eeb88-4f12-41b8-8c38-dfe0fce21b13/embedding_guide.md).
+See [docs/embedding_guide.md](docs/embedding_guide.md).
 
 ### 2. Iframe / External API
 For non-React apps or isolated environments, use the Iframe + PostMessage API.
-See [api_guide.md](file:///home/bchambule/.gemini/antigravity/brain/d95eeb88-4f12-41b8-8c38-dfe0fce21b13/api_guide.md).
+See [docs/api_guide.md](docs/api_guide.md).
 
 ### 3. Public View
 To render a read-only version of an invitation:

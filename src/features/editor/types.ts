@@ -47,7 +47,14 @@ export interface EventLayout {
 
 export interface CanvasRendererProps {
     layout: EventLayout;
-    device: DeviceType;
+    /**
+     * The device type to simulate.
+     * If undefined, it will be automatically detected based on the container width:
+     * - < 640px: 'mobile'
+     * - < 1024px: 'tablet'
+     * - >= 1024px: 'desktop'
+     */
+    device?: DeviceType; // Made optional for auto-detection
     readOnly?: boolean;
     activeSectionId?: string | null;
     onSectionUpdate?: (sectionId: string, newContent: Partial<SectionContent>) => void;
@@ -62,4 +69,6 @@ export interface SectionRendererProps {
     onUpdate: (newContent: Partial<SectionContent>) => void;
     readOnly?: boolean;
     index: number;
+    device: DeviceType; // Added device prop
+    onOpen?: () => void;
 }

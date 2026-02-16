@@ -5,9 +5,12 @@ import { InlineText } from '../common/InlineText';
 export const HeroSection: React.FC<SectionRendererProps> = ({
     section,
     globalStyles,
-    onUpdate
+    onUpdate,
+    device,
+    readOnly
 }) => {
     const { content } = section;
+    const isMobile = device === 'mobile';
 
     return (
         <section
@@ -26,7 +29,8 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
                     tagName="h2"
                     value={content.title}
                     onChange={(val) => onUpdate({ title: val })}
-                    className="text-4xl md:text-5xl"
+                    className={isMobile ? "text-4xl" : "text-5xl"}
+                    readOnly={readOnly}
                     style={{
                         fontFamily: globalStyles.fontFamilyTitle,
                         color: section.styles?.color || globalStyles.primaryColor
@@ -85,6 +89,7 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
                     value={content.subtitle}
                     onChange={(val) => onUpdate({ subtitle: val })}
                     className="text-lg leading-relaxed opacity-80"
+                    readOnly={readOnly}
                     style={{ color: section.styles?.color || globalStyles.secondaryColor }}
                 />
             </div>

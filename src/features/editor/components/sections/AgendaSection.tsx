@@ -5,12 +5,14 @@ import { InlineText } from '../common/InlineText';
 export const AgendaSection: React.FC<SectionRendererProps> = ({
     section,
     globalStyles,
-    onUpdate
+    onUpdate,
+    readOnly
 }) => {
     const { content } = section;
     const items = content.items || [];
 
     const updateItem = (index: number, field: string, value: string) => {
+        if (readOnly) return;
         const newItems = [...items];
         newItems[index] = { ...newItems[index], [field]: value };
         onUpdate({ items: newItems });
@@ -34,6 +36,7 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
                     value={content.title || 'Programação'}
                     onChange={(val) => onUpdate({ title: val })}
                     className="text-4xl md:text-5xl"
+                    readOnly={readOnly}
                     style={{
                         fontFamily: globalStyles.fontFamilyTitle,
                         color: section.styles?.color || globalStyles.primaryColor,
@@ -64,6 +67,7 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
                                     className={`text-sm font-bold tracking-widest uppercase mb-2 block ${section.styles?.textAlign === 'right' ? 'ml-auto' :
                                         section.styles?.textAlign === 'left' ? 'mr-auto' : 'mx-auto'
                                         } w-fit`}
+                                    readOnly={readOnly}
                                     style={{ color: section.styles?.color || globalStyles.secondaryColor }}
                                 />
                                 <InlineText
@@ -71,6 +75,7 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
                                     value={item.label}
                                     onChange={(val) => updateItem(idx, 'label', val)}
                                     className="text-xl font-medium mb-1 block w-full"
+                                    readOnly={readOnly}
                                     style={{ color: 'inherit' }}
                                 />
                                 <InlineText
@@ -78,6 +83,7 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
                                     value={item.location}
                                     onChange={(val) => updateItem(idx, 'location', val)}
                                     className="opacity-50 font-light block w-full"
+                                    readOnly={readOnly}
                                     style={{ color: section.styles?.color || 'rgb(107 114 128)' }}
                                 />
                             </div>

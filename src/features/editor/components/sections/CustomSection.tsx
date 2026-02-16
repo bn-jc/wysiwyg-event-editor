@@ -4,17 +4,20 @@ import { InlineText } from '../common/InlineText';
 
 export const CustomSection: React.FC<SectionRendererProps> = ({
     section,
-    onUpdate
+    onUpdate,
+    readOnly
 }) => {
     const { elements = [] } = section.content;
 
     const handleUpdateElement = (index: number, newContent: any) => {
+        if (readOnly) return;
         const newElements = [...elements];
         newElements[index] = { ...newElements[index], ...newContent };
         onUpdate({ elements: newElements });
     };
 
     const handleUpdateListItem = (elementIndex: number, itemIndex: number, newValue: string) => {
+        if (readOnly) return;
         const newElements = [...elements];
         const newItems = [...newElements[elementIndex].items];
         newItems[itemIndex] = newValue;
@@ -80,6 +83,7 @@ export const CustomSection: React.FC<SectionRendererProps> = ({
                                             value={item}
                                             onChange={(val) => handleUpdateListItem(index, iIdx, val)}
                                             className="text-lg leading-relaxed block opacity-80"
+                                            readOnly={readOnly}
                                             style={{ color: section.styles?.color }}
                                         />
                                     </li>
@@ -99,6 +103,7 @@ export const CustomSection: React.FC<SectionRendererProps> = ({
                                     ? "text-4xl font-bold text-center mb-2"
                                     : "text-lg leading-relaxed text-center opacity-80"
                             }
+                            readOnly={readOnly}
                             style={{ color: section.styles?.color }}
                         />
                     );

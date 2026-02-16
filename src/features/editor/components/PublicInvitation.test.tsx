@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { PublicInvitation } from './PublicInvitation';
-import { EventLayout } from '../types';
+import type { EventLayout } from '../types';
 
 // Mock dependencies
 vi.mock('./DynamicRenderer', () => ({
     DynamicRenderer: ({ readOnly, device }: any) => (
         <div data-testid="dynamic-renderer">
-            Renderer (ReadOnly: {String(readOnly)}, Device: {device})
+            Renderer (ReadOnly: {String(readOnly)}, Device: {device || 'auto'})
         </div>
     )
 }));
@@ -51,7 +51,7 @@ describe('PublicInvitation', () => {
 
         const renderer = screen.getByTestId('dynamic-renderer');
         expect(renderer.textContent).toContain('ReadOnly: true');
-        expect(renderer.textContent).toContain('Device: desktop');
+        expect(renderer.textContent).toContain('Device: desktop'); // Auto-detected as desktop (default mock size)
     });
 
     it('passes layout data to music and effects', () => {

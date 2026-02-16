@@ -6,9 +6,10 @@ interface EditorApiProps {
     setLayout: (layout: EventLayout) => void;
     updateSectionContent: (sectionId: string, content: Partial<SectionContent>) => void;
     onSave: () => void;
+    enabled?: boolean;
 }
 
-export const useEditorApi = ({ layout, setLayout, updateSectionContent, onSave }: EditorApiProps) => {
+export const useEditorApi = ({ layout, setLayout, updateSectionContent, onSave, enabled = true }: EditorApiProps) => {
     const handleMessage = useCallback((event: MessageEvent) => {
         // In a real app, we should validate event.origin here
         const { type, payload } = event.data;
@@ -44,19 +45,23 @@ export const useEditorApi = ({ layout, setLayout, updateSectionContent, onSave }
     }, [layout, setLayout, updateSectionContent, onSave]);
 
     useEffect(() => {
+        if (!enabled) return;
+
         window.addEventListener('message', handleMessage);
 
         // Notify parent that editor is ready
         window.parent.postMessage({ type: 'EDITOR_READY' }, '*');
 
         return () => window.removeEventListener('message', handleMessage);
-    }, [handleMessage]);
+    }, [handleMessage, enabled]);
 
     // Send update to parent whenever layout changes (optional, for live preview in host)
     useEffect(() => {
+        if (!enabled) return;
+
         window.parent.postMessage({
             type: 'EDITOR_LAYOUT_CHANGE',
             payload: layout
         }, '*');
-    }, [layout]);
+    }, [layout, enabled]);
 };

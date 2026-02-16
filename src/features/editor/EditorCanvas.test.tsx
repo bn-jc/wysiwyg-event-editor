@@ -2,6 +2,13 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { EditorCanvas } from './EditorCanvas';
 
+// Mock ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+    observe() { }
+    unobserve() { }
+    disconnect() { }
+};
+
 // Mock DynamicRenderer
 vi.mock('./components/DynamicRenderer', () => ({
     DynamicRenderer: ({ layout, onSectionSelect }: any) => (

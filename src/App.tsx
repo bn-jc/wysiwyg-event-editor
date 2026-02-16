@@ -2,10 +2,20 @@ import { useState, useEffect } from 'react';
 import { EditorCanvas } from '@/features/editor/EditorCanvas';
 import { PublicInvitation } from '@/features/editor/components/PublicInvitation';
 import { useEditorState } from '@/features/editor/hooks/useEditorState';
+import { useEditorApi } from '@/features/editor/hooks/useEditorApi';
 
 function App() {
   const [viewMode, setViewMode] = useState<'editor' | 'public' | 'embedded'>('editor');
-  const { layout } = useEditorState();
+  const { layout, setLayout, updateSectionContent } = useEditorState();
+
+  // Initialize Editor API (Global Listener)
+  useEditorApi({
+    layout,
+    setLayout,
+    updateSectionContent,
+    onSave: () => console.log('Save triggered via API'),
+    enabled: viewMode === 'public'
+  });
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

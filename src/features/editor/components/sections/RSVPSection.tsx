@@ -6,7 +6,8 @@ import { InlineText } from '../common/InlineText';
 export const RSVPSection: React.FC<SectionRendererProps> = ({
     section,
     globalStyles,
-    onUpdate
+    onUpdate,
+    readOnly
 }) => {
     const { content } = section;
 
@@ -34,6 +35,7 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                             fontFamily: globalStyles.fontFamilyTitle,
                             color: section.styles?.color || globalStyles.primaryColor
                         }}
+                        readOnly={readOnly}
                     />
 
                     {content.deadline && (
@@ -45,12 +47,14 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                                 tagName="span"
                                 value={content.deadlineLabel || 'Por favor responda até '}
                                 onChange={(val) => onUpdate({ deadlineLabel: val })}
+                                readOnly={readOnly}
                             />
                             <InlineText
                                 tagName="span"
                                 value={content.deadline}
                                 onChange={(val) => onUpdate({ deadline: val })}
                                 className="font-bold underline cursor-pointer ml-1"
+                                readOnly={readOnly}
                             />
                         </p>
                     )}
@@ -68,12 +72,14 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                                     tagName="span"
                                     value={content.attendanceLabel || 'Você vai?'}
                                     onChange={(val) => onUpdate({ attendanceLabel: val })}
+                                    readOnly={readOnly}
                                 />
                             </label>
                             <div className="relative">
                                 <select
-                                    className="w-full bg-white border border-gray-100 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500 hover:border-gray-200 transition-all outline-none pl-12 appearance-none cursor-pointer"
+                                    className="w-full bg-white border border-gray-100 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500 hover:border-gray-200 transition-all outline-none pl-12 appearance-none cursor-pointer disabled:cursor-default"
                                     defaultValue=""
+                                    disabled={!readOnly} // Disable in edit mode, enable in preview/public
                                 >
                                     <option value="" disabled>Selecione uma opção</option>
                                     {(content.attendanceOptions || ['Sim, Eu vou!', 'Desculpe, não posso ir']).map((option: string, idx: number) => (
@@ -92,13 +98,14 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                                     tagName="span"
                                     value={content.nameLabel || 'Seu Nome Completo'}
                                     onChange={(val) => onUpdate({ nameLabel: val })}
+                                    readOnly={readOnly}
                                 />
                             </label>
                             <div className="relative">
                                 <input
                                     type="text"
                                     placeholder={content.namePlaceholder || "Ex: Maria & João Silva"}
-                                    readOnly // Prevent typing in preview/edit mode to avoid confusion with inline edit
+                                    readOnly={!readOnly} // Disable in edit mode, enable in preview/public
                                     className="w-full bg-white border border-gray-100 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500 hover:border-gray-200 transition-all outline-none pl-12 cursor-default"
                                 />
                                 <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-hover:text-blue-500 transition-colors" size={18} />
@@ -111,13 +118,14 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                                     tagName="span"
                                     value={content.emailLabel || 'E-mail para Contacto'}
                                     onChange={(val) => onUpdate({ emailLabel: val })}
+                                    readOnly={readOnly}
                                 />
                             </label>
                             <div className="relative">
                                 <input
                                     type="email"
                                     placeholder={content.emailPlaceholder || "seu-email@exemplo.com"}
-                                    readOnly
+                                    readOnly={!readOnly}
                                     className="w-full bg-white border border-gray-100 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-400 hover:border-gray-200 transition-all outline-none pl-12 cursor-default"
                                 />
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-hover:text-blue-400 transition-colors" size={18} />
@@ -130,13 +138,14 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                                     tagName="span"
                                     value={content.messageLabel || 'Mensagem para os Noivos'}
                                     onChange={(val) => onUpdate({ messageLabel: val })}
+                                    readOnly={readOnly}
                                 />
                             </label>
                             <div className="relative">
                                 <textarea
                                     rows={4}
                                     placeholder={content.messagePlaceholder || "Alguma restrição alimentar ou mensagem especial?"}
-                                    readOnly
+                                    readOnly={!readOnly}
                                     className="w-full bg-white border border-gray-100 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-400 hover:border-gray-200 transition-all outline-none pl-12 resize-none cursor-default"
                                 />
                                 <MessageSquare className="absolute left-4 top-4 text-gray-300 group-hover:text-blue-400 transition-colors" size={18} />
@@ -152,6 +161,7 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                                 value={content.buttonLabel || 'CONFIRMAR PRESENÇA'}
                                 onChange={(val) => onUpdate({ buttonLabel: val })}
                                 className="text-white"
+                                readOnly={readOnly}
                             />
                         </button>
                     </div>
@@ -163,6 +173,7 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                         value={content.footerText || 'Estamos ansiosos por celebrar este dia especial convosco!'}
                         onChange={(val) => onUpdate({ footerText: val })}
                         className="text-gray-400 text-sm italic font-light"
+                        readOnly={readOnly}
                     />
                 </div>
             </div>

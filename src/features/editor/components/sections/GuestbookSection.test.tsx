@@ -21,7 +21,8 @@ const defaultProps = {
     onUpdate: vi.fn(),
     readOnly: false,
     globalStyles: mockGlobalStyles,
-    index: 0
+    index: 0,
+    device: 'desktop' as const
 };
 
 describe('GuestbookSection', () => {

@@ -24,7 +24,8 @@ describe('CustomSection', () => {
         },
         isActive: false,
         onUpdate: vi.fn(),
-        onSelect: vi.fn()
+        onSelect: vi.fn(),
+        device: 'desktop' as const
     };
 
     it('renders all elements correctly', () => {

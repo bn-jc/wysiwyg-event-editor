@@ -19,7 +19,9 @@ const IconMap: Record<string, React.FC<any>> = {
 export const SplashSection: React.FC<SectionRendererProps> = ({
     section,
     globalStyles,
-    onUpdate
+    onUpdate,
+    readOnly,
+    onOpen
 }) => {
     const { content } = section;
 
@@ -53,6 +55,7 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
                     value={content.title || 'Bem-vindos ao nosso evento'}
                     onChange={(val) => onUpdate({ title: val })}
                     className="text-sm md:text-md uppercase tracking-[0.3em] font-medium opacity-90"
+                    readOnly={readOnly}
                 />
 
                 {content.icon && content.icon !== 'none' && (
@@ -69,6 +72,7 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
                     value={content.names || 'John & Jane'}
                     onChange={(val) => onUpdate({ names: val })}
                     className="text-6xl md:text-8xl py-4"
+                    readOnly={readOnly}
                     style={{ fontFamily: globalStyles.fontFamilyTitle }}
                 />
 
@@ -148,9 +152,11 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
                     value={content.date || '20 de Junho de 2026'}
                     onChange={(val) => onUpdate({ date: val })}
                     className="text-lg md:text-xl font-light opacity-90 tracking-wide"
+                    readOnly={readOnly}
                 />
 
                 <button
+                    onClick={onOpen}
                     className="mt-12 px-10 py-4 bg-white text-black rounded-full text-xs font-bold uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-2xl active:scale-95 whitespace-nowrap"
                     style={{ fontFamily: globalStyles.fontFamilyBody }}
                 >
@@ -158,6 +164,7 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
                         tagName="span"
                         value={content.buttonLabel || 'Abrir Convite'}
                         onChange={(val) => onUpdate({ buttonLabel: val })}
+                        readOnly={readOnly}
                     />
                 </button>
             </div>
