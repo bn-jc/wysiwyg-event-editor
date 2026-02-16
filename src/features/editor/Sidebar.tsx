@@ -1,7 +1,9 @@
 import React from 'react';
-import { Layers, Sparkles, Image as ImageIcon, Calendar, MessageSquare, PenTool, Clock, Minus } from 'lucide-react';
+import { Layers, Sparkles, Image as ImageIcon, Calendar, MessageSquare, PenTool, Clock, Minus, Menu } from 'lucide-react';
 
 import type { SectionType } from './types';
+import type { ContainerMode } from './hooks/useContainerSize';
+import { cn } from '@/utils/cn';
 
 interface SidebarItem {
     id: SectionType;
@@ -20,15 +22,27 @@ interface SidebarProps {
     onToggleLayers: () => void;
     isLayersOpen: boolean;
     readOnly?: boolean;
+    mode?: ContainerMode;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
     onAddSection,
     onToggleLayers,
     isLayersOpen,
-    readOnly = false
+    readOnly = false,
+    mode = 'wide'
 }) => {
     if (readOnly) return null;
+    const [collapsed, setCollapsed] = React.useState(mode !== 'wide');
+
+    // Auto-collapse when mode changes to non-wide
+    React.useEffect(() => {
+        if (mode !== 'wide') {
+            setCollapsed(true);
+        } else {
+            setCollapsed(false);
+        }
+    }, [mode]);
 
     const categories: SidebarCategory[] = [
         {
@@ -59,39 +73,66 @@ export const Sidebar: React.FC<SidebarProps> = ({
         }
     ];
 
+    const isMobile = mode === 'mobile';
+
     return (
-        <div className="w-16 flex flex-col items-center py-4 bg-white border-r border-gray-200 h-full shadow-sm z-20 overflow-y-auto no-scrollbar">
+        <div className={cn(
+            "flex flex-col items-center py-4 bg-white border-r border-gray-200 h-full shadow-sm z-20 transition-all duration-300",
+            collapsed ? "w-14" : "w-24", // Slimmer when collapsed
+            isMobile && "absolute bottom-0 left-0 w-full h-auto border-r-0 border-t flex-row justify-around py-2 z-50 overflow-x-auto"
+        )}>
+            {/* Toggle Button for Desktop/Compact */}
+            {!isMobile && (
+                <button
+                    onClick={() => setCollapsed(!collapsed)}
+                    className="mb-4 p-2 text-gray-400 hover:text-gray-600"
+                >
+                    <Menu size={20} />
+                </button>
+            )}
+
             {/* Layers Toggle */}
-            <div className="flex flex-col items-center gap-1 mb-6">
+            <div className={cn("flex flex-col items-center gap-1 mb-6", isMobile && "mb-0")}>
                 <button
                     onClick={onToggleLayers}
-                    className={`p-3 rounded-xl transition-colors border ${isLayersOpen ? 'bg-blue-100 text-blue-600 border-blue-200' : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-blue-50 hover:text-blue-600'}`}
+                    className={cn(
+                        "p-3 rounded-xl transition-colors border",
+                        isLayersOpen ? 'bg-blue-100 text-blue-600 border-blue-200' : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-blue-50 hover:text-blue-600',
+                        isMobile && "p-2"
+                    )}
                 >
-                    <Layers size={24} />
+                    <Layers size={isMobile ? 20 : 24} />
                 </button>
-                <span className="text-[10px] font-medium text-gray-500 uppercase tracking-tighter">Camadas</span>
+                {!collapsed && !isMobile && <span className="text-[10px] font-medium text-gray-500 uppercase tracking-tighter">Camadas</span>}
             </div>
 
-            <div className="w-8 h-[1px] bg-gray-100 mb-6" />
+            {!isMobile && <div className="w-8 h-[1px] bg-gray-100 mb-6" />}
 
             {/* Section Templates */}
-            {categories.map(cat => (
-                <div key={cat.id} className="flex flex-col items-center gap-4 w-full mb-6">
-                    <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{cat.name}</span>
-                    {cat.items.map(item => (
-                        <div key={item.id} className="flex flex-col items-center gap-1 group relative px-2">
-                            <button
-                                onClick={() => onAddSection(item.id)}
-                                className="p-3 rounded-xl bg-gray-50 hover:bg-white text-gray-700 hover:text-blue-600 transition-all border border-gray-100 hover:border-blue-200 hover:scale-110 shadow-sm active:scale-95"
-                                title={`Adicionar ${item.name}`}
-                            >
-                                <item.icon size={22} />
-                            </button>
-                            <span className="text-[10px] font-medium text-gray-500">{item.name}</span>
-                        </div>
-                    ))}
-                </div>
-            ))}
+            <div className={cn("flex flex-col items-center gap-4 w-full", isMobile && "flex-row gap-2")}>
+                {categories.map(cat => (
+                    <div key={cat.id} className={cn("flex flex-col items-center gap-2 w-full", !isMobile && "mb-4", isMobile && "flex-row gap-1 border-r pr-2 last:border-0")}>
+                        {!collapsed && !isMobile && <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{cat.name}</span>}
+
+                        {cat.items.map(item => (
+                            <div key={item.id} className="flex flex-col items-center gap-1 group relative px-1">
+                                <button
+                                    onClick={() => onAddSection(item.id)}
+                                    className={cn(
+                                        "p-3 rounded-xl bg-gray-50 hover:bg-white text-gray-700 hover:text-blue-600 transition-all border border-gray-100 hover:border-blue-200 shadow-sm active:scale-95",
+                                        !collapsed && "hover:scale-110",
+                                        isMobile && "p-2"
+                                    )}
+                                    title={`Adicionar ${item.name}`}
+                                >
+                                    <item.icon size={isMobile ? 18 : 22} />
+                                </button>
+                                {!collapsed && !isMobile && <span className="text-[10px] font-medium text-gray-500">{item.name}</span>}
+                            </div>
+                        ))}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
