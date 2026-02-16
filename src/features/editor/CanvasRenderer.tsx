@@ -23,7 +23,7 @@ const RecursiveRenderer: React.FC<{
     onUpdate: (id: string, newProps: Partial<EditorElement>) => void;
     onDragDelta: (id: string, deltaX: number, deltaY: number) => void;
     readOnly: boolean;
-    device?: 'tablet' | 'mobile';
+    device?: DeviceType;
 }> = ({ node, selectedIds, onSelect, onUpdate, onDragDelta, readOnly, device = 'tablet' }) => {
     // If it's a container, we just render it as a DraggableElement
     // But DraggableElement currently assumes leaf content.

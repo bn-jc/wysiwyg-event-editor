@@ -5,12 +5,13 @@ A modern, embeddable event editor built with React and TypeScript. This applicat
 ## Features
 
 - **Versatile Invitation Design**: Create beautiful invitations for broad range of events including weddings, anniversaries, baptisms, graduations, and general parties.
-- **Embeddable Editor**: Seamlessly integrate the editor into any existing webpage or application.
+- **Embedded Component Mode**: Seamlessly integrate the editor directly into your React application as a component.
+- **Editor API**: Control the editor from external applications using the cross-origin PostMessage API.
+- **Public View & HTML Export**: Render invitations in a standalone, read-only mode or export them as a single HTML file.
+- **Rich Visual Effects**: Enhance invitations with interactive effects like confetti, sparkles, balloons, and more.
+- **Background Music**: Add atmosphere with built-in music tracks.
 - **RSVP Management**: Built-in functionality to collect and manage guest RSVPs efficiently.
-- **Rich Text Customization**: rigorous control over typography and layout with a powerful WYSIWYG editor.
-- **Media Integration**: Easy image uploads and management with drag-and-drop support.
 - **Responsive Experience**: Fully responsive designs that look perfect on desktops, tablets, and mobile phones.
-- **Modern UI/UX**: A clean, intuitive interface featuring smooth animations and real-time validation.
 
 ## Getting Started
 
@@ -46,33 +47,32 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) to view the application in your browser.
 
-### Embedding
+## Integration Guides
 
-To embed the editor in your application, you can use an `iframe`:
+### 1. React Component Embedding
+For React applications, use the direct component integration for best performance and control.
+See [embedding_guide.md](file:///home/bchambule/.gemini/antigravity/brain/d95eeb88-4f12-41b8-8c38-dfe0fce21b13/embedding_guide.md).
 
-```html
-<iframe 
-  src="https://your-deployment-url.com" 
-  width="100%" 
-  height="800px" 
-  style="border: none; border-radius: 8px;"
-></iframe>
-```
+### 2. Iframe / External API
+For non-React apps or isolated environments, use the Iframe + PostMessage API.
+See [api_guide.md](file:///home/bchambule/.gemini/antigravity/brain/d95eeb88-4f12-41b8-8c38-dfe0fce21b13/api_guide.md).
+
+### 3. Public View
+To render a read-only version of an invitation:
+`http://localhost:3000/?view=public`
 
 ## Project Structure
 
 ```
 wysiwyg-event-editor/
 ├── src/
-│   ├── components/        # Reusable UI components
-│   │   ├── EventForm.tsx    # Main event creation form
-│   │   ├── ImageUpload.tsx  # Image upload component
-│   │   ├── RichTextEditor.tsx # WYSIWYG editor wrapper
-│   │   └── ...
-│   ├── hooks/             # Custom React hooks
-│   ├── types/             # TypeScript type definitions
-│   ├── utils/             # Utility functions
-│   ├── App.tsx            # Root component
+│   ├── features/
+│   │   └── editor/        # Core editor logic and components
+│   │       ├── components/  # Editor UI components (Toolbar, Canvas, Sections)
+│   │       ├── hooks/       # State management (useEditorState)
+│   │       └── utils/       # Helpers (Export, Schema Registry)
+│   ├── components/        # Shared UI components
+│   ├── App.tsx            # Root component with routing logic
 │   └── index.tsx          # Entry point
 ├── public/                # Static assets
 ├── .env                   # Environment variables
@@ -92,6 +92,7 @@ wysiwyg-event-editor/
 - **Lucide React**: Icon library.
 - **clsx**: Utility for building `className` strings.
 - **date-fns**: Date utility library.
+- **canvas-confetti**: Visual effects library.
 
 ## Environment Variables
 

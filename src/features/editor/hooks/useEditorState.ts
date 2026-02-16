@@ -31,8 +31,8 @@ const INITIAL_LAYOUT: EventLayout = {
     ]
 };
 
-export const useEditorState = () => {
-    const [layout, setLayout] = useState<EventLayout>(INITIAL_LAYOUT);
+export const useEditorState = (initialLayout?: EventLayout) => {
+    const [layout, setLayout] = useState<EventLayout>(initialLayout || INITIAL_LAYOUT);
     const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
     const [viewMode, setViewMode] = useState<ViewMode>('split');
     const [device, setDevice] = useState<DeviceType>('desktop');

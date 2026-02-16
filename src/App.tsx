@@ -4,18 +4,43 @@ import { PublicInvitation } from '@/features/editor/components/PublicInvitation'
 import { useEditorState } from '@/features/editor/hooks/useEditorState';
 
 function App() {
-  const [viewMode, setViewMode] = useState<'editor' | 'public'>('editor');
+  const [viewMode, setViewMode] = useState<'editor' | 'public' | 'embedded'>('editor');
   const { layout } = useEditorState();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('view') === 'public') {
+    const mode = params.get('view');
+    if (mode === 'public') {
       setViewMode('public');
+    } else if (mode === 'embedded') {
+      setViewMode('embedded');
     }
   }, []);
 
   if (viewMode === 'public') {
     return <PublicInvitation layout={layout} />;
+  }
+
+  if (viewMode === 'embedded') {
+    const embeddedLayout = {
+      ...layout,
+      name: "Embedded Event (Pre-loaded)"
+    };
+
+    return (
+      <div className="h-screen w-screen p-8 bg-slate-900 flex flex-col items-center justify-center">
+        <h1 className="text-white text-2xl mb-4 font-bold">Host App Context</h1>
+        <div className="w-[1000px] h-[700px] bg-white rounded-xl overflow-hidden shadow-2xl border-4 border-slate-700">
+          <EditorCanvas
+            initialLayout={embeddedLayout}
+            onSave={(savedLayout) => {
+              console.log('Host App received save:', savedLayout);
+              alert(`Host App: Saved "${savedLayout.name}" successfully!`);
+            }}
+          />
+        </div>
+      </div>
+    );
   }
 
   return (

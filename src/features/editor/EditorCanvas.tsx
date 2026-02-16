@@ -10,7 +10,12 @@ import { BackgroundMusic } from './components/BackgroundMusic';
 import { EffectsOverlay } from './components/EffectsOverlay';
 import { useEditorApi } from './hooks/useEditorApi';
 
-export const EditorCanvas: React.FC = () => {
+export interface EditorCanvasProps {
+    initialLayout?: import('./types').EventLayout;
+    onSave?: (layout: import('./types').EventLayout) => void;
+}
+
+export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSave }) => {
     const {
         layout,
         setLayout,
@@ -30,13 +35,17 @@ export const EditorCanvas: React.FC = () => {
         updateGlobalStyles,
         updateMusic,
         updateEffects
-    } = useEditorState();
+    } = useEditorState(initialLayout);
 
     const handleSave = useCallback(() => {
-        console.log('Saving design:', JSON.stringify(layout, null, 2));
-        alert('Design saved successfully! (Simulated)');
+        if (onSave) {
+            onSave(layout);
+        } else {
+            console.log('Saving design:', JSON.stringify(layout, null, 2));
+            alert('Design saved successfully! (Default Handler)');
+        }
         // Notify parent via API if needed (handled in useEditorApi if triggered via message)
-    }, [layout]);
+    }, [layout, onSave]);
 
     // Initialize Editor API
     useEditorApi({
@@ -67,6 +76,7 @@ export const EditorCanvas: React.FC = () => {
                 onUpdateMusic={updateMusic}
                 effects={layout.effects}
                 onUpdateEffects={updateEffects}
+                layout={layout}
             />
 
             <div className="flex flex-1 overflow-hidden relative">
