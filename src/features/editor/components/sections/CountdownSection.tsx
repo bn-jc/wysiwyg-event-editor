@@ -11,7 +11,7 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
     const { content } = section;
     const targetDate = content.targetDate || '2026-12-12T10:00:00';
 
-    const calculateTimeLeft = () => {
+    const calculateTimeLeft = React.useCallback(() => {
         const difference = +new Date(targetDate) - +new Date();
         let timeLeft: { [key: string]: number } = {};
 
@@ -25,17 +25,20 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
         }
 
         return timeLeft;
-    };
+    }, [targetDate]);
 
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
     useEffect(() => {
-        const timer = setTimeout(() => {
+        // Update immediately on mount/change
+        setTimeLeft(calculateTimeLeft());
+
+        const timer = setInterval(() => {
             setTimeLeft(calculateTimeLeft());
         }, 1000);
 
-        return () => clearTimeout(timer);
-    });
+        return () => clearInterval(timer);
+    }, [calculateTimeLeft]);
 
     const isFinished = Object.keys(timeLeft).length === 0;
 
