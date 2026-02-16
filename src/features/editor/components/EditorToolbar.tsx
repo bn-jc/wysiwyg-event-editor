@@ -1,7 +1,8 @@
 import React from 'react';
-import { LayoutGrid, Save, Smartphone, Tablet, Monitor, Eye, Type, Globe, Music, Palette, Sparkle } from 'lucide-react';
+import { LayoutGrid, Save, Smartphone, Tablet, Monitor, Eye, Type, Globe, Music, Palette, Sparkle, Code } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import type { DeviceType, ViewMode, EventLayout } from '../types';
+import { generateStandaloneHtml } from '../utils/exportHtml';
 
 interface EditorToolbarProps {
     viewMode: ViewMode;
@@ -16,6 +17,7 @@ interface EditorToolbarProps {
     onUpdateMusic: (url?: string) => void;
     effects?: EventLayout['effects'];
     onUpdateEffects: (effects: EventLayout['effects']) => void;
+    layout: EventLayout;
 }
 
 export const EditorToolbar: React.FC<EditorToolbarProps> = ({
@@ -29,9 +31,21 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
     musicUrl,
     onUpdateMusic,
     effects,
-    onUpdateEffects
+    onUpdateEffects,
+    layout
 }) => {
     const isPreview = viewMode === 'preview';
+
+    const handleExport = () => {
+        const html = generateStandaloneHtml(layout);
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${layout.name || 'convite'}.html`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
 
     return (
         <div className="flex h-16 items-center justify-between border-b bg-white px-6 shadow-sm z-30">
@@ -159,10 +173,20 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                 <div className="w-[1px] h-6 bg-gray-200" />
 
                 <button
-                    onClick={onSave}
-                    className="flex items-center gap-2 bg-black hover:bg-gray-800 text-white px-6 py-2 rounded-xl text-xs font-bold transition-all shadow-xl active:scale-95"
+                    onClick={handleExport}
+                    className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-xs font-bold transition-all"
+                    title="Exportar HTML"
                 >
-                    <Save size={16} /> GUARDAR
+                    <Code size={14} />
+                    <span>HTML</span>
+                </button>
+
+                <button
+                    onClick={onSave}
+                    className="flex items-center gap-2 bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-black/10 transition-all hover:scale-105 active:scale-95"
+                >
+                    <Save size={14} />
+                    <span>GUARDAR</span>
                 </button>
             </div>
         </div>
