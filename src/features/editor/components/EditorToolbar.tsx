@@ -24,7 +24,6 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
     device,
     setDevice,
     onSave,
-    selectedCount,
     globalStyles,
     onUpdateGlobalStyles,
     musicUrl,
