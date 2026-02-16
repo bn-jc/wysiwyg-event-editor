@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, Save, Smartphone, Tablet, Eye, Type, Globe, Music, Palette, Sparkle } from 'lucide-react';
+import { LayoutGrid, Save, Smartphone, Tablet, Monitor, Eye, Type, Globe, Music, Palette, Sparkle } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import type { DeviceType, ViewMode, EventLayout } from '../types';
 
@@ -12,6 +12,10 @@ interface EditorToolbarProps {
     selectedCount: number;
     globalStyles: EventLayout['globalStyles'];
     onUpdateGlobalStyles: (styles: Partial<EventLayout['globalStyles']>) => void;
+    musicUrl?: string;
+    onUpdateMusic: (url?: string) => void;
+    effects?: EventLayout['effects'];
+    onUpdateEffects: (effects: EventLayout['effects']) => void;
 }
 
 export const EditorToolbar: React.FC<EditorToolbarProps> = ({
@@ -22,7 +26,11 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
     onSave,
     selectedCount,
     globalStyles,
-    onUpdateGlobalStyles
+    onUpdateGlobalStyles,
+    musicUrl,
+    onUpdateMusic,
+    effects,
+    onUpdateEffects
 }) => {
     const isPreview = viewMode === 'preview';
 
@@ -78,14 +86,38 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                             <span className="text-[10px] font-bold text-gray-400 uppercase select-none">PT-PT</span>
                         </div>
 
-                        <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100 group">
+                        <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
                             <Music size={14} className="text-gray-400" />
-                            <span className="text-[10px] font-bold text-gray-500 truncate max-w-[80px]">Piano Class.</span>
+                            <select
+                                value={musicUrl || ''}
+                                onChange={(e) => onUpdateMusic(e.target.value || undefined)}
+                                className="bg-transparent text-[10px] font-bold text-gray-500 border-none p-0 focus:ring-0 cursor-pointer"
+                            >
+                                <option value="">Sem Música</option>
+                                <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">Piano Class.</option>
+                                <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">Marcha Nupcial</option>
+                            </select>
                         </div>
 
                         <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
                             <Sparkle size={14} className="text-gray-400" />
-                            <span className="text-[10px] font-bold text-gray-400 uppercase">Efeitos</span>
+                            <select
+                                value={effects || 'none'}
+                                onChange={(e) => onUpdateEffects(e.target.value as any)}
+                                className="bg-transparent text-[10px] font-bold text-gray-500 border-none p-0 focus:ring-0 cursor-pointer"
+                            >
+                                <option value="none">Sem Efeitos</option>
+                                <option value="confetti">Confetes</option>
+                                <option value="sparkles">Brilhos</option>
+                                <option value="bubbles">Bolhas</option>
+                                <option value="balloons">Balões</option>
+                                <option value="hearts">Corações</option>
+                                <option value="birds">Pássaros</option>
+                                <option value="hats">Graduação</option>
+                                <option value="roses">Rosas</option>
+                                <option value="rings">Alianças</option>
+                                <option value="cakes">Bolos</option>
+                            </select>
                         </div>
                     </div>
                 )}
@@ -94,11 +126,22 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
             <div className="flex items-center gap-4">
                 <div className="flex gap-1 p-1 bg-gray-100/80 rounded-xl">
                     <button
+                        onClick={() => setDevice('desktop')}
+                        className={cn(
+                            "p-2 rounded-lg transition-all",
+                            device === 'desktop' ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                        )}
+                        title="Desktop"
+                    >
+                        <Monitor size={18} />
+                    </button>
+                    <button
                         onClick={() => setDevice('tablet')}
                         className={cn(
                             "p-2 rounded-lg transition-all",
-                            device === 'tablet' ? "bg-white text-blue-600 shadow-sm" : "text-gray-500"
+                            device === 'tablet' ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
                         )}
+                        title="Tablet"
                     >
                         <Tablet size={18} />
                     </button>
@@ -106,8 +149,9 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                         onClick={() => setDevice('mobile')}
                         className={cn(
                             "p-2 rounded-lg transition-all",
-                            device === 'mobile' ? "bg-white text-blue-600 shadow-sm" : "text-gray-500"
+                            device === 'mobile' ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
                         )}
+                        title="Smartphone"
                     >
                         <Smartphone size={18} />
                     </button>

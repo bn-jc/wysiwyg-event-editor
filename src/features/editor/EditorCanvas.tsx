@@ -6,6 +6,8 @@ import { DynamicRenderer } from './components/DynamicRenderer';
 import { cn } from '@/utils/cn';
 
 import { PropertyEditor } from './components/PropertyEditor';
+import { BackgroundMusic } from './components/BackgroundMusic';
+import { EffectsOverlay } from './components/EffectsOverlay';
 
 export const EditorCanvas: React.FC = () => {
     const {
@@ -20,9 +22,12 @@ export const EditorCanvas: React.FC = () => {
         setShowLayers,
         addSection,
         updateSectionContent,
+        updateSectionStyles,
         deleteSection,
         moveSection,
-        updateGlobalStyles
+        updateGlobalStyles,
+        updateMusic,
+        updateEffects
     } = useEditorState();
 
     const handleSave = () => {
@@ -36,6 +41,8 @@ export const EditorCanvas: React.FC = () => {
 
     return (
         <div className="flex h-full flex-col bg-gray-50 overflow-hidden font-sans">
+            <BackgroundMusic url={layout.musicUrl} />
+            <EffectsOverlay effects={layout.effects} />
             <EditorToolbar
                 viewMode={viewMode}
                 setViewMode={setViewMode}
@@ -45,6 +52,10 @@ export const EditorCanvas: React.FC = () => {
                 selectedCount={activeSectionId ? 1 : 0}
                 globalStyles={layout.globalStyles}
                 onUpdateGlobalStyles={updateGlobalStyles}
+                musicUrl={layout.musicUrl}
+                onUpdateMusic={updateMusic}
+                effects={layout.effects}
+                onUpdateEffects={updateEffects}
             />
 
             <div className="flex flex-1 overflow-hidden relative">
@@ -65,7 +76,9 @@ export const EditorCanvas: React.FC = () => {
                     <div
                         className={cn(
                             "transition-all duration-500 bg-white shadow-2xl relative",
-                            device === 'mobile' ? "w-[375px]" : "w-full max-w-4xl"
+                            device === 'mobile' ? "w-[375px]" :
+                                device === 'tablet' ? "w-[768px]" :
+                                    "w-full max-w-6xl"
                         )}
                         style={{ minHeight: isPreviewOnly ? '100vh' : '800px' }}
                     >
@@ -86,6 +99,7 @@ export const EditorCanvas: React.FC = () => {
                         <PropertyEditor
                             section={activeSection}
                             onUpdate={(content) => updateSectionContent(activeSection.id, content)}
+                            onUpdateStyles={(styles) => updateSectionStyles(activeSection.id, styles)}
                             onDelete={() => deleteSection(activeSection.id)}
                             onMove={(direction) => moveSection(activeSectionIndex, direction)}
                         />

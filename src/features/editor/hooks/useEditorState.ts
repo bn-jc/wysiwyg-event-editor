@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
-import type { DeviceType, ViewMode, EventLayout, SectionDefinition, SectionContent } from '../types';
-import { createSection, SECTION_TEMPLATES } from '../utils/SectionSchemaRegistry';
+import { createSection } from '../utils/SectionSchemaRegistry';
+import type { DeviceType, ViewMode, EventLayout, SectionDefinition, SectionContent, SectionType } from '../types';
 
 const INITIAL_LAYOUT: EventLayout = {
     id: 'invitation-1',
@@ -16,16 +16,18 @@ const INITIAL_LAYOUT: EventLayout = {
     },
     sections: [
         {
-            ...createSection('splash-01'),
+            ...createSection('SplashSection'),
             content: {
                 title: 'O Grande Dia de',
-                coupleNames: 'Sofia & Tiago',
+                names: 'John & Jane',
                 date: '20 de Junho de 2026',
                 buttonLabel: 'Abrir Convite',
                 backgroundImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1200',
+                icon: 'heart',
+                lineVariant: 'line'
             }
         },
-        createSection('hero-01')
+        createSection('HeroSection')
     ]
 };
 
@@ -33,11 +35,11 @@ export const useEditorState = () => {
     const [layout, setLayout] = useState<EventLayout>(INITIAL_LAYOUT);
     const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
     const [viewMode, setViewMode] = useState<ViewMode>('split');
-    const [device, setDevice] = useState<DeviceType>('mobile');
+    const [device, setDevice] = useState<DeviceType>('desktop');
     const [showLayers, setShowLayers] = useState(true);
 
-    const addSection = useCallback((templateId: string) => {
-        const newSection = createSection(templateId);
+    const addSection = useCallback((type: SectionType) => {
+        const newSection = createSection(type);
         setLayout(prev => ({
             ...prev,
             sections: [...prev.sections, newSection]
@@ -79,9 +81,12 @@ export const useEditorState = () => {
         setLayout(prev => {
             const newSections = [...prev.sections];
             const targetIndex = direction === 'up' ? index - 1 : index + 1;
+
             if (targetIndex < 0 || targetIndex >= newSections.length) return prev;
 
+            // Simple swap
             [newSections[index], newSections[targetIndex]] = [newSections[targetIndex], newSections[index]];
+
             return { ...prev, sections: newSections };
         });
     }, []);
@@ -91,6 +96,14 @@ export const useEditorState = () => {
             ...prev,
             globalStyles: { ...prev.globalStyles, ...newStyles }
         }));
+    }, []);
+
+    const updateMusic = useCallback((url?: string) => {
+        setLayout(prev => ({ ...prev, musicUrl: url }));
+    }, []);
+
+    const updateEffects = useCallback((effects: EventLayout['effects']) => {
+        setLayout(prev => ({ ...prev, effects }));
     }, []);
 
     return {
@@ -109,6 +122,8 @@ export const useEditorState = () => {
         updateSectionStyles,
         deleteSection,
         moveSection,
-        updateGlobalStyles
+        updateGlobalStyles,
+        updateMusic,
+        updateEffects
     };
 };

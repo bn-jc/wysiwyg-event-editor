@@ -8,7 +8,7 @@ describe('useEditorState', () => {
 
         expect(result.current.layout).toBeDefined();
         expect(result.current.layout.sections.length).toBeGreaterThan(0);
-        expect(result.current.layout.sections[0].templateId).toBe('splash-01');
+        expect(result.current.layout.sections[0].type).toBe('SplashSection');
     });
 
     it('should add a new section', () => {
@@ -16,12 +16,12 @@ describe('useEditorState', () => {
         const initialCount = result.current.layout.sections.length;
 
         act(() => {
-            result.current.addSection('hero-01');
+            result.current.addSection('HeroSection');
         });
 
         expect(result.current.layout.sections).toHaveLength(initialCount + 1);
         const lastSection = result.current.layout.sections[result.current.layout.sections.length - 1];
-        expect(lastSection.templateId).toBe('hero-01');
+        expect(lastSection.type).toBe('HeroSection');
         expect(result.current.activeSectionId).toBe(lastSection.id);
     });
 
@@ -29,7 +29,7 @@ describe('useEditorState', () => {
         const { result } = renderHook(() => useEditorState());
         // Add a fresh section to test update safely
         act(() => {
-            result.current.addSection('hero-01');
+            result.current.addSection('HeroSection');
         });
 
         const sectionId = result.current.activeSectionId!;
@@ -47,7 +47,7 @@ describe('useEditorState', () => {
 
         // Add a section to delete
         act(() => {
-            result.current.addSection('agenda-01');
+            result.current.addSection('AgendaSection');
         });
 
         const sectionId = result.current.activeSectionId!;
@@ -67,7 +67,7 @@ describe('useEditorState', () => {
         const { result } = renderHook(() => useEditorState());
 
         // Clear default sections for predictable state or just append known ones
-        // Default init has splash-01 (index 0) and hero-01 (index 1) usually.
+        // Default init has SplashSection (index 0) and HeroSection (index 1) usually.
         // Let's add two distinct ones to be sure.
 
         // Actually, let's just use what we have.
@@ -79,7 +79,7 @@ describe('useEditorState', () => {
         const initialSections = result.current.layout.sections;
         if (initialSections.length < 2) {
             act(() => {
-                result.current.addSection('hero-01');
+                result.current.addSection('HeroSection');
             });
         }
 

@@ -11,23 +11,36 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
     const { content } = section;
 
     return (
-        <section className="py-24 px-6 bg-white relative overflow-hidden">
+        <section
+            className="px-6 bg-transparent relative overflow-hidden"
+            style={{
+                paddingTop: section.styles?.paddingTop || '96px',
+                paddingBottom: section.styles?.paddingBottom || '96px',
+                backgroundColor: section.styles?.backgroundColor
+            }}
+        >
             {/* Background Decorative Elements */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-gray-50 rounded-full -mr-32 -mt-32 opacity-50" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-gray-50 rounded-full -ml-32 -mb-32 opacity-50" />
 
-            <div className="max-w-xl mx-auto relative z-10">
+            <div className="max-w-3xl mx-auto relative z-10">
                 <div className="text-center mb-16">
                     <InlineText
                         tagName="h2"
                         value={content.title || 'Confirme a sua Presença'}
                         onChange={(val) => onUpdate({ title: val })}
                         className="text-4xl md:text-5xl mb-4"
-                        style={{ fontFamily: globalStyles.fontFamilyTitle, color: globalStyles.primaryColor }}
+                        style={{
+                            fontFamily: globalStyles.fontFamilyTitle,
+                            color: section.styles?.color || globalStyles.primaryColor
+                        }}
                     />
 
                     {content.deadline && (
-                        <p className="text-gray-400 uppercase tracking-widest text-[10px] font-bold">
+                        <p
+                            className="uppercase tracking-widest text-[10px] font-bold opacity-70"
+                            style={{ color: section.styles?.color || 'rgb(156 163 175)' }}
+                        >
                             <InlineText
                                 tagName="span"
                                 value={content.deadlineLabel || 'Por favor responda até '}
@@ -45,6 +58,34 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
 
                 <div className="bg-gray-50 rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-gray-100">
                     <div className="space-y-6">
+
+                        <div className="group">
+                            <label
+                                className="text-[10px] font-bold uppercase tracking-widest mb-2 block ml-1 opacity-70"
+                                style={{ color: section.styles?.color || 'rgb(156 163 175)' }}
+                            >
+                                <InlineText
+                                    tagName="span"
+                                    value={content.attendanceLabel || 'Você vai?'}
+                                    onChange={(val) => onUpdate({ attendanceLabel: val })}
+                                />
+                            </label>
+                            <div className="relative">
+                                <select
+                                    className="w-full bg-white border border-gray-100 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500 hover:border-gray-200 transition-all outline-none pl-12 appearance-none cursor-pointer"
+                                    defaultValue=""
+                                >
+                                    <option value="" disabled>Selecione uma opção</option>
+                                    {(content.attendanceOptions || ['Sim, Eu vou!', 'Desculpe, não posso ir']).map((option: string, idx: number) => (
+                                        <option key={idx} value={option}>{option}</option>
+                                    ))}
+                                </select>
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="group">
                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block ml-1">
                                 <InlineText

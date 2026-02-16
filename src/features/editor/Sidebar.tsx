@@ -1,8 +1,22 @@
 import React from 'react';
-import { Layers, Sparkles, Image as ImageIcon, Calendar, MessageSquare } from 'lucide-react';
+import { Layers, Sparkles, Image as ImageIcon, Calendar, MessageSquare, PenTool, Clock, Minus } from 'lucide-react';
+
+import type { SectionType } from './types';
+
+interface SidebarItem {
+    id: SectionType;
+    name: string;
+    icon: React.FC<any>;
+}
+
+interface SidebarCategory {
+    id: string;
+    name: string;
+    items: SidebarItem[];
+}
 
 interface SidebarProps {
-    onAddSection: (templateId: string) => void;
+    onAddSection: (type: SectionType) => void;
     onToggleLayers: () => void;
     isLayersOpen: boolean;
     readOnly?: boolean;
@@ -16,21 +30,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
     if (readOnly) return null;
 
-    const categories = [
+    const categories: SidebarCategory[] = [
         {
             id: 'essentials',
             name: 'Essenciais',
             items: [
-                { id: 'splash-01', name: 'Portão', icon: Sparkles },
-                { id: 'hero-01', name: 'Início', icon: ImageIcon },
+                { id: 'SplashSection', name: 'Portão', icon: Sparkles },
+                { id: 'HeroSection', name: 'Início', icon: ImageIcon },
+                { id: 'CountdownSection', name: 'Contagem', icon: Clock },
+                { id: 'SeparatorSection', name: 'Divisor', icon: Minus },
             ]
         },
         {
             id: 'details',
             name: 'Detalhes',
             items: [
-                { id: 'agenda-01', name: 'Agenda', icon: Calendar },
-                { id: 'rsvp-01', name: 'RSVP', icon: MessageSquare },
+                { id: 'AgendaSection', name: 'Agenda', icon: Calendar },
+                { id: 'RSVPSection', name: 'RSVP', icon: MessageSquare },
+                { id: 'GuestbookSection', name: 'Mural', icon: PenTool },
+            ]
+        },
+        {
+            id: 'custom',
+            name: 'Personalizado',
+            items: [
+                { id: 'CustomSection', name: 'Seção Livre', icon: Layers },
             ]
         }
     ];

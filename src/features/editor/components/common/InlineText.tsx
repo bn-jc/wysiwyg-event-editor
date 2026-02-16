@@ -58,6 +58,8 @@ export const InlineText: React.FC<InlineTextProps> = ({
             onKeyDown={handleKeyDown}
             suppressContentEditableWarning={true}
             data-placeholder={placeholder}
-        />
+        >
+            {value}
+        </Tag>
     );
 };

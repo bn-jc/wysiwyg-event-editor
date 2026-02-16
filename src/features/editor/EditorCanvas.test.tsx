@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { EditorCanvas } from './EditorCanvas';
-import React from 'react';
 
 // Mock DynamicRenderer
 vi.mock('./components/DynamicRenderer', () => ({
@@ -10,10 +9,11 @@ vi.mock('./components/DynamicRenderer', () => ({
             {layout.sections.map((section: any) => (
                 <div
                     key={section.id}
-                    data-testid={`section-${section.templateId}`}
+                    data-testid={`section-${section.type}`}
                     onClick={() => onSectionSelect && onSectionSelect(section.id)}
+                    style={section.styles}
                 >
-                    {section.templateId}: {section.id}
+                    {section.type}: {section.id}
                 </div>
             ))}
         </div>
@@ -24,17 +24,20 @@ vi.mock('./components/DynamicRenderer', () => ({
 vi.mock('./Sidebar', () => ({
     Sidebar: ({ onAddSection }: any) => (
         <div data-testid="sidebar">
-            <button onClick={() => onAddSection('hero-01')}>Add Hero</button>
-            <button onClick={() => onAddSection('agenda-01')}>Add Agenda</button>
+            <button onClick={() => onAddSection('HeroSection')}>Add Hero</button>
+            <button onClick={() => onAddSection('AgendaSection')}>Add Agenda</button>
         </div>
     )
 }));
 
 // Mock PropertyEditor
 vi.mock('./components/PropertyEditor', () => ({
-    PropertyEditor: ({ section, onDelete }: any) => (
+    PropertyEditor: ({ section, onDelete, onUpdateStyles, onMove }: any) => (
         <div data-testid="property-editor">
-            <span>Editing {section.templateId}</span>
+            <span>Editing {section.type}</span>
+            <button onClick={() => onUpdateStyles({ backgroundColor: '#ff0000' })}>Set Red Background</button>
+            <button onClick={() => onMove('up')} title="Mover para cima">Up</button>
+            <button onClick={() => onMove('down')} title="Mover para baixo">Down</button>
             <button onClick={onDelete}>ELIMINAR SEÇÃO</button>
         </div>
     )
@@ -52,8 +55,8 @@ describe('EditorCanvas Integration', () => {
         fireEvent.click(addHeroBtn);
 
         // DynamicRenderer should now show the new section
-        const heroSections = screen.getAllByTestId('section-hero-01');
-        // Initial state has 1 hero-01 + 1 new hero-01 = 2
+        const heroSections = screen.getAllByTestId('section-HeroSection');
+        // Initial state has 1 HeroSection + 1 new HeroSection = 2
         expect(heroSections.length).toBeGreaterThanOrEqual(2);
     });
 
@@ -61,18 +64,18 @@ describe('EditorCanvas Integration', () => {
         render(<EditorCanvas />);
 
         // Find splash section (initially present)
-        const splashSection = screen.getByTestId('section-splash-01');
+        const splashSection = screen.getByTestId('section-SplashSection');
         fireEvent.click(splashSection);
 
         expect(screen.getByTestId('property-editor')).toBeInTheDocument();
-        expect(screen.getByText(/Editing splash-01/i)).toBeInTheDocument();
+        expect(screen.getByText(/Editing SplashSection/i)).toBeInTheDocument();
     });
 
     it('should delete a section when clicking delete in property editor', () => {
         render(<EditorCanvas />);
 
         // Select splash section
-        const splashSection = screen.getByTestId('section-splash-01');
+        const splashSection = screen.getByTestId('section-SplashSection');
         fireEvent.click(splashSection);
 
         // Click delete in property editor
@@ -80,21 +83,53 @@ describe('EditorCanvas Integration', () => {
         fireEvent.click(deleteBtn);
 
         // Splash section should be gone
-        expect(screen.queryByTestId('section-splash-01')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('section-SplashSection')).not.toBeInTheDocument();
         expect(screen.queryByTestId('property-editor')).not.toBeInTheDocument();
     });
 
-    it('should switch view modes and hide sidebar in preview', () => {
+    it('should move a section when clicking move buttons in property editor', () => {
         render(<EditorCanvas />);
 
-        // Check sidebar is visible initially
-        expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+        // Initially we have Splash (index 0) and Hero (index 1)
+        const splashSection = screen.getByTestId('section-SplashSection');
+        fireEvent.click(splashSection);
 
-        // Switch to preview
-        const previewBtn = screen.getByText('PREVER');
-        fireEvent.click(previewBtn);
+        // Move splash down
+        const moveDownBtn = screen.getByTitle('Mover para baixo');
+        fireEvent.click(moveDownBtn);
 
-        // Sidebar should be hidden in preview mode
-        expect(screen.queryByTestId('sidebar')).not.toBeInTheDocument();
+        // Now first section should be HeroSection
+        const sections = screen.getAllByTestId(/section-/);
+        expect(sections[0]).toHaveAttribute('data-testid', 'section-HeroSection');
+        expect(sections[1]).toHaveAttribute('data-testid', 'section-SplashSection');
+    });
+
+    it('should add new section to the bottom and select it', () => {
+        render(<EditorCanvas />);
+        const addAgendaBtn = screen.getByText('Add Agenda');
+        fireEvent.click(addAgendaBtn);
+
+        const sections = screen.getAllByTestId(/section-/);
+        const lastSection = sections[sections.length - 1];
+        expect(lastSection).toHaveAttribute('data-testid', 'section-AgendaSection');
+
+        // Should also open property editor for it
+        expect(screen.getByText(/Editing AgendaSection/i)).toBeInTheDocument();
+    });
+
+    it('should update section styles when changed in property editor', () => {
+        render(<EditorCanvas />);
+
+        // Select splash section
+        const splashSection = screen.getByTestId('section-SplashSection');
+        fireEvent.click(splashSection);
+
+        // Click set red background
+        const styleBtn = screen.getByText('Set Red Background');
+        fireEvent.click(styleBtn);
+
+        // Verify splash section now has red background style
+        const updatedSplash = screen.getByTestId('section-SplashSection');
+        expect(updatedSplash.style.backgroundColor).toBe('rgb(255, 0, 0)');
     });
 });

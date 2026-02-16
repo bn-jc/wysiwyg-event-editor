@@ -10,9 +10,19 @@ export interface SectionContent {
     [key: string]: any; // Dynamic fields like 'title', 'subtitle', 'imageUrl', 'address'
 }
 
+export type SectionType =
+    | 'SplashSection'
+    | 'HeroSection'
+    | 'AgendaSection'
+    | 'RSVPSection'
+    | 'GuestbookSection'
+    | 'CountdownSection'
+    | 'SeparatorSection'
+    | 'CustomSection';
+
 export interface SectionDefinition {
     id: string;
-    templateId: string; // References SectionSchemaRegistry (e.g., 'splash-v1', 'hero-basic')
+    type: SectionType;
     content: SectionContent;
     styles?: React.CSSProperties;
     isHidden?: boolean;
@@ -24,7 +34,7 @@ export interface EventLayout {
     eventType: string; // 'wedding', 'baptism', 'anniversary', etc.
     language: string; // default 'pt-MZ'
     musicUrl?: string;
-    effects?: 'confetti' | 'sparkles' | 'none';
+    effects?: 'confetti' | 'sparkles' | 'bubbles' | 'balloons' | 'hearts' | 'birds' | 'hats' | 'roses' | 'rings' | 'cakes' | 'none';
     globalStyles: {
         primaryColor: string;
         secondaryColor: string;

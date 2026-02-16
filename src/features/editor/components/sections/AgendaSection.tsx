@@ -17,17 +17,34 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
     };
 
     return (
-        <section className="py-20 px-6 bg-gray-50">
-            <div className="max-w-2xl mx-auto flex flex-col items-center gap-12">
+        <section
+            className="px-6 bg-transparent"
+            style={{
+                paddingTop: section.styles?.paddingTop || '80px',
+                paddingBottom: section.styles?.paddingBottom || '80px',
+                backgroundColor: section.styles?.backgroundColor
+            }}
+        >
+            <div
+                className="max-w-2xl mx-auto flex flex-col items-center"
+                style={{ gap: section.styles?.gap || '48px' }}
+            >
                 <InlineText
                     tagName="h2"
                     value={content.title || 'Programação'}
                     onChange={(val) => onUpdate({ title: val })}
-                    className="text-4xl md:text-5xl text-center"
-                    style={{ fontFamily: globalStyles.fontFamilyTitle, color: globalStyles.primaryColor }}
+                    className="text-4xl md:text-5xl"
+                    style={{
+                        fontFamily: globalStyles.fontFamilyTitle,
+                        color: section.styles?.color || globalStyles.primaryColor,
+                        textAlign: section.styles?.textAlign || 'center'
+                    }}
                 />
 
-                <div className="w-full flex flex-col gap-0">
+                <div
+                    className="w-full flex flex-col gap-0"
+                    style={{ textAlign: section.styles?.textAlign || 'center' }}
+                >
                     {items.map((item: any, idx: number) => (
                         <div key={idx} className="flex gap-6 group">
                             <div className="flex flex-col items-center">
@@ -44,22 +61,24 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
                                     tagName="span"
                                     value={item.time}
                                     onChange={(val) => updateItem(idx, 'time', val)}
-                                    className="text-sm font-bold tracking-widest uppercase mb-2 block w-fit"
-                                    style={{ color: globalStyles.secondaryColor }}
+                                    className={`text-sm font-bold tracking-widest uppercase mb-2 block ${section.styles?.textAlign === 'right' ? 'ml-auto' :
+                                        section.styles?.textAlign === 'left' ? 'mr-auto' : 'mx-auto'
+                                        } w-fit`}
+                                    style={{ color: section.styles?.color || globalStyles.secondaryColor }}
                                 />
-
                                 <InlineText
                                     tagName="h4"
                                     value={item.label}
                                     onChange={(val) => updateItem(idx, 'label', val)}
                                     className="text-xl font-medium mb-1 block w-full"
+                                    style={{ color: 'inherit' }}
                                 />
-
                                 <InlineText
                                     tagName="p"
                                     value={item.location}
                                     onChange={(val) => updateItem(idx, 'location', val)}
-                                    className="text-gray-500 font-light block w-full"
+                                    className="opacity-50 font-light block w-full"
+                                    style={{ color: section.styles?.color || 'rgb(107 114 128)' }}
                                 />
                             </div>
                         </div>

@@ -1,0 +1,59 @@
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { RSVPSection } from './RSVPSection';
+import { SECTION_TEMPLATES } from '../../utils/SectionSchemaRegistry';
+
+const mockGlobalStyles = {
+    fontFamilyTitle: 'Arial',
+    fontFamilyBody: 'Arial',
+    primaryColor: '#000',
+    secondaryColor: '#333'
+};
+
+const defaultProps = {
+    section: {
+        id: '1',
+        type: 'RSVPSection' as const,
+        content: SECTION_TEMPLATES['RSVPSection'].defaultData
+    },
+    isActive: false,
+    onSelect: vi.fn(),
+    onUpdate: vi.fn(),
+    readOnly: false,
+    globalStyles: mockGlobalStyles,
+    index: 0
+};
+
+describe('RSVPSection', () => {
+    it('renders correctly', () => {
+        render(<RSVPSection {...defaultProps} />);
+        expect(screen.getByText('Confirme a sua Presença')).toBeInTheDocument();
+        expect(screen.getByText('Até 30 de Novembro')).toBeInTheDocument();
+    });
+
+    it('displays the attendance dropdown', () => {
+        render(<RSVPSection {...defaultProps} />);
+        const dropdown = screen.getByRole('combobox');
+        expect(dropdown).toBeInTheDocument();
+        expect(screen.getByText('Selecione uma opção')).toBeInTheDocument();
+        expect(screen.getByText('Sim, Eu vou!')).toBeInTheDocument();
+    });
+
+    it('has readonly inputs to prevent direct editing', () => {
+        render(<RSVPSection {...defaultProps} />);
+        const nameInput = screen.getByPlaceholderText(/Ex: Maria & João Silva/i);
+        expect(nameInput).toHaveAttribute('readonly');
+    });
+
+    it('calls onUpdate when title is edited via InlineText', () => {
+        const onUpdate = vi.fn();
+        render(<RSVPSection {...defaultProps} onUpdate={onUpdate} />);
+
+        const title = screen.getByText('Confirme a sua Presença');
+        fireEvent.focus(title);
+        fireEvent.input(title, { target: { innerText: 'Nova Confirmação' } });
+        fireEvent.blur(title);
+
+        expect(onUpdate).toHaveBeenCalledWith({ title: 'Nova Confirmação' });
+    });
+});
