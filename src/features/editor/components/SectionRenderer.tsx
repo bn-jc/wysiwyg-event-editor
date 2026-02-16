@@ -1,6 +1,6 @@
 import React from 'react';
 import type { SectionRendererProps } from '../types';
-import { SplashSection, HeroSection, AgendaSection, RSVPSection, GuestbookSection, CountdownSection, SeparatorSection, CustomSection } from './sections';
+import { SplashSection, HeroSection, AgendaSection, RSVPSection, GuestbookSection, CountdownSection, SeparatorSection, NavSection, CustomSection } from './sections';
 
 export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
     const { section, isActive, onSelect, readOnly } = props;
@@ -21,6 +21,8 @@ export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
                 return <CountdownSection {...props} />;
             case 'SeparatorSection':
                 return <SeparatorSection {...props} />;
+            case 'NavSection':
+                return <NavSection {...props} />;
             case 'CustomSection':
                 return <CustomSection {...props} />;
             default:
@@ -35,6 +37,7 @@ export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
     return (
         <div
             onClick={onSelect}
+            id={section.id}
             className={`relative group cursor-pointer transition-all ${isActive && !readOnly ? 'ring-2 ring-blue-500 ring-inset shadow-lg z-10' : ''
                 }`}
             style={section.styles}

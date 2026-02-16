@@ -98,6 +98,20 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
                 }
             ]
         }
+    },
+    NavSection: {
+        name: 'Barra de Navegação',
+        defaultData: {
+            links: [
+                { label: 'Início', targetId: 'top' },
+                { label: 'Agenda', targetId: 'agenda' },
+                { label: 'RSVP', targetId: 'rsvp' }
+            ],
+            style: 'floating', // 'sticky', 'fixed', 'floating'
+            alignment: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            textColor: '#333333'
+        }
     }
 };
 

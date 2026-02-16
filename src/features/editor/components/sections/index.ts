@@ -5,4 +5,5 @@ export * from './RSVPSection';
 export * from './GuestbookSection';
 export * from './CountdownSection';
 export * from './SeparatorSection';
+export * from './NavSection';
 export * from './CustomSection';

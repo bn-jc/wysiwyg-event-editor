@@ -18,6 +18,7 @@ export type SectionType =
     | 'GuestbookSection'
     | 'CountdownSection'
     | 'SeparatorSection'
+    | 'NavSection'
     | 'CustomSection';
 
 export interface SectionDefinition {
