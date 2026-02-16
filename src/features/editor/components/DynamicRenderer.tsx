@@ -30,12 +30,18 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
     const hasSplash = firstSection?.type === 'SplashSection';
     const showOnlySplash = readOnly && hasSplash && !hasOpened;
 
-    // Scroll to active section when it changes (specifically for new additions)
+    // Scroll to active section or top when splash is dismissed
     React.useEffect(() => {
-        if (activeSectionId && containerRef.current && !showOnlySplash) {
-            const element = containerRef.current.querySelector(`[data-section-id="${activeSectionId}"]`);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (containerRef.current && !showOnlySplash) {
+            // If we have an active section, scroll to it
+            if (activeSectionId) {
+                const element = containerRef.current.querySelector(`[data-section-id="${activeSectionId}"]`);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } else {
+                // Otherwise (e.g. read-only mode after splash), force scroll to top
+                containerRef.current.scrollTop = 0;
             }
         }
     }, [activeSectionId, showOnlySplash]);
