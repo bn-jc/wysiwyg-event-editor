@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Editor API Test Harness</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; display: flex; height: 100vh; margin: 0; background: #f0f2f5; }
+        #controls { width: 350px; padding: 20px; background: white; border-right: 1px solid #ddd; overflow-y: auto; }
+        #canvas-container { flex: 1; padding: 20px; display: flex; flex-direction: column; }
+        iframe { flex: 1; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .btn { display: block; w-full; padding: 10px; margin-bottom: 10px; border: none; border-radius: 6px; background: #2563eb; color: white; cursor: pointer; font-weight: bold; }
+        .btn:hover { background: #1d4ed8; }
+        .btn-secondary { background: #64748b; }
+        textarea { width: 100%; height: 200px; font-family: monospace; font-size: 12px; margin-bottom: 10px; box-sizing: border-box; }
+        h3 { margin-top: 20px; }
+        .log { border: 1px solid #eee; padding: 10px; height: 150px; overflow-y: auto; font-size: 11px; background: #fafafa; }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <h2>Editor API Harness</h2>
+        
+        <h3>1. Initial Load</h3>
+        <button class="btn" onclick="loadSampleLayout()">Load Sample Layout</button>
+        
+        <h3>2. Live Updates</h3>
+        <input type="text" id="section-id" placeholder="Section ID" style="width: 100%; padding: 8px; margin-bottom: 5px;">
+        <input type="text" id="section-title" placeholder="New Title" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+        <button class="btn btn-secondary" onclick="updateSection()">Update Section Title</button>
+        
+        <h3>3. Actions</h3>
+        <button class="btn btn-secondary" onclick="getLayout()">Get Current Layout</button>
+        <button class="btn btn-secondary" onclick="triggerSave()">Trigger Save</button>
+
+        <h3>Event Log</h3>
+        <div id="log" class="log"></div>
+    </div>
+    <div id="canvas-container">
+        <iframe id="editor-iframe" src="http://localhost:5173/"></iframe>
+    </div>
+
+    <script>
+        const iframe = document.getElementById('editor-iframe');
+        const logEl = document.getElementById('log');
+
+        function log(msg) {
+            const div = document.createElement('div');
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            logEl.prepend(div);
+        }
+
+        window.addEventListener('message', (event) => {
+            log(`Received: ${event.data.type}`);
+            if (event.data.type === 'EDITOR_LAYOUT_DATA' || event.data.type === 'EDITOR_LAYOUT_CHANGE') {
+                console.log('Layout Data:', event.data.payload);
+            }
+        });
+
+        function loadSampleLayout() {
+            const sample = {
+                id: 'api-test',
+                name: 'API Controlled Invitation',
+                eventType: 'wedding',
+                language: 'pt-PT',
+                globalStyles: {
+                    primaryColor: '#8b5cf6',
+                    secondaryColor: '#94a3b8',
+                    fontFamilyTitle: "'Sacramento', cursive",
+                    fontFamilyBody: "'Josefin Sans', sans-serif"
+                },
+                sections: [
+                    { id: 'splash-1', type: 'SplashSection', content: { title: 'Loaded via API', names: 'API & Harness' } }
+                ]
+            };
+            iframe.contentWindow.postMessage({
+                type: 'EDITOR_LOAD_LAYOUT',
+                payload: sample
+            }, '*');
+            log('Sent: EDITOR_LOAD_LAYOUT');
+        }
+
+        function getLayout() {
+            iframe.contentWindow.postMessage({ type: 'EDITOR_GET_LAYOUT' }, '*');
+            log('Sent: EDITOR_GET_LAYOUT');
+        }
+
+        function updateSection() {
+            const id = document.getElementById('section-id').value;
+            const title = document.getElementById('section-title').value;
+            iframe.contentWindow.postMessage({
+                type: 'EDITOR_UPDATE_SECTION',
+                payload: { sectionId: id, content: { title: title } }
+            }, '*');
+            log(`Sent: EDITOR_UPDATE_SECTION for ${id}`);
+        }
+
+        function triggerSave() {
+            iframe.contentWindow.postMessage({ type: 'EDITOR_TRIGGER_SAVE' }, '*');
+            log('Sent: EDITOR_TRIGGER_SAVE');
+        }
+    </script>
+</body>
+</html>

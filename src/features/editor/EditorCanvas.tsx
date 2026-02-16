@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Sidebar } from './Sidebar';
 import { useEditorState } from './hooks/useEditorState';
 import { EditorToolbar } from './components/EditorToolbar';
@@ -8,10 +8,12 @@ import { cn } from '@/utils/cn';
 import { PropertyEditor } from './components/PropertyEditor';
 import { BackgroundMusic } from './components/BackgroundMusic';
 import { EffectsOverlay } from './components/EffectsOverlay';
+import { useEditorApi } from './hooks/useEditorApi';
 
 export const EditorCanvas: React.FC = () => {
     const {
         layout,
+        setLayout,
         activeSectionId,
         setActiveSectionId,
         viewMode,
@@ -30,10 +32,19 @@ export const EditorCanvas: React.FC = () => {
         updateEffects
     } = useEditorState();
 
-    const handleSave = () => {
+    const handleSave = useCallback(() => {
         console.log('Saving design:', JSON.stringify(layout, null, 2));
         alert('Design saved successfully! (Simulated)');
-    };
+        // Notify parent via API if needed (handled in useEditorApi if triggered via message)
+    }, [layout]);
+
+    // Initialize Editor API
+    useEditorApi({
+        layout,
+        setLayout,
+        updateSectionContent,
+        onSave: handleSave
+    });
 
     const isPreviewOnly = viewMode === 'preview';
     const activeSection = layout.sections.find(s => s.id === activeSectionId);
