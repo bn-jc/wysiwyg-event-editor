@@ -84,6 +84,25 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
                     </div>
                 )}
 
+                {content.showRecipient && (
+                    <div className="flex gap-2 items-baseline opacity-60 mb-2">
+                        <InlineText
+                            tagName="span"
+                            value={content.recipientPrefix || 'Convidado:'}
+                            onChange={(val) => onUpdate({ recipientPrefix: val })}
+                            className="text-xs uppercase tracking-tighter font-bold"
+                            readOnly={readOnly}
+                        />
+                        <InlineText
+                            tagName="span"
+                            value={content.recipientName || '[Nome]'}
+                            onChange={(val) => onUpdate({ recipientName: val })}
+                            className="text-md italic"
+                            readOnly={readOnly}
+                        />
+                    </div>
+                )}
+
                 <InlineText
                     tagName="p"
                     value={content.subtitle}

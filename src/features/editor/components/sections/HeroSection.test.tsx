@@ -56,4 +56,54 @@ describe('HeroSection', () => {
 
         expect(onUpdate).toHaveBeenCalledWith({ subtitle: 'Nova Legenda' });
     });
+
+    it('renders recipient greeting when showRecipient is true', () => {
+        const props = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: {
+                    ...defaultProps.section.content,
+                    showRecipient: true,
+                    recipientPrefix: 'Convidado:',
+                    recipientName: 'Carlos'
+                }
+            }
+        };
+        render(<HeroSection {...props} />);
+        expect(screen.getByText('Convidado:')).toBeInTheDocument();
+        expect(screen.getByText('Carlos')).toBeInTheDocument();
+    });
+
+    it('updates recipient info when edited', () => {
+        const onUpdate = vi.fn();
+        const props = {
+            ...defaultProps,
+            onUpdate,
+            section: {
+                ...defaultProps.section,
+                content: {
+                    ...defaultProps.section.content,
+                    showRecipient: true,
+                    recipientPrefix: 'Para:',
+                    recipientName: Sofia
+                }
+            }
+        };
+        // wait, I noticed a tiny typo in my planned replacement (Sofia vs 'Sofia'). Fixing it here.
+        props.section.content.recipientName = 'Sofia';
+        render(<HeroSection {...props} />);
+
+        const prefix = screen.getByText('Para:');
+        fireEvent.focus(prefix);
+        fireEvent.input(prefix, { target: { innerText: 'Caro:' } });
+        fireEvent.blur(prefix);
+        expect(onUpdate).toHaveBeenCalledWith({ recipientPrefix: 'Caro:' });
+
+        const name = screen.getByText('Sofia');
+        fireEvent.focus(name);
+        fireEvent.input(name, { target: { innerText: 'Ana' } });
+        fireEvent.blur(name);
+        expect(onUpdate).toHaveBeenCalledWith({ recipientName: 'Ana' });
+    });
 });

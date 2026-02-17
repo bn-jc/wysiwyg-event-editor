@@ -57,4 +57,52 @@ describe('SplashSection', () => {
 
         expect(onUpdate).toHaveBeenCalledWith({ names: 'Alice & Bob' });
     });
+
+    it('renders recipient greeting when showRecipient is true', () => {
+        const props = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: {
+                    ...defaultProps.section.content,
+                    showRecipient: true,
+                    recipientPrefix: 'De:',
+                    recipientName: 'Familia Silva'
+                }
+            }
+        };
+        render(<SplashSection {...props} />);
+        expect(screen.getByText('De:')).toBeInTheDocument();
+        expect(screen.getByText('Familia Silva')).toBeInTheDocument();
+    });
+
+    it('updates recipient info when edited', () => {
+        const onUpdate = vi.fn();
+        const props = {
+            ...defaultProps,
+            onUpdate,
+            section: {
+                ...defaultProps.section,
+                content: {
+                    ...defaultProps.section.content,
+                    showRecipient: true,
+                    recipientPrefix: 'Para:',
+                    recipientName: 'João'
+                }
+            }
+        };
+        render(<SplashSection {...props} />);
+
+        const prefix = screen.getByText('Para:');
+        fireEvent.focus(prefix);
+        fireEvent.input(prefix, { target: { innerText: 'Caro:' } });
+        fireEvent.blur(prefix);
+        expect(onUpdate).toHaveBeenCalledWith({ recipientPrefix: 'Caro:' });
+
+        const name = screen.getByText('João');
+        fireEvent.focus(name);
+        fireEvent.input(name, { target: { innerText: 'Maria' } });
+        fireEvent.blur(name);
+        expect(onUpdate).toHaveBeenCalledWith({ recipientName: 'Maria' });
+    });
 });

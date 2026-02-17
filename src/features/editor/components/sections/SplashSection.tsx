@@ -61,6 +61,25 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
                     readOnly={readOnly}
                 />
 
+                {content.showRecipient && (
+                    <div className="flex gap-2 items-baseline opacity-70 mt-2">
+                        <InlineText
+                            tagName="span"
+                            value={content.recipientPrefix || 'Para:'}
+                            onChange={(val) => onUpdate({ recipientPrefix: val })}
+                            className="text-xs uppercase tracking-widest font-bold"
+                            readOnly={readOnly}
+                        />
+                        <InlineText
+                            tagName="span"
+                            value={content.recipientName || '[Nome]'}
+                            onChange={(val) => onUpdate({ recipientName: val })}
+                            className="text-lg italic font-serif"
+                            readOnly={readOnly}
+                        />
+                    </div>
+                )}
+
                 {content.icon && content.icon !== 'none' && (
                     <div className="py-2">
                         {(() => {

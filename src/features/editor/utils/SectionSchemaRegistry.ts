@@ -10,7 +10,10 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
             buttonLabel: 'Ver Convite',
             backgroundImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1200',
             icon: 'heart',
-            lineVariant: 'line'
+            lineVariant: 'line',
+            showRecipient: false,
+            recipientPrefix: 'Para:',
+            recipientName: '[Nome do Convidado]'
         }
     },
     HeroSection: {
@@ -19,7 +22,10 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
             title: 'O Nosso Grande Dia',
             subtitle: 'Estamos muito felizes em partilhar este momento convosco.',
             imageUrl: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800',
-            imageMask: 'heart'
+            imageMask: 'heart',
+            showRecipient: false,
+            recipientPrefix: 'Convidado:',
+            recipientName: '[Nome]'
         }
     },
     AgendaSection: {

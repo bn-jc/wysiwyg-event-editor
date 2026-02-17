@@ -40,7 +40,10 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
             padding: 'Espaçamento',
             color: 'Cor personalizada',
             gradient: 'Gradiente',
-            elements: 'Elementos da Seção'
+            elements: 'Elementos da Seção',
+            showRecipient: 'Personalizar p/ Convidado',
+            recipientPrefix: 'Rótulo (ex: Para:)',
+            recipientName: 'Nome do Destinatário'
         };
 
         const label = labelMap[key] || key;
@@ -473,6 +476,20 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                             </button>
                         </div>
                     )}
+                </div>
+            );
+        }
+
+        if (key === 'showRecipient') {
+            return (
+                <div key={key} className="flex items-center justify-between mb-6 p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50">
+                    <label className="text-[10px] font-black text-blue-600 uppercase tracking-widest">{label}</label>
+                    <button
+                        onClick={() => handleChange(key, !value)}
+                        className={`w-12 h-6 rounded-full transition-all relative ${value ? 'bg-blue-500' : 'bg-gray-200'}`}
+                    >
+                        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${value ? 'right-1' : 'left-1'}`} />
+                    </button>
                 </div>
             );
         }
