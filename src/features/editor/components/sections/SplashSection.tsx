@@ -1,7 +1,7 @@
 import React from 'react';
 import type { SectionRendererProps } from '../../types';
 import { InlineText } from '../common/InlineText';
-import { Heart, Diamond, Star, Sparkles, Wine, Music, Camera, Bird, GraduationCap, Leaf } from 'lucide-react';
+import { Heart, Diamond, Star, Sparkles, Wine, Music, Camera, Bird, GraduationCap, Leaf, Gem, Dessert, PartyPopper } from 'lucide-react';
 
 const IconMap: Record<string, React.FC<any>> = {
     heart: Heart,
@@ -13,7 +13,10 @@ const IconMap: Record<string, React.FC<any>> = {
     camera: Camera,
     bird: Bird,
     graduationCap: GraduationCap,
-    leaf: Leaf
+    leaf: Leaf,
+    ring: Gem,
+    cake: Dessert,
+    party: PartyPopper
 };
 
 export const SplashSection: React.FC<SectionRendererProps> = ({

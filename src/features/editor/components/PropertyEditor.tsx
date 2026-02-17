@@ -137,6 +137,9 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                             <option value="camera">Fotografia</option>
                             <option value="bird">Pomba (Baptismo)</option>
                             <option value="graduationCap">Graduação / Formatura</option>
+                            <option value="ring">Anéis / Casamento</option>
+                            <option value="cake">Bolo / Aniversário</option>
+                            <option value="party">Festa / Celebração</option>
                         </select>
                         <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                     </div>
