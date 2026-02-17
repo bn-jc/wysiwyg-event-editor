@@ -67,4 +67,16 @@ describe('SeparatorSection', () => {
         const { container } = render(<SeparatorSection {...getProps('stars')} />);
         expect(container.querySelectorAll('svg')).toHaveLength(3);
     });
+
+    it('applies correct padding classes', () => {
+        const propsSmall = { ...getProps('line') };
+        propsSmall.section.content.padding = 'small';
+        const { container: containerSmall } = render(<SeparatorSection {...propsSmall} />);
+        expect(containerSmall.firstChild).toHaveClass('py-8');
+
+        const propsLarge = { ...getProps('line') };
+        propsLarge.section.content.padding = 'large';
+        const { container: containerLarge } = render(<SeparatorSection {...propsLarge} />);
+        expect(containerLarge.firstChild).toHaveClass('py-24');
+    });
 });

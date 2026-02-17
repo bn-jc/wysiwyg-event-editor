@@ -65,11 +65,13 @@ describe('CountdownSection', () => {
         expect(screen.getByText('09')).toBeInTheDocument();
     });
 
-    it('shows finish message when date is reached', () => {
+    it('shows custom finish message when date is reached', () => {
         vi.setSystemTime(new Date('2026-01-01T12:00:00'));
         const pastDate = '2025-12-31T12:00:00';
+        const props = getProps(pastDate);
+        props.section.content.finishMessage = 'Já casamos!';
 
-        render(<CountdownSection {...getProps(pastDate)} />);
-        expect(screen.getByText('O Grande Dia Chegou!')).toBeInTheDocument();
+        render(<CountdownSection {...props} />);
+        expect(screen.getByText('Já casamos!')).toBeInTheDocument();
     });
 });

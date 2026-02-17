@@ -80,4 +80,29 @@ describe('GiftsSection', () => {
         expect(screen.getByText('Banco Teste')).toBeDefined();
         expect(screen.getByText('Titular Teste')).toBeDefined();
     });
+
+    it('hides elements when showGifts or showBankDetails is false', () => {
+        const hiddenSection = {
+            ...mockSection,
+            content: {
+                ...mockSection.content,
+                showGifts: false,
+                showBankDetails: false
+            }
+        };
+        render(
+            <GiftsSection
+                section={hiddenSection}
+                globalStyles={mockGlobalStyles}
+                onUpdate={vitest.fn()}
+                readOnly={true}
+                isActive={false}
+                onSelect={vitest.fn()}
+                index={0}
+                device="desktop"
+            />
+        );
+        expect(screen.queryByText('Presente 1')).toBeNull();
+        expect(screen.queryByText('Dados Bancários')).toBeNull();
+    });
 });

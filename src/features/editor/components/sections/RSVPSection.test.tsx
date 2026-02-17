@@ -63,4 +63,16 @@ describe('RSVPSection', () => {
 
         expect(onUpdate).toHaveBeenCalledWith({ title: 'Nova Confirmação' });
     });
+
+    it('calls onUpdate when deadline is edited via InlineText', () => {
+        const onUpdate = vi.fn();
+        render(<RSVPSection {...defaultProps} onUpdate={onUpdate} />);
+
+        const deadline = screen.getByText('Até 30 de Novembro');
+        fireEvent.focus(deadline);
+        fireEvent.input(deadline, { target: { innerText: 'Até 15 de Outubro' } });
+        fireEvent.blur(deadline);
+
+        expect(onUpdate).toHaveBeenCalledWith({ deadline: 'Até 15 de Outubro' });
+    });
 });

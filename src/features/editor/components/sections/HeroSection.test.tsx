@@ -104,4 +104,26 @@ describe('HeroSection', () => {
         fireEvent.blur(name);
         expect(onUpdate).toHaveBeenCalledWith({ recipientName: 'Ana' });
     });
+
+    it('applies different layout alignments', () => {
+        const propsLeft = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: { ...defaultProps.section.content, layout: 'left' }
+            }
+        };
+        const { container: containerLeft } = render(<HeroSection {...propsLeft} />);
+        expect(containerLeft.querySelector('.flex-col')).toHaveClass('items-start');
+
+        const propsCenter = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: { ...defaultProps.section.content, layout: 'centered' }
+            }
+        };
+        const { container: containerCenter } = render(<HeroSection {...propsCenter} />);
+        expect(containerCenter.querySelector('.flex-col')).toHaveClass('items-center');
+    });
 });

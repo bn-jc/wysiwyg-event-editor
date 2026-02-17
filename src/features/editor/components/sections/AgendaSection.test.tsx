@@ -58,4 +58,17 @@ describe('AgendaSection', () => {
         const callArg = onUpdate.mock.calls[0][0];
         expect(callArg.items[0].label).toBe('Missa');
     });
+
+    it('applies custom text alignment from styles', () => {
+        const props = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                styles: { textAlign: 'right' as const }
+            }
+        };
+        render(<AgendaSection {...props} />);
+        const title = screen.getByText('Programação');
+        expect(title.style.textAlign).toBe('right');
+    });
 });

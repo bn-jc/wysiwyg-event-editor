@@ -14,7 +14,7 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
 
     return (
         <section
-            className="px-6 flex flex-col items-center bg-transparent"
+            className={`px-6 flex flex-col ${content.layout === 'left' ? 'items-start' : 'items-center'} bg-transparent`}
             style={{
                 paddingTop: section.styles?.paddingTop || '80px',
                 paddingBottom: section.styles?.paddingBottom || '80px',
@@ -22,7 +22,7 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
             }}
         >
             <div
-                className="max-w-2xl w-full flex flex-col items-center text-center"
+                className={`max-w-2xl w-full flex flex-col ${content.layout === 'left' ? 'items-start text-left' : 'items-center text-center'}`}
                 style={{ gap: section.styles?.gap || '40px' }}
             >
                 <InlineText

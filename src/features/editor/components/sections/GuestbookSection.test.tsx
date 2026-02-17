@@ -72,4 +72,21 @@ describe('GuestbookSection', () => {
             date: 'Agora mesmo'
         });
     });
+
+    it('calls onUpdate when title or subtitle is edited', () => {
+        const onUpdate = vi.fn();
+        render(<GuestbookSection {...defaultProps} onUpdate={onUpdate} />);
+
+        const title = screen.getByText('Deixe uma Mensagem');
+        fireEvent.focus(title);
+        fireEvent.input(title, { target: { innerText: 'Mural de Carinho' } });
+        fireEvent.blur(title);
+        expect(onUpdate).toHaveBeenCalledWith({ title: 'Mural de Carinho' });
+
+        const subtitle = screen.getByText('Partilhe o seu amor e desejos para os noivos.');
+        fireEvent.focus(subtitle);
+        fireEvent.input(subtitle, { target: { innerText: 'Novas palavras' } });
+        fireEvent.blur(subtitle);
+        expect(onUpdate).toHaveBeenCalledWith({ subtitle: 'Novas palavras' });
+    });
 });
