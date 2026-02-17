@@ -1,6 +1,8 @@
 import React from 'react';
 import type { SectionRendererProps } from '../../types';
+import { cn } from '@/utils/cn';
 import { InlineText } from '../common/InlineText';
+
 import { Plane, Utensils, Home, Gift, DollarSign, Landmark, CreditCard, Info } from 'lucide-react';
 
 const IconMap: Record<string, React.FC<any>> = {
@@ -18,7 +20,8 @@ export const GiftsSection: React.FC<SectionRendererProps> = ({
     section,
     globalStyles,
     onUpdate,
-    readOnly
+    readOnly,
+    isDark
 }) => {
     const { content } = section;
     const giftItems = content.giftItems || [];
@@ -61,7 +64,7 @@ export const GiftsSection: React.FC<SectionRendererProps> = ({
                         readOnly={readOnly}
                         style={{
                             fontFamily: globalStyles.fontFamilyTitle,
-                            color: section.styles?.color || globalStyles.primaryColor
+                            color: section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor)
                         }}
                     />
                     <InlineText
@@ -80,8 +83,11 @@ export const GiftsSection: React.FC<SectionRendererProps> = ({
                             return (
                                 <div
                                     key={item.id || idx}
-                                    className="p-6 rounded-2xl border flex items-start gap-4 transition-all hover:shadow-lg bg-white/50 backdrop-blur-sm"
-                                    style={{ borderColor: `${globalStyles.primaryColor}22` }}
+                                    className={cn(
+                                        "p-6 rounded-2xl border flex items-start gap-4 transition-all hover:shadow-lg backdrop-blur-sm",
+                                        isDark ? "bg-white/5 border-white/10 hover:bg-white/10" : "bg-white/50 border-gray-100"
+                                    )}
+                                    style={{ borderColor: !isDark ? `${globalStyles.primaryColor}22` : undefined }}
                                 >
                                     <div
                                         className="p-3 rounded-full shrink-0"
@@ -115,8 +121,8 @@ export const GiftsSection: React.FC<SectionRendererProps> = ({
                     <div
                         className="w-full max-w-2xl p-6 md:p-8 rounded-3xl border flex flex-col gap-6"
                         style={{
-                            borderColor: `${globalStyles.primaryColor}33`,
-                            backgroundColor: `${globalStyles.primaryColor}05`
+                            borderColor: isDark ? 'rgba(255,255,255,0.1)' : `${globalStyles.primaryColor}33`,
+                            backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : `${globalStyles.primaryColor}05`
                         }}
                     >
                         <div className="flex items-center gap-3">

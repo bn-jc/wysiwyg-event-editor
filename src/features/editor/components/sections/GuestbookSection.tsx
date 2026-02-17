@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import type { SectionRendererProps } from '../../types';
+import { cn } from '@/utils/cn';
 import { InlineText } from '../common/InlineText';
+
 import { Send, MessageCircle, Heart, User } from 'lucide-react';
 
 export const GuestbookSection: React.FC<SectionRendererProps> = ({
@@ -8,7 +10,8 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
     globalStyles,
     onUpdate,
     onInteraction,
-    readOnly
+    readOnly,
+    isDark
 }) => {
     const { content } = section;
     const messages = content.messages || [];
@@ -62,7 +65,7 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                         className="text-4xl md:text-5xl"
                         style={{
                             fontFamily: globalStyles.fontFamilyTitle,
-                            color: section.styles?.color || globalStyles.primaryColor
+                            color: section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor)
                         }}
                         readOnly={readOnly}
                     />
@@ -77,14 +80,17 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                 </div>
 
                 {/* Input Form */}
-                <div className="bg-white rounded-[2rem] p-8 shadow-xl shadow-gray-100 mb-16 border border-gray-100 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 opacity-50" />
+                <div className={cn(
+                    "rounded-[2rem] p-8 transition-all duration-500 border relative overflow-hidden",
+                    isDark ? "bg-[#1E1E1E] border-white/5 shadow-2xl" : "bg-white border-gray-100 shadow-xl shadow-gray-100"
+                )}>
+                    <div className={cn("absolute top-0 left-0 w-full h-2 opacity-50", isDark ? "bg-gradient-to-r from-blue-900/40 via-purple-900/40 to-pink-900/40" : "bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100")} />
 
                     <div className="space-y-6">
                         <div>
                             <label
                                 className="text-[10px] font-bold uppercase tracking-widest mb-2 block ml-1 opacity-70"
-                                style={{ color: section.styles?.color || 'rgb(156 163 175)' }}
+                                style={{ color: section.styles?.color || (isDark ? '#9CA3AF' : 'rgb(156 163 175)') }}
                             >
                                 <InlineText
                                     tagName="span"
@@ -99,7 +105,10 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     placeholder="Ex: Tio Manel"
-                                    className="w-full bg-gray-50 border border-transparent rounded-xl p-4 pl-12 text-sm focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-200 transition-all outline-none"
+                                    className={cn(
+                                        "w-full border border-transparent rounded-xl p-4 pl-12 text-sm transition-all outline-none",
+                                        isDark ? "bg-black/40 text-gray-200 focus:bg-black/60 focus:ring-2 focus:ring-blue-900/30" : "bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-200"
+                                    )}
                                 />
                                 <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
                             </div>
@@ -108,7 +117,7 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                         <div>
                             <label
                                 className="text-[10px] font-bold uppercase tracking-widest mb-2 block ml-1 opacity-70"
-                                style={{ color: section.styles?.color || 'rgb(156 163 175)' }}
+                                style={{ color: section.styles?.color || (isDark ? '#9CA3AF' : 'rgb(156 163 175)') }}
                             >
                                 <InlineText
                                     tagName="span"
@@ -123,7 +132,10 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
                                     placeholder="Escreva algo bonito..."
-                                    className="w-full bg-gray-50 border border-transparent rounded-xl p-4 pl-12 text-sm focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-200 transition-all outline-none resize-none"
+                                    className={cn(
+                                        "w-full border border-transparent rounded-xl p-4 pl-12 text-sm transition-all outline-none resize-none",
+                                        isDark ? "bg-black/40 text-gray-200 focus:bg-black/60 focus:ring-2 focus:ring-blue-900/30" : "bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-200"
+                                    )}
                                 />
                                 <MessageCircle size={18} className="absolute left-4 top-4 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
                             </div>
@@ -162,16 +174,19 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                         </div>
                     ) : (
                         messages.map((msg: any, idx: number) => (
-                            <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex gap-4 transition-all hover:shadow-md">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center text-blue-300 flex-shrink-0">
+                            <div key={idx} className={cn(
+                                "p-6 rounded-2xl border flex gap-4 transition-all hover:shadow-md",
+                                isDark ? "bg-[#1E1E1E] border-white/5 text-gray-200 shadow-2xl" : "bg-white border-gray-100 text-gray-800 shadow-sm"
+                            )}>
+                                <div className={cn("w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0", isDark ? "bg-blue-900/20 text-blue-400" : "bg-gradient-to-br from-blue-50 to-purple-50 text-blue-300")}>
                                     <Heart size={20} fill="currentColor" className="opacity-50" />
                                 </div>
                                 <div className="flex-1">
                                     <div className="flex justify-between items-start mb-2">
-                                        <h4 className="font-bold text-gray-800">{msg.name}</h4>
+                                        <h4 className={cn("font-bold", isDark ? "text-gray-200" : "text-gray-800")}>{msg.name}</h4>
                                         <span className="text-[10px] uppercase tracking-widest text-gray-400 font-medium">{msg.date}</span>
                                     </div>
-                                    <p className="text-gray-600 font-light leading-relaxed text-sm">"{msg.message}"</p>
+                                    <p className={cn("font-light leading-relaxed text-sm", isDark ? "text-gray-400" : "text-gray-600")}>"{msg.message}"</p>
                                 </div>
                             </div>
                         ))

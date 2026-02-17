@@ -1,6 +1,8 @@
 import React from 'react';
 import type { SectionRendererProps } from '../../types';
+import { cn } from '@/utils/cn';
 import { InlineText } from '../common/InlineText';
+
 import { Heart, Diamond, Star, Sparkles, Wine, Music, Camera, Bird, GraduationCap, Leaf, Gem, Dessert, PartyPopper } from 'lucide-react';
 
 const IconMap: Record<string, React.FC<any>> = {
@@ -24,7 +26,8 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
     globalStyles,
     onUpdate,
     readOnly,
-    onOpen
+    onOpen,
+    isDark
 }) => {
     const { content } = section;
 
@@ -32,8 +35,8 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
         <div
             className="relative h-[100vh] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden bg-transparent"
             style={{
-                backgroundColor: section.styles?.backgroundColor || globalStyles.primaryColor,
-                color: section.styles?.color || '#ffffff'
+                backgroundColor: isDark ? '#121212' : (section.styles?.backgroundColor || globalStyles.primaryColor),
+                color: isDark ? '#E0E0E0' : (section.styles?.color || '#ffffff')
             }}
         >
             {/* Background Image with Overlay */}
@@ -42,9 +45,9 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
                     <img
                         src={content.backgroundImage}
                         alt="Background"
-                        className="w-full h-full object-cover opacity-60"
+                        className={cn("w-full h-full object-cover transition-opacity duration-1000", isDark ? "opacity-30" : "opacity-60")}
                     />
-                    <div className="absolute inset-0 bg-black/40" />
+                    <div className={cn("absolute inset-0 transition-colors duration-1000", isDark ? "bg-black/80" : "bg-black/40")} />
                 </div>
             )}
 

@@ -5,7 +5,7 @@ import { SplashSection, HeroSection, AgendaSection, RSVPSection, GuestbookSectio
 import { ParticlesBackground } from './common/ParticlesBackground';
 
 export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
-    const { section, isActive, onSelect, readOnly } = props;
+    const { section, isActive, onSelect, readOnly, isDark } = props;
     const { content } = section;
 
     const renderContent = () => {

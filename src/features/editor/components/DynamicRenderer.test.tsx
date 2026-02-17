@@ -8,6 +8,31 @@ vi.mock('../hooks/useContainerSize', () => ({
     useContainerSize: () => ({ mode: 'desktop', width: 1024, height: 800 })
 }));
 
+// Mock matchMedia
+Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation(query => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+    })),
+});
+
+
+// Mock BackgroundMusic
+vi.mock('./BackgroundMusic', () => ({
+    BackgroundMusic: ({ url }: any) => (
+        <div data-testid="background-music" data-url={url}>
+            Music Toggle
+        </div>
+    )
+}));
+
 // Mock SectionRenderer
 vi.mock('./SectionRenderer', () => ({
     SectionRenderer: ({ section, onOpen }: any) => (
@@ -98,5 +123,36 @@ describe('DynamicRenderer', () => {
         expect(screen.getByTestId('section-CountdownSection')).toBeInTheDocument();
         expect(screen.getByTestId('section-SeparatorSection')).toBeInTheDocument();
         expect(screen.getByTestId('section-CustomSection')).toBeInTheDocument();
+    });
+
+    it('should render background music when musicUrl is present in read-only mode', () => {
+        const musicLayout: EventLayout = {
+            ...mockLayout,
+            musicUrl: 'https://example.com/music.mp3'
+        };
+
+        render(<DynamicRenderer layout={musicLayout} readOnly={true} />);
+
+        // Should NOT render music yet because splash is showing
+        expect(screen.queryByTestId('background-music')).not.toBeInTheDocument();
+
+        // Dismiss splash
+        const openBtn = screen.getByTestId('open-btn');
+        fireEvent.click(openBtn);
+
+        // Now music should be visible
+        expect(screen.getByTestId('background-music')).toBeInTheDocument();
+        expect(screen.getByTestId('background-music')).toHaveAttribute('data-url', 'https://example.com/music.mp3');
+    });
+
+    it('should NOT render background music in edit mode even if musicUrl is present', () => {
+        const musicLayout: EventLayout = {
+            ...mockLayout,
+            musicUrl: 'https://example.com/music.mp3'
+        };
+
+        render(<DynamicRenderer layout={musicLayout} readOnly={false} />);
+
+        expect(screen.queryByTestId('background-music')).not.toBeInTheDocument();
     });
 });

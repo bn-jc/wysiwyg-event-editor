@@ -103,6 +103,13 @@ Every interaction contains a `type`, a `payload`, and a `timestamp`.
 }
 ```
 
+## 5. Built-in Features
+When using the `DynamicRenderer` (preview mode), the following features are handled automatically based on the layout data:
+
+- **Dark Mode**: A floating toggle allows users to switch between light and dark themes. The theme also supports automatic system preference detection.
+- **Background Music**: If a `musicUrl` is present in the `EventLayout`, a play/pause toggle will appear after the user dismisses the splash screen.
+- **Sections**: All standard sections support bespoke dark mode styles out-of-the-box.
+
 ---
 
 ## Reference Implementation

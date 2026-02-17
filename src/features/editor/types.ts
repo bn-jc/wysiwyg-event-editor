@@ -87,4 +87,5 @@ export interface SectionRendererProps {
     onNavigate?: (target: string) => void;
     onInteraction?: (interaction: EditorInteraction) => void;
     onOpen?: () => void;
+    isDark?: boolean;
 }

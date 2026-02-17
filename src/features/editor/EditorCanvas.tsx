@@ -6,7 +6,6 @@ import { DynamicRenderer } from './components/DynamicRenderer';
 import { cn } from '@/utils/cn';
 
 import { PropertyEditor } from './components/PropertyEditor';
-import { BackgroundMusic } from './components/BackgroundMusic';
 import { useEditorApi } from './hooks/useEditorApi';
 import { useContainerSize } from './hooks/useContainerSize';
 
@@ -106,7 +105,6 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                     </svg>
                 </button>
                 <div className="flex-1 overflow-hidden relative">
-                    <BackgroundMusic url={layout.musicUrl} />
                     <DynamicRenderer
                         key={`play-${playKey}`}
                         layout={layout}
@@ -121,7 +119,6 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
 
     return (
         <div ref={containerRef} className="flex h-full flex-col bg-gray-50 overflow-hidden font-sans relative">
-            <BackgroundMusic url={layout.musicUrl} />
             <EditorToolbar
                 viewMode={viewMode}
                 setViewMode={setViewMode}

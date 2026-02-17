@@ -1,14 +1,17 @@
 import React from 'react';
 import type { SectionRendererProps } from '../../types';
+import { cn } from '@/utils/cn';
 import { Mail, Users, MessageSquare } from 'lucide-react';
 import { InlineText } from '../common/InlineText';
+
 
 export const RSVPSection: React.FC<SectionRendererProps> = ({
     section,
     globalStyles,
     onUpdate,
     onInteraction,
-    readOnly
+    readOnly,
+    isDark
 }) => {
     const { content } = section;
 
@@ -69,8 +72,8 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
             }}
         >
             {/* Background Decorative Elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gray-50 rounded-full -mr-32 -mt-32 opacity-50" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gray-50 rounded-full -ml-32 -mb-32 opacity-50" />
+            <div className={cn("absolute top-0 right-0 w-64 h-64 rounded-full -mr-32 -mt-32 transition-opacity duration-700", isDark ? "bg-white/5 opacity-10" : "bg-gray-50 opacity-50")} />
+            <div className={cn("absolute bottom-0 left-0 w-64 h-64 rounded-full -ml-32 -mb-32 transition-opacity duration-700", isDark ? "bg-white/5 opacity-10" : "bg-gray-50 opacity-50")} />
 
             <div className="max-w-3xl mx-auto relative z-10">
                 <div className="text-center mb-16">
@@ -81,7 +84,7 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                         className="text-4xl md:text-5xl mb-4"
                         style={{
                             fontFamily: globalStyles.fontFamilyTitle,
-                            color: section.styles?.color || globalStyles.primaryColor
+                            color: section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor)
                         }}
                         readOnly={readOnly}
                     />
@@ -108,7 +111,10 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                     )}
                 </div>
 
-                <div className="bg-white rounded-[2.5rem] p-6 md:p-12 shadow-sm border border-gray-100">
+                <div className={cn(
+                    "rounded-[2.5rem] p-6 md:p-12 shadow-sm border transition-all duration-500",
+                    isDark ? "bg-[#1E1E1E] border-white/5 shadow-2xl" : "bg-white border-gray-100"
+                )}>
                     <div className="space-y-6">
 
                         <div className="group">
@@ -125,7 +131,10 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                             </label>
                             <div className="relative">
                                 <select
-                                    className="w-full bg-gray-50 border border-transparent rounded-2xl p-4 text-base md:text-sm focus:ring-2 focus:ring-blue-500 hover:border-gray-200 transition-all outline-none pl-12 appearance-none cursor-pointer disabled:cursor-default"
+                                    className={cn(
+                                        "w-full border border-transparent rounded-2xl p-4 text-base md:text-sm focus:ring-2 transition-all outline-none pl-12 appearance-none cursor-pointer disabled:cursor-default",
+                                        isDark ? "bg-black/40 text-gray-200 focus:ring-blue-500/50" : "bg-gray-50 text-gray-900 focus:ring-blue-500"
+                                    )}
                                     value={attendance}
                                     onChange={(e) => setAttendance(e.target.value)}
                                     disabled={!readOnly}
@@ -157,7 +166,11 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                                     onChange={(e) => setName(e.target.value)}
                                     placeholder={content.namePlaceholder || "Ex: Maria & João Silva"}
                                     readOnly={!readOnly}
-                                    className={`w-full bg-gray-50 border border-transparent rounded-2xl p-4 text-base md:text-sm focus:ring-2 focus:ring-blue-500 hover:border-gray-200 transition-all outline-none pl-12 ${readOnly ? 'cursor-text' : 'cursor-default'}`}
+                                    className={cn(
+                                        "w-full border border-transparent rounded-2xl p-4 text-base md:text-sm focus:ring-2 transition-all outline-none pl-12",
+                                        isDark ? "bg-black/40 text-gray-200 focus:ring-blue-500/50" : "bg-gray-50 text-gray-900 focus:ring-blue-500",
+                                        readOnly ? 'cursor-text' : 'cursor-default'
+                                    )}
                                 />
                                 <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-hover:text-blue-500 transition-colors" size={18} />
                             </div>
@@ -179,7 +192,11 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder={content.emailPlaceholder || "seu-email@exemplo.com"}
                                     readOnly={!readOnly}
-                                    className={`w-full bg-gray-50 border border-transparent rounded-2xl p-4 text-base md:text-sm focus:ring-2 focus:ring-blue-400 hover:border-gray-200 transition-all outline-none pl-12 ${readOnly ? 'cursor-text' : 'cursor-default'}`}
+                                    className={cn(
+                                        "w-full border border-transparent rounded-2xl p-4 text-base md:text-sm focus:ring-2 transition-all outline-none pl-12",
+                                        isDark ? "bg-black/40 text-gray-200 focus:ring-blue-400/50" : "bg-gray-50 text-gray-900 focus:ring-blue-400",
+                                        readOnly ? 'cursor-text' : 'cursor-default'
+                                    )}
                                 />
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-hover:text-blue-400 transition-colors" size={18} />
                             </div>
@@ -202,7 +219,11 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                                         onChange={(e) => setMessage(e.target.value)}
                                         placeholder={content.messagePlaceholder || "Alguma restrição alimentar ou mensagem especial?"}
                                         readOnly={!readOnly}
-                                        className={`w-full bg-gray-50 border border-transparent rounded-2xl p-4 text-base md:text-sm focus:ring-2 focus:ring-blue-400 hover:border-gray-200 transition-all outline-none pl-12 resize-none ${readOnly ? 'cursor-text' : 'cursor-default'}`}
+                                        className={cn(
+                                            "w-full border border-transparent rounded-2xl p-4 text-base md:text-sm focus:ring-2 transition-all outline-none pl-12 resize-none",
+                                            isDark ? "bg-black/40 text-gray-200 focus:ring-blue-400/50" : "bg-gray-50 text-gray-900 focus:ring-blue-400",
+                                            readOnly ? 'cursor-text' : 'cursor-default'
+                                        )}
                                     />
                                     <MessageSquare className="absolute left-4 top-4 text-gray-300 group-hover:text-blue-400 transition-colors" size={18} />
                                 </div>

@@ -6,9 +6,10 @@ interface NavSectionProps {
     readOnly?: boolean;
     activeScrollSectionId?: string | null;
     onNavigate?: (targetId: string) => void;
+    isDark?: boolean;
 }
 
-export const NavSection: React.FC<NavSectionProps> = ({ section, activeScrollSectionId, onNavigate }) => {
+export const NavSection: React.FC<NavSectionProps> = ({ section, activeScrollSectionId, onNavigate, isDark }) => {
     const { links = [], style = 'floating', alignment = 'center', backgroundColor, textColor } = section.content;
 
     const handleScroll = (targetId: string) => {
@@ -45,9 +46,10 @@ export const NavSection: React.FC<NavSectionProps> = ({ section, activeScrollSec
         <div
             className={`p-4 transition-all duration-300 ${getPositionClasses()} ${alignment === 'center' ? 'justify-center' : alignment === 'left' ? 'justify-start' : 'justify-end'} flex`}
             style={{
-                backgroundColor: backgroundColor || 'rgba(255,255,255,0.9)',
-                color: textColor || '#333',
-                backdropFilter: 'blur(8px)'
+                backgroundColor: isDark ? 'rgba(30,30,30,0.8)' : (backgroundColor || 'rgba(255,255,255,0.9)'),
+                color: isDark ? '#E0E0E0' : (textColor || '#333'),
+                backdropFilter: 'blur(12px)',
+                border: isDark ? '1px solid rgba(255,255,255,0.05)' : 'none'
             }}
         >
             <nav className="flex items-center gap-6 overflow-x-auto no-scrollbar px-2">

@@ -6,7 +6,8 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
     section,
     globalStyles,
     onUpdate,
-    readOnly
+    readOnly,
+    isDark
 }) => {
     const { content } = section;
     const targetDate = content.targetDate || '2026-12-12T10:00:00';
@@ -69,7 +70,7 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
                     className="text-4xl md:text-5xl"
                     style={{
                         fontFamily: globalStyles.fontFamilyTitle,
-                        color: section.styles?.color || globalStyles.primaryColor
+                        color: section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor)
                     }}
                     readOnly={readOnly}
                 />
@@ -80,7 +81,7 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
                             <div key={idx} className="flex flex-col items-center min-w-[80px] md:min-w-[120px]">
                                 <div
                                     className="text-4xl md:text-6xl font-bold mb-2 tabular-nums transition-all duration-300"
-                                    style={{ color: section.styles?.color || globalStyles.primaryColor }}
+                                    style={{ color: section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor) }}
                                 >
                                     {String(item.value).padStart(2, '0')}
                                 </div>
@@ -96,7 +97,7 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
                 ) : (
                     <div
                         className="text-3xl md:text-4xl font-light italic opacity-80"
-                        style={{ color: globalStyles.primaryColor }}
+                        style={{ color: isDark ? '#FFFFFF' : globalStyles.primaryColor }}
                     >
                         {content.finishMessage || 'O Grande Dia Chegou!'}
                     </div>

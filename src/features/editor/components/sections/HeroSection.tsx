@@ -1,6 +1,8 @@
 import React from 'react';
 import type { SectionRendererProps } from '../../types';
+import { cn } from '@/utils/cn';
 import { InlineText } from '../common/InlineText';
+
 
 const MASK_PATHS: Record<string, { d: string; transform?: string }> = {
     heart: { d: "M0.5,0.9 C0.2,0.7,0,0.5,0,0.3 C0,0.1,0.2,0,0.4,0 C0.55,0,0.65,0.1,0.75,0.2 C0.85,0.1,0.95,0,1.1,0 C1.3,0,1.5,0.1,1.5,0.3 C1.5,0.5,1.3,0.7,1,0.9 L0.75,1.1 L0.5,0.9 Z", transform: "scale(0.66, 0.9) translate(0.01, 0)" },
@@ -23,7 +25,8 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
     globalStyles,
     onUpdate,
     device,
-    readOnly
+    readOnly,
+    isDark
 }) => {
     const { content } = section;
     const isMobile = device === 'mobile';
@@ -50,7 +53,7 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
                     readOnly={readOnly}
                     style={{
                         fontFamily: globalStyles.fontFamilyTitle,
-                        color: section.styles?.color || globalStyles.primaryColor
+                        color: section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor)
                     }}
                 />
 
@@ -124,18 +127,20 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
                         )}
 
                         <div
-                            className={`relative overflow-hidden group transition-all duration-300 ${content.imageDecoration === 'gold' && content.imageMask === 'none'
-                                ? 'border-[3px] outline outline-1 outline-offset-4 outline-[#D4AF37] shadow-xl'
-                                : content.imageMask === 'none'
-                                    ? 'border-8 border-white shadow-lg'
-                                    : content.imageDecoration === 'gold' ? 'shadow-lg' : ''
-                                }`}
+                            className={cn(
+                                "relative overflow-hidden group transition-all duration-300",
+                                content.imageDecoration === 'gold' && content.imageMask === 'none'
+                                    ? 'border-[3px] outline outline-1 outline-offset-4 outline-[#D4AF37] shadow-xl'
+                                    : content.imageMask === 'none'
+                                        ? (content.imageDecoration === 'gold' ? 'shadow-lg' : isDark ? 'border-8 border-gray-800 shadow-2xl' : 'border-8 border-white shadow-lg')
+                                        : ''
+                            )}
                             style={{
                                 width: `${(content.imageScale || 1) * 320}px`,
                                 height: `${(content.imageScale || 1) * 320}px`,
                                 maxWidth: '90vw',
                                 maxHeight: '90vw',
-                                borderColor: content.imageDecoration === 'gold' ? '#D4AF37' : '#FFFFFF',
+                                borderColor: content.imageDecoration === 'gold' ? '#D4AF37' : isDark ? '#1E1E1E' : '#FFFFFF',
                                 clipPath: content.imageMask && content.imageMask !== 'none' && content.imageMask !== 'circle'
                                     ? `url(#mask-${content.imageMask})`
                                     : 'none',
@@ -186,9 +191,9 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
                     onChange={(val) => onUpdate({ subtitle: val })}
                     className="text-lg leading-relaxed opacity-80"
                     readOnly={readOnly}
-                    style={{ color: section.styles?.color || globalStyles.secondaryColor }}
+                    style={{ color: section.styles?.color || (isDark ? '#B0B0B0' : globalStyles.secondaryColor) }}
                 />
             </div>
-        </section>
+        </section >
     );
 };

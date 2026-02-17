@@ -64,10 +64,7 @@ import { EffectsOverlay } from './features/editor/components/EffectsOverlay';
 function InvitationView({ layout }) {
   return (
     <div className="invitation-container relative min-h-screen">
-       {/* Optional: Add music and effects */}
-       <BackgroundMusic url={layout.musicUrl} />
-       <EffectsOverlay effects={layout.effects} />
-
+       {/* DynamicRenderer now handles background music and dark mode toggles internally */}
        <DynamicRenderer 
           layout={layout} 
           readOnly={true} 

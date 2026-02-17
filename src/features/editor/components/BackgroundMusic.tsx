@@ -1,11 +1,14 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
+import { cn } from '@/utils/cn';
 
 interface BackgroundMusicProps {
     url?: string;
+    isDark?: boolean;
+    className?: string;
 }
 
-export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ url }) => {
+export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ url, isDark, className }) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [hasInteracted, setHasInteracted] = useState(false);
@@ -52,7 +55,11 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ url }) => {
             <audio ref={audioRef} loop />
             <button
                 onClick={togglePlay}
-                className="fixed bottom-6 right-6 w-12 h-12 bg-white rounded-full shadow-2xl flex items-center justify-center text-gray-700 z-50 hover:scale-110 transition-all border border-gray-100"
+                className={cn(
+                    "fixed bottom-24 right-6 w-12 h-12 rounded-full shadow-2xl flex items-center justify-center z-50 hover:scale-110 active:scale-90 transition-all border backdrop-blur-md",
+                    isDark ? "bg-white/10 border-white/20 text-[#FCD34D]" : "bg-white border-gray-100 text-gray-700",
+                    className
+                )}
                 title={isPlaying ? 'Pausar Música' : 'Reproduzir Música'}
             >
                 {isPlaying ? <Volume2 size={20} /> : <VolumeX size={20} />}
@@ -60,3 +67,4 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ url }) => {
         </>
     );
 };
+

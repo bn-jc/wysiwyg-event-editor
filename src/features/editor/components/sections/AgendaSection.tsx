@@ -1,12 +1,15 @@
 import React from 'react';
 import type { SectionRendererProps } from '../../types';
+import { cn } from '@/utils/cn';
 import { InlineText } from '../common/InlineText';
+
 
 export const AgendaSection: React.FC<SectionRendererProps> = ({
     section,
     globalStyles,
     onUpdate,
-    readOnly
+    readOnly,
+    isDark
 }) => {
     const { content } = section;
     const items = content.items || [];
@@ -39,7 +42,7 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
                     readOnly={readOnly}
                     style={{
                         fontFamily: globalStyles.fontFamilyTitle,
-                        color: section.styles?.color || globalStyles.primaryColor,
+                        color: section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor),
                         textAlign: section.styles?.textAlign || 'center'
                     }}
                 />
@@ -53,10 +56,10 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
                             <div className="flex flex-col items-center">
                                 <div
                                     className="w-3 h-3 rounded-full mt-2"
-                                    style={{ backgroundColor: globalStyles.primaryColor }}
+                                    style={{ backgroundColor: isDark ? '#FFFFFF' : globalStyles.primaryColor }}
                                 />
                                 {idx < items.length - 1 && (
-                                    <div className="w-[1px] flex-1 bg-gray-300 my-2" />
+                                    <div className={cn("w-[1px] flex-1 my-2 transition-colors", isDark ? "bg-white/20" : "bg-gray-300")} />
                                 )}
                             </div>
                             <div className="pb-10 md:pb-12 pt-1 transition-transform group-hover:translate-x-1 w-full">

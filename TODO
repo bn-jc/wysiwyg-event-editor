@@ -1,9 +1,7 @@
 
-2. Ensure that when the page is is in play mode, the editor UI is not visible.
-3. Ensure that even when the elements are big, when the screen is small, the elements are not cutted. Ensure that the elements are responsive.
+
 4. The white color in the palate is not visible, there's no contrast with the border/editor.
 
-6. Create a branch to Add a toggle for dark mode to the rendered page.
 7. Create a branch to Add a toggle for dark mode to the editor UI.
 8. Change the name of the app to "Event Page Builder".
 9. Add local storage to save the page data.
@@ -12,7 +10,10 @@
 12. Add locales [en-US, pt-PT, pt-BR].
 13. Add possibility to add text over the images.
 14. Add possibility to choose contact type in RSVP (email, phone, sms, whatsapp, etc).
-15. Add possibility to, when adding a section, add right after the current selected section.
-16. I am planning on using this editor inside an event managment system, make sure to implement the API for the event managment system to be able to interact with the editor (get section, section data, for example data from inputs, clicked element, etc, set data, etc). When I say set data, I mean that the event managment system should be able to set the data of the editor, for example, if the user uploads an image, the event managment system should be able to set the data of the image. This data will be stored in the event managment system database. Another example, in the Rendered Mode, when the user writes text to the Guest Book section, the event managment system should be able to get the data of the guest book (name, message). If the user clicks on the "RSVP" button, the event managment system should be able to get the data of the RSVP (name, message, rsvp, contact type, contact info). I may need to know when the user opened the invite, so we need to capture the time of the clicking of the SplashSection button. This time will be stored in the event managment system database. The event management system should be able to get/set the data of the editor. [Done]
+15. Add possibility to, when adding a section, it must be added right after the current selected section.
 17. Add possibility to add custom fonts per text element.
 18. Add possibility to add custom colors per text element.
+19. Add possibility to have a pair of colors for the event, one for the light mode and one for the dark mode.
+20. Add possibiliity to have a pair of fonts for the event, one for the light mode and one for the dark mode.
+21. Add possibility to have a pair of background images for the event, one for the light mode and one for the dark mode.
+22. Add possibility to have a pair of fonts for titles and for other texts - Suggest.

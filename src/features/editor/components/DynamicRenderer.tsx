@@ -1,9 +1,10 @@
 import React from 'react';
-import type { CanvasRendererProps } from '../types';
+import { Sun, Moon } from 'lucide-react';
 import { SectionRenderer } from './SectionRenderer';
-
+import { BackgroundMusic } from './BackgroundMusic';
 import { useContainerSize } from '../hooks/useContainerSize';
-import type { DeviceType } from '../types';
+import type { CanvasRendererProps, DeviceType } from '../types';
+
 
 export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
     layout,
@@ -27,6 +28,20 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
 
     const [hasOpened, setHasOpened] = React.useState(false);
     const [activeScrollSectionId, setActiveScrollSectionId] = React.useState<string | null>(null);
+
+    // Theme state
+    const [isDark, setIsDark] = React.useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        return false;
+    });
+
+    // Theme colors
+    const themeColors = {
+        background: isDark ? '#121212' : (layout.globalStyles.backgroundColor || '#ffffff'),
+        text: isDark ? '#E0E0E0' : layout.globalStyles.primaryColor
+    };
 
     // Global click listener for interaction tracking
     React.useEffect(() => {
@@ -135,75 +150,101 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
     }, [activeSectionId, showOnlySplash]);
 
     return (
-        <div
-            ref={containerRef}
-            className={`flex flex-col w-full h-full overflow-y-auto no-scrollbar scroll-smooth ${showOnlySplash ? 'overflow-hidden' : ''}`}
-            style={{
-                backgroundColor: layout.globalStyles.backgroundColor || '#ffffff',
-                fontFamily: layout.globalStyles.fontFamilyBody,
-                color: layout.globalStyles.primaryColor
-            }}
-        >
-            {showOnlySplash && splashSection ? (
-                <div key={splashSection.id} data-section-id={splashSection.id} className="h-full w-full">
-                    <SectionRenderer
-                        section={splashSection}
-                        globalStyles={layout.globalStyles}
-                        isActive={false}
-                        onSelect={() => { }}
-                        onUpdate={() => { }}
-                        readOnly={true}
-                        index={layout.sections.indexOf(splashSection)}
-                        device={device}
-                        onOpen={() => {
-                            setHasOpened(true);
-                            onOpen?.(); // Call the prop
-                            onInteraction?.({
-                                type: 'INVITATION_OPENED',
-                                payload: { timestamp: Date.now() },
-                                timestamp: Date.now()
-                            });
-                        }}
-                    />
-                </div>
-            ) : (
-                layout.sections.map((section, index) => {
-                    // If in read-only mode and we have a splash screen, don't show it in the main list
-                    // (Detect by ID to be safe across reorders)
-                    if (readOnly && hasSplash && section.id === splashSection?.id) return null;
+        <div className="relative w-full h-full">
+            <div
+                ref={containerRef}
+                className={`flex flex-col w-full h-full overflow-y-auto no-scrollbar scroll-smooth transition-colors duration-500 ${showOnlySplash ? 'overflow-hidden' : ''}`}
+                style={{
+                    backgroundColor: themeColors.background,
+                    fontFamily: layout.globalStyles.fontFamilyBody,
+                    color: themeColors.text
+                }}
+            >
+                {showOnlySplash && splashSection ? (
+                    <div key={splashSection.id} data-section-id={splashSection.id} className="h-full w-full">
+                        <SectionRenderer
+                            section={splashSection}
+                            globalStyles={layout.globalStyles}
+                            isActive={false}
+                            onSelect={() => { }}
+                            onUpdate={() => { }}
+                            readOnly={true}
+                            index={layout.sections.indexOf(splashSection)}
+                            device={device}
+                            isDark={isDark}
+                            onOpen={() => {
+                                setHasOpened(true);
+                                onOpen?.(); // Call the prop
+                                onInteraction?.({
+                                    type: 'INVITATION_OPENED',
+                                    payload: { timestamp: Date.now() },
+                                    timestamp: Date.now()
+                                });
+                            }}
+                        />
+                    </div>
+                ) : (
+                    layout.sections.map((section, index) => {
+                        // If in read-only mode and we have a splash screen, don't show it in the main list
+                        // (Detect by ID to be safe across reorders)
+                        if (readOnly && hasSplash && section.id === splashSection?.id) return null;
 
-                    if (section.isHidden) return null;
+                        if (section.isHidden) return null;
 
-                    return (
-                        <div key={section.id} data-section-id={section.id}>
-                            <SectionRenderer
-                                section={section}
-                                globalStyles={layout.globalStyles}
-                                isActive={activeSectionId === section.id}
-                                activeScrollSectionId={activeScrollSectionId}
-                                onNavigate={handleNavigate}
-                                onInteraction={onInteraction}
-                                onSelect={() => onSectionSelect?.(section.id)}
-                                onUpdate={(newContent) => onSectionUpdate?.(section.id, newContent)}
-                                readOnly={readOnly}
-                                index={index}
-                                device={device}
-                                onOpen={() => {
-                                    setHasOpened(true);
-                                    onOpen?.(); // Call the prop
-                                    onInteraction?.({
-                                        type: 'INVITATION_OPENED',
-                                        payload: { timestamp: Date.now() },
-                                        timestamp: Date.now()
-                                    });
-                                }}
-                            />
-                        </div>
-                    );
-                })
+                        return (
+                            <div key={section.id} data-section-id={section.id}>
+                                <SectionRenderer
+                                    section={section}
+                                    globalStyles={layout.globalStyles}
+                                    isActive={activeSectionId === section.id}
+                                    activeScrollSectionId={activeScrollSectionId}
+                                    onNavigate={handleNavigate}
+                                    onInteraction={onInteraction}
+                                    onSelect={() => onSectionSelect?.(section.id)}
+                                    onUpdate={(newContent) => onSectionUpdate?.(section.id, newContent)}
+                                    readOnly={readOnly}
+                                    index={index}
+                                    device={device}
+                                    isDark={isDark}
+                                    onOpen={() => {
+                                        setHasOpened(true);
+                                        onOpen?.(); // Call the prop
+                                        onInteraction?.({
+                                            type: 'INVITATION_OPENED',
+                                            payload: { timestamp: Date.now() },
+                                            timestamp: Date.now()
+                                        });
+                                    }}
+                                />
+                            </div>
+                        );
+                    })
+                )}
+                {/* Hidden debug info for verification if needed */}
+                <div className="hidden" data-testid="detected-device">{device}</div>
+            </div>
+
+            {/* Background Music */}
+            {readOnly && layout.musicUrl && !showOnlySplash && (
+                <BackgroundMusic url={layout.musicUrl} isDark={isDark} />
             )}
-            {/* Hidden debug info for verification if needed */}
-            <div className="hidden" data-testid="detected-device">{device}</div>
+
+
+            {/* Dark Mode Toggle */}
+
+            {readOnly && !showOnlySplash && (
+                <button
+                    onClick={() => setIsDark(!isDark)}
+                    className="absolute bottom-6 right-6 z-50 p-3 rounded-full shadow-2xl backdrop-blur-md transition-all hover:scale-110 active:scale-90 border border-white/20"
+                    style={{
+                        backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                        color: isDark ? '#FCD34D' : '#4B5563'
+                    }}
+                    title={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
+                >
+                    {isDark ? <Sun size={20} /> : <Moon size={20} />}
+                </button>
+            )}
         </div>
     );
 };

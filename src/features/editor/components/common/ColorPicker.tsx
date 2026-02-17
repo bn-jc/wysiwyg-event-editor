@@ -40,9 +40,9 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label
                         key={p.color}
                         onClick={() => onChange(p.color)}
                         title={p.name}
-                        className={`w-8 h-8 rounded-full border-2 transition-all flex items-center justify-center ${value.toLowerCase() === p.color.toLowerCase()
-                            ? 'border-blue-500 scale-110 shadow-md'
-                            : 'border-transparent hover:scale-105'
+                        className={`w-8 h-8 rounded-full border transition-all flex items-center justify-center ${value.toLowerCase() === p.color.toLowerCase()
+                            ? 'border-blue-500 scale-110 shadow-lg ring-2 ring-blue-500/20'
+                            : 'border-gray-200 hover:border-gray-300 hover:scale-105 shadow-sm'
                             }`}
                         style={{ backgroundColor: p.color }}
                     >
