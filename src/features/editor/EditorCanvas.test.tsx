@@ -151,4 +151,27 @@ describe('EditorCanvas Integration', () => {
         const updatedSplash = screen.getByTestId('section-SplashSection');
         expect(updatedSplash.style.backgroundColor).toBe('rgb(255, 0, 0)');
     });
+
+    it('should enter and exit play mode', () => {
+        render(<EditorCanvas />);
+
+        // 1. Enter Play mode
+        const playBtn = screen.getByText('PLAY');
+        fireEvent.click(playBtn);
+
+        // 2. Verify Editor UI is hidden
+        expect(screen.queryByTestId('sidebar')).not.toBeInTheDocument();
+        expect(screen.queryByText(/CONVITE PREMIUM/i)).not.toBeInTheDocument();
+
+        // 3. Verify Close button exists
+        const closeBtn = screen.getByTitle('Fechar Visualização');
+        expect(closeBtn).toBeInTheDocument();
+
+        // 4. Exit Play mode
+        fireEvent.click(closeBtn);
+
+        // 5. Verify Editor UI is back
+        expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+        expect(screen.getByText(/CONVITE PREMIUM/i)).toBeInTheDocument();
+    });
 });
