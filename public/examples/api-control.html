@@ -57,6 +57,7 @@
                             <option value="hero-1">Hero Section</option>
                             <option value="splash-1">Splash Screen</option>
                             <option value="agenda-1">Agenda</option>
+                            <option value="gifts-1">Gifts</option>
                         </select>
                     </div>
                     <div class="flex gap-2">
@@ -156,6 +157,18 @@
                         content: {
                             targetDate: '2024-07-20T14:00:00',
                             title: 'Counting Down'
+                        }
+                    },
+                    {
+                        id: 'gifts-1',
+                        type: 'GiftsSection',
+                        content: {
+                            title: 'Gift List',
+                            description: 'Optional: Thank you for your kindness!',
+                            showGifts: true,
+                            giftItems: [
+                                { id: '1', name: 'Travel Fund', icon: 'plane', description: 'Help us travel.' }
+                            ]
                         }
                     }
                 ]
