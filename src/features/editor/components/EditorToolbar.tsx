@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, Smartphone, Tablet, Monitor, Eye, Type, Music, Palette, Navigation } from 'lucide-react';
+import { LayoutGrid, Smartphone, Tablet, Monitor, Eye, Type, Music, Palette, Navigation, Sun, Moon } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import type { DeviceType, ViewMode, EventLayout } from '../types';
 import type { ContainerMode } from '../hooks/useContainerSize';
@@ -19,6 +19,8 @@ interface EditorToolbarProps {
     containerMode?: ContainerMode;
     onToggleNavbar: () => void;
     onPlay: () => void;
+    isDark?: boolean;
+    onToggleDark?: () => void;
 }
 
 export const EditorToolbar: React.FC<EditorToolbarProps> = ({
@@ -33,7 +35,9 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
     layout,
     containerMode = 'wide',
     onToggleNavbar,
-    onPlay
+    onPlay,
+    isDark,
+    onToggleDark
 }) => {
     const navSection = layout.sections.find(s => s.type === 'NavSection');
     const isNavHidden = navSection?.isHidden;
@@ -56,7 +60,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
 
     return (
         <div className={cn(
-            "flex h-16 items-center justify-between border-b bg-white shadow-sm z-30 transition-all",
+            "flex h-16 items-center justify-between border-b shadow-sm z-30 transition-all",
+            isDark ? "bg-[#1a1d23] border-[#2d333b]" : "bg-white border-gray-100",
             isMobile ? "px-2" : "px-6"
         )}>
             <div className="flex items-center gap-4">
@@ -66,19 +71,27 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                             <LayoutGrid size={18} />
                         </div>
                         {!isCompact && (
-                            <h1 className="text-sm font-black tracking-tighter text-gray-900 border-r pr-6 border-gray-100">
+                            <h1 className={cn(
+                                "text-sm font-black tracking-tighter border-r pr-6",
+                                isDark ? "text-white border-[#2d333b]" : "text-gray-900 border-gray-100"
+                            )}>
                                 CONVITE PREMIUM
                             </h1>
                         )}
                     </div>
                 )}
 
-                <div className="flex gap-1 p-1 bg-gray-100/80 rounded-xl">
+                <div className={cn(
+                    "flex gap-1 p-1 rounded-xl",
+                    isDark ? "bg-[#2d333b]" : "bg-gray-100/80"
+                )}>
                     <button
                         onClick={() => setViewMode('edit')}
                         className={cn(
                             "flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all",
-                            viewMode === 'edit' ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700",
+                            viewMode === 'edit'
+                                ? (isDark ? "bg-[#1a1d23] text-blue-400 shadow-lg" : "bg-white text-blue-600 shadow-sm")
+                                : (isDark ? "text-gray-400 hover:text-gray-200" : "text-gray-500 hover:text-gray-700"),
                             isMobile && "px-2"
                         )}>
                         <Type size={14} /> {!isMobile && "EDITAR"}
@@ -87,12 +100,29 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                         onClick={() => setViewMode('preview')}
                         className={cn(
                             "flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all",
-                            viewMode === 'preview' ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700",
+                            viewMode === 'preview'
+                                ? (isDark ? "bg-[#1a1d23] text-blue-400 shadow-lg" : "bg-white text-blue-600 shadow-sm")
+                                : (isDark ? "text-gray-400 hover:text-gray-200" : "text-gray-500 hover:text-gray-700"),
                             isMobile && "px-2"
                         )}>
                         <Eye size={14} /> {!isMobile && "PREVER"}
                     </button>
                 </div>
+
+                {onToggleDark && (
+                    <button
+                        onClick={onToggleDark}
+                        className={cn(
+                            "p-2 rounded-xl transition-all",
+                            isDark
+                                ? "bg-gray-800 text-yellow-400 hover:bg-gray-700"
+                                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                        )}
+                        title={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
+                    >
+                        {isDark ? <Sun size={16} /> : <Moon size={16} />}
+                    </button>
+                )}
 
                 {!isMobile && <div className="h-6 w-[1px] bg-gray-100" />}
 

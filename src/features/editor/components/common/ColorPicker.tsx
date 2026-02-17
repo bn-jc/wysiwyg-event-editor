@@ -5,6 +5,7 @@ interface ColorPickerProps {
     value: string;
     onChange: (color: string) => void;
     label?: string;
+    isDark?: boolean;
 }
 
 const PRESETS = [
@@ -18,7 +19,7 @@ const PRESETS = [
     { name: 'White', color: '#FFFFFF' },
 ];
 
-export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label }) => {
+export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label, isDark = false }) => {
     const [isCustom, setIsCustom] = useState(false);
 
     useEffect(() => {
@@ -42,8 +43,8 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label
                         title={p.name}
                         className={`w-8 h-8 rounded-full border transition-all flex items-center justify-center ${value.toLowerCase() === p.color.toLowerCase()
                             ? 'border-blue-500 scale-110 shadow-lg ring-2 ring-blue-500/20'
-                            : 'border-gray-200 hover:border-gray-300 hover:scale-105 shadow-sm'
-                            }`}
+                            : (isDark ? 'border-gray-700 hover:border-gray-600' : 'border-gray-200 hover:border-gray-300')
+                            } hover:scale-105 shadow-sm`}
                         style={{ backgroundColor: p.color }}
                     >
                         {value.toLowerCase() === p.color.toLowerCase() && (
@@ -63,8 +64,10 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label
                 </div>
             </div>
 
-            <div className="flex gap-2 p-2 bg-gray-50 rounded-xl border border-gray-100 items-center animate-in fade-in slide-in-from-top-1">
-                <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-gray-200">
+            <div className={`flex gap-2 p-2 rounded-xl border items-center animate-in fade-in slide-in-from-top-1 ${isDark ? 'bg-[#2d333b] border-[#3d444d]' : 'bg-gray-50 border-gray-100'
+                }`}>
+                <div className={`relative w-8 h-8 rounded-lg overflow-hidden border ${isDark ? 'border-gray-700' : 'border-gray-200'
+                    }`}>
                     <input
                         type="color"
                         value={value || '#FFFFFF'}
@@ -77,7 +80,8 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ value, onChange, label
                     value={(value || '').toUpperCase()}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder="#FFFFFF"
-                    className="flex-1 bg-transparent border-none text-xs font-mono text-gray-600 focus:ring-0 uppercase"
+                    className={`flex-1 bg-transparent border-none text-xs font-mono focus:ring-0 uppercase ${isDark ? 'text-gray-300' : 'text-gray-600'
+                        }`}
                 />
             </div>
         </div>

@@ -45,9 +45,9 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
                     <img
                         src={content.backgroundImage}
                         alt="Background"
-                        className={cn("w-full h-full object-cover transition-opacity duration-1000", isDark ? "opacity-30" : "opacity-60")}
+                        className={cn("w-full h-full object-cover transition-opacity duration-1000", isDark ? "opacity-45" : "opacity-60")}
                     />
-                    <div className={cn("absolute inset-0 transition-colors duration-1000", isDark ? "bg-black/80" : "bg-black/40")} />
+                    <div className={cn("absolute inset-0 transition-colors duration-1000", isDark ? "bg-black/65" : "bg-black/40")} />
                 </div>
             )}
 

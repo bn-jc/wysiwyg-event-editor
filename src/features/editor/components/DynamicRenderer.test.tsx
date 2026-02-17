@@ -155,4 +155,15 @@ describe('DynamicRenderer', () => {
 
         expect(screen.queryByTestId('background-music')).not.toBeInTheDocument();
     });
+
+    it('should respect the isDark prop and synchronize local state', () => {
+        const { rerender } = render(<DynamicRenderer layout={mockLayout} isDark={true} readOnly={true} />);
+
+        // Check if the toggle button reflects dark mode (renders Sun icon)
+        expect(screen.getByTitle('Mudar para modo claro')).toBeInTheDocument();
+
+        // Rerender with light mode
+        rerender(<DynamicRenderer layout={mockLayout} isDark={false} />);
+        expect(screen.getByTitle('Mudar para modo escuro')).toBeInTheDocument();
+    });
 });

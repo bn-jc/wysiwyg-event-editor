@@ -3,6 +3,7 @@ import type { SectionDefinition, SectionContent } from '../types';
 import { ColorPicker } from './common/ColorPicker';
 import { SECTION_TEMPLATES } from '../utils/SectionSchemaRegistry';
 import { Trash2, ChevronDown, ChevronUp, Plus, Image as ImageIcon, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
+import { cn } from '@/utils/cn';
 
 interface PropertyEditorProps {
     section: SectionDefinition;
@@ -10,6 +11,7 @@ interface PropertyEditorProps {
     onUpdateStyles: (styles: React.CSSProperties) => void;
     onDelete: () => void;
     onMove: (direction: 'up' | 'down') => void;
+    isDark?: boolean;
 }
 
 export const PropertyEditor: React.FC<PropertyEditorProps> = ({
@@ -17,7 +19,8 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
     onUpdate,
     onUpdateStyles,
     onDelete,
-    onMove
+    onMove,
+    isDark = false
 }) => {
     const template = SECTION_TEMPLATES[section.type as keyof typeof SECTION_TEMPLATES];
 
@@ -91,7 +94,10 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                         <select
                             value={value}
                             onChange={(e) => handleChange(key, e.target.value)}
-                            className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer hover:bg-white transition-all shadow-sm"
+                            className={cn(
+                                "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
                         >
                             <option value="none">Nenhuma</option>
                             <option value="heart">Coração</option>
@@ -251,7 +257,10 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                             <select
                                 value={value || 'none'}
                                 onChange={(e) => handleChange(key, e.target.value)}
-                                className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer hover:bg-white transition-all shadow-sm"
+                                className={cn(
+                                    "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                    isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                                )}
                             >
                                 <option value="none">Nenhum</option>
                                 <option value="hearts">Corações</option>
@@ -413,10 +422,16 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                             type="text"
                             value={value}
                             onChange={(e) => handleChange(key, e.target.value)}
-                            className="flex-1 bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs focus:ring-2 focus:ring-blue-500 hover:bg-white transition-all shadow-sm"
+                            className={cn(
+                                "flex-1 border rounded-xl p-3 text-xs focus:ring-2 focus:ring-blue-500 transition-all shadow-sm",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
                             placeholder="https://..."
                         />
-                        <button className="p-3 bg-gray-100 rounded-xl hover:bg-white border border-gray-100 text-gray-400 hover:text-blue-500 transition-all shadow-sm">
+                        <button className={cn(
+                            "p-3 rounded-xl border transition-all shadow-sm",
+                            isDark ? "bg-[#2a2f36] border-[#3d444d] text-gray-400 hover:text-blue-400" : "bg-gray-100 border-gray-100 text-gray-400 hover:text-blue-500 hover:bg-white"
+                        )}>
                             <ImageIcon size={18} />
                         </button>
                     </div>
@@ -429,7 +444,10 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                 <div key={key} className="flex flex-col gap-2 mb-6">
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
                     {value.map((item: any, idx: number) => (
-                        <div key={idx} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 mb-2 group shadow-sm hover:shadow-md transition-all relative">
+                        <div key={idx} className={cn(
+                            "p-4 rounded-2xl border mb-2 group shadow-sm hover:shadow-md transition-all relative",
+                            isDark ? "bg-[#2d333b] border-[#3d444d]" : "bg-gray-50 border-gray-100"
+                        )}>
                             {typeof item === 'string' ? (
                                 <div className="flex gap-2 items-center">
                                     <input
@@ -440,7 +458,10 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                             newList[idx] = e.target.value;
                                             handleChange(key, newList);
                                         }}
-                                        className="flex-1 bg-white/50 border border-gray-100 rounded-lg px-2 py-2 text-xs font-medium"
+                                        className={cn(
+                                            "flex-1 border rounded-lg px-2 py-2 text-xs font-medium",
+                                            isDark ? "bg-black/20 border-white/5 text-gray-200" : "bg-white/50 border-gray-100 text-gray-900"
+                                        )}
                                     />
                                 </div>
                             ) : (
@@ -721,7 +742,10 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
 
         if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
             return (
-                <div key={key} className="flex flex-col gap-2 mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                <div key={key} className={cn(
+                    "flex flex-col gap-2 mb-6 p-4 rounded-2xl border",
+                    isDark ? "bg-[#2d333b] border-[#3d444d]" : "bg-gray-50 border-gray-100"
+                )}>
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{label}</label>
                     {Object.entries(value).map(([iKey, iVal]) => (
                         <div key={iKey} className="flex flex-col gap-1 mb-3 last:mb-0">
@@ -732,7 +756,10 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                 onChange={(e) => {
                                     handleChange(key, { ...value, [iKey]: e.target.value });
                                 }}
-                                className="w-full bg-white border border-gray-100 rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500 hover:bg-white transition-all shadow-sm font-medium text-gray-700"
+                                className={cn(
+                                    "w-full border rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500 transition-all shadow-sm font-medium",
+                                    isDark ? "bg-black/20 border-white/5 text-gray-200" : "bg-white border-gray-100 text-gray-700 hover:bg-white"
+                                )}
                                 placeholder={`Digitar ${iKey}...`}
                             />
                         </div>
@@ -743,13 +770,25 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
 
         if (key === 'showRecipient' || key === 'showMessageField' || (section.type === 'GiftsSection' && (key === 'showBankDetails' || key === 'showGifts'))) {
             return (
-                <div key={key} className="flex items-center justify-between mb-6 p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50">
-                    <label className="text-[10px] font-black text-blue-600 uppercase tracking-widest">{label}</label>
+                <div key={key} className={cn(
+                    "flex items-center justify-between mb-6 p-4 rounded-2xl border",
+                    isDark ? "bg-blue-900/20 border-blue-800/40" : "bg-blue-50/50 border-blue-100/50"
+                )}>
+                    <label className={cn(
+                        "text-[10px] font-black uppercase tracking-widest",
+                        isDark ? "text-blue-400" : "text-blue-600"
+                    )}>{label}</label>
                     <button
                         onClick={() => handleChange(key, !value)}
-                        className={`w-12 h-6 rounded-full transition-all relative ${value ? 'bg-blue-500' : 'bg-gray-200'}`}
+                        className={cn(
+                            "w-12 h-6 rounded-full transition-all relative",
+                            value ? 'bg-blue-500' : (isDark ? 'bg-gray-700' : 'bg-gray-200')
+                        )}
                     >
-                        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${value ? 'right-1' : 'left-1'}`} />
+                        <div className={cn(
+                            "absolute top-1 w-4 h-4 bg-white rounded-full transition-all",
+                            value ? 'right-1' : 'left-1'
+                        )} />
                     </button>
                 </div>
             );
@@ -762,7 +801,10 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                     value={value}
                     onChange={(e) => handleChange(key, e.target.value)}
                     rows={value.toString().length > 30 ? 3 : 1}
-                    className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 resize-none hover:bg-white transition-all shadow-sm font-medium text-gray-700"
+                    className={cn(
+                        "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 resize-none transition-all shadow-sm font-medium",
+                        isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                    )}
                     placeholder={`Digitar ${label.toLowerCase()}...`}
                 />
             </div>
@@ -774,20 +816,29 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.25em] mb-1.5 block leading-none">Editor de Seção</span>
-                    <h2 className="text-xl font-black text-gray-900 leading-none">{template?.name || 'Seção'}</h2>
+                    <h2 className={cn(
+                        "text-xl font-black leading-none",
+                        isDark ? "text-white" : "text-gray-900"
+                    )}>{template?.name || 'Seção'}</h2>
                 </div>
                 <div className="flex gap-1">
                     <button
                         onClick={() => onMove('up')}
                         title="Mover para cima"
-                        className="p-2.5 hover:bg-gray-100 rounded-xl text-gray-300 hover:text-gray-900 transition-all border border-transparent hover:border-gray-100"
+                        className={cn(
+                            "p-2.5 rounded-xl transition-all border border-transparent",
+                            isDark ? "hover:bg-gray-800 text-gray-500 hover:text-white" : "hover:bg-gray-100 text-gray-300 hover:text-gray-900 hover:border-gray-100"
+                        )}
                     >
                         <ChevronUp size={20} />
                     </button>
                     <button
                         onClick={() => onMove('down')}
                         title="Mover para baixo"
-                        className="p-2.5 hover:bg-gray-100 rounded-xl text-gray-300 hover:text-gray-900 transition-all border border-transparent hover:border-gray-100"
+                        className={cn(
+                            "p-2.5 rounded-xl transition-all border border-transparent",
+                            isDark ? "hover:bg-gray-800 text-gray-500 hover:text-white" : "hover:bg-gray-100 text-gray-300 hover:text-gray-900 hover:border-gray-100"
+                        )}
                     >
                         <ChevronDown size={20} />
                     </button>
@@ -800,7 +851,7 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                 </div>
 
                 {/* Section Styles */}
-                <div className="mt-8 pt-6 border-t border-gray-100">
+                <div className={cn("mt-8 pt-6 border-t", isDark ? "border-gray-800" : "border-gray-100")}>
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-4 block leading-none">Aparência da Seção</span>
 
                     <div className="flex flex-col gap-2 mb-6">
@@ -818,7 +869,10 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                 const val = `${e.target.value}px`;
                                 onUpdateStyles({ paddingTop: val, paddingBottom: val });
                             }}
-                            className="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                            className={cn(
+                                "w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-blue-600",
+                                isDark ? "bg-gray-800" : "bg-gray-100"
+                            )}
                         />
                     </div>
 
@@ -834,7 +888,10 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                             step="4"
                             value={parseInt(String(section.styles?.gap || '24'))}
                             onChange={(e) => onUpdateStyles({ gap: `${e.target.value}px` })}
-                            className="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                            className={cn(
+                                "w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-blue-600",
+                                isDark ? "bg-gray-800" : "bg-gray-100"
+                            )}
                         />
                     </div>
 
@@ -842,12 +899,14 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                         label="Cor de Fundo"
                         value={(section.styles?.backgroundColor as string) || '#ffffff'}
                         onChange={(color) => onUpdateStyles({ backgroundColor: color })}
+                        isDark={isDark}
                     />
 
                     <ColorPicker
                         label="Cor do Texto"
                         value={(section.styles?.color as string) || '#000000'}
                         onChange={(color) => onUpdateStyles({ color: color })}
+                        isDark={isDark}
                     />
 
                     {section.type === 'AgendaSection' && (
@@ -855,22 +914,40 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">
                                 Alinhamento do Texto
                             </label>
-                            <div className="flex gap-2 p-1 bg-gray-50 rounded-xl border border-gray-100">
+                            <div className={cn(
+                                "flex gap-2 p-1 rounded-xl border",
+                                isDark ? "bg-[#2d333b] border-[#3d444d]" : "bg-gray-50 border-gray-100"
+                            )}>
                                 <button
                                     onClick={() => onUpdateStyles({ textAlign: 'left' })}
-                                    className={`flex-1 flex justify-center p-2 rounded-lg transition-all ${section.styles?.textAlign === 'left' ? 'bg-white text-blue-500 shadow-sm' : 'text-gray-400 hover:bg-white'}`}
+                                    className={cn(
+                                        "flex-1 flex justify-center p-2 rounded-lg transition-all",
+                                        section.styles?.textAlign === 'left'
+                                            ? (isDark ? 'bg-gray-800 text-blue-400 shadow-lg' : 'bg-white text-blue-500 shadow-sm')
+                                            : (isDark ? 'text-gray-500 hover:bg-gray-800' : 'text-gray-400 hover:bg-white')
+                                    )}
                                 >
                                     <AlignLeft size={16} />
                                 </button>
                                 <button
                                     onClick={() => onUpdateStyles({ textAlign: 'center' })}
-                                    className={`flex-1 flex justify-center p-2 rounded-lg transition-all ${section.styles?.textAlign === 'center' || !section.styles?.textAlign ? 'bg-white text-blue-500 shadow-sm' : 'text-gray-400 hover:bg-white'}`}
+                                    className={cn(
+                                        "flex-1 flex justify-center p-2 rounded-lg transition-all",
+                                        section.styles?.textAlign === 'center' || !section.styles?.textAlign
+                                            ? (isDark ? 'bg-gray-800 text-blue-400 shadow-lg' : 'bg-white text-blue-500 shadow-sm')
+                                            : (isDark ? 'text-gray-500 hover:bg-gray-800' : 'text-gray-400 hover:bg-white')
+                                    )}
                                 >
                                     <AlignCenter size={16} />
                                 </button>
                                 <button
                                     onClick={() => onUpdateStyles({ textAlign: 'right' })}
-                                    className={`flex-1 flex justify-center p-2 rounded-lg transition-all ${section.styles?.textAlign === 'right' ? 'bg-white text-blue-500 shadow-sm' : 'text-gray-400 hover:bg-white'}`}
+                                    className={cn(
+                                        "flex-1 flex justify-center p-2 rounded-lg transition-all",
+                                        section.styles?.textAlign === 'right'
+                                            ? (isDark ? 'bg-gray-800 text-blue-400 shadow-lg' : 'bg-white text-blue-500 shadow-sm')
+                                            : (isDark ? 'text-gray-500 hover:bg-gray-800' : 'text-gray-400 hover:bg-white')
+                                    )}
                                 >
                                     <AlignRight size={16} />
                                 </button>
@@ -881,7 +958,12 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                     <div className="mt-8">
                         <button
                             onClick={onDelete}
-                            className="w-full flex items-center justify-center gap-2 p-4 text-xs font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all border border-transparent hover:border-red-100 group"
+                            className={cn(
+                                "w-full flex items-center justify-center gap-2 p-4 text-xs font-bold transition-all border border-transparent group rounded-2xl",
+                                isDark
+                                    ? "text-red-400 hover:bg-red-950/30 hover:border-red-900/50"
+                                    : "text-red-500 hover:bg-red-50 hover:border-red-100"
+                            )}
                         >
                             <Trash2 size={16} className="group-hover:scale-110 transition-transform" />
                             ELIMINAR ESTA SEÇÃO

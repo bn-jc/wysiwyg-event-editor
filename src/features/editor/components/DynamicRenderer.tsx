@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sun, Moon } from 'lucide-react';
+import { cn } from '@/utils/cn';
 import { SectionRenderer } from './SectionRenderer';
 import { BackgroundMusic } from './BackgroundMusic';
 import { useContainerSize } from '../hooks/useContainerSize';
@@ -14,7 +15,8 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
     onSectionSelect,
     onOpen,
     onInteraction,
-    device: propDevice
+    device: propDevice,
+    isDark: isDarkProp
 }) => {
     const containerRef = React.useRef<HTMLDivElement>(null);
     const { mode } = useContainerSize(containerRef);
@@ -29,13 +31,22 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
     const [hasOpened, setHasOpened] = React.useState(false);
     const [activeScrollSectionId, setActiveScrollSectionId] = React.useState<string | null>(null);
 
-    // Theme state
-    const [isDark, setIsDark] = React.useState(() => {
-        if (typeof window !== 'undefined') {
-            return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Theme state - synchronized with prop for editor mode
+    const [isDark, setIsDark] = React.useState(isDarkProp ?? false);
+
+    // Sync theme if prop changes and we're not in a path that should be independent
+    React.useEffect(() => {
+        if (isDarkProp !== undefined) {
+            setIsDark(isDarkProp);
         }
-        return false;
-    });
+    }, [isDarkProp]);
+
+    // Initialize from system if no prop provided
+    React.useEffect(() => {
+        if (isDarkProp === undefined && typeof window !== 'undefined') {
+            setIsDark(window.matchMedia('(prefers-color-scheme: dark)').matches);
+        }
+    }, [isDarkProp]);
 
     // Theme colors
     const themeColors = {
@@ -231,15 +242,13 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
 
 
             {/* Dark Mode Toggle */}
-
-            {readOnly && !showOnlySplash && (
+            {readOnly && (
                 <button
                     onClick={() => setIsDark(!isDark)}
-                    className="absolute bottom-6 right-6 z-50 p-3 rounded-full shadow-2xl backdrop-blur-md transition-all hover:scale-110 active:scale-90 border border-white/20"
-                    style={{
-                        backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-                        color: isDark ? '#FCD34D' : '#4B5563'
-                    }}
+                    className={cn(
+                        "absolute bottom-6 right-6 z-50 p-3 rounded-full shadow-2xl backdrop-blur-md transition-all hover:scale-110 active:scale-90 border",
+                        isDark ? "bg-white/10 border-white/20 text-yellow-400" : "bg-white/80 border-gray-200 text-gray-700 hover:bg-white"
+                    )}
                     title={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
                 >
                     {isDark ? <Sun size={20} /> : <Moon size={20} />}

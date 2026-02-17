@@ -72,6 +72,7 @@ export interface CanvasRendererProps {
     onSectionSelect?: (sectionId: string) => void;
     onOpen?: () => void;
     onInteraction?: (interaction: EditorInteraction) => void;
+    isDark?: boolean;
 }
 
 export interface SectionRendererProps {

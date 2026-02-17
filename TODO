@@ -1,13 +1,8 @@
-
-
-4. The white color in the palate is not visible, there's no contrast with the border/editor.
-
-7. Create a branch to Add a toggle for dark mode to the editor UI.
 8. Change the name of the app to "Event Page Builder".
 9. Add local storage to save the page data.
 10. Add API to export the page data.
 11. Add API to import the page data.
-12. Add locales [en-US, pt-PT, pt-BR].
+12. Add locales [en-US, pt-PT].
 13. Add possibility to add text over the images.
 14. Add possibility to choose contact type in RSVP (email, phone, sms, whatsapp, etc).
 15. Add possibility to, when adding a section, it must be added right after the current selected section.
@@ -17,3 +12,4 @@
 20. Add possibiliity to have a pair of fonts for the event, one for the light mode and one for the dark mode.
 21. Add possibility to have a pair of background images for the event, one for the light mode and one for the dark mode.
 22. Add possibility to have a pair of fonts for titles and for other texts - Suggest.
+23. Add liquid glass to NavSection

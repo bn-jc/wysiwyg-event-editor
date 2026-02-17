@@ -20,6 +20,21 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
     const [isPlayMode, setIsPlayMode] = React.useState(false);
     const [playKey, setPlayKey] = React.useState(0);
 
+    // Editor UI Theme state
+    const [editorIsDark, setEditorIsDark] = React.useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('editor-theme');
+            if (saved) return saved === 'dark';
+            return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        return false;
+    });
+
+    // Persist editor theme
+    React.useEffect(() => {
+        localStorage.setItem('editor-theme', editorIsDark ? 'dark' : 'light');
+    }, [editorIsDark]);
+
     const {
         layout,
         setLayout,
@@ -111,6 +126,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                         device={device}
                         readOnly={true}
                         onInteraction={emitInteraction}
+                        isDark={editorIsDark}
                     />
                 </div>
             </div>
@@ -118,7 +134,10 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
     }
 
     return (
-        <div ref={containerRef} className="flex h-full flex-col bg-gray-50 overflow-hidden font-sans relative">
+        <div ref={containerRef} className={cn(
+            "flex h-full flex-col overflow-hidden font-sans relative transition-colors duration-300",
+            editorIsDark ? "bg-[#0f1115]" : "bg-gray-50"
+        )}>
             <EditorToolbar
                 viewMode={viewMode}
                 setViewMode={setViewMode}
@@ -131,6 +150,8 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                 onUpdateMusic={updateMusic}
                 layout={layout}
                 onPlay={handlePlay}
+                isDark={editorIsDark}
+                onToggleDark={() => setEditorIsDark(!editorIsDark)}
                 onToggleNavbar={() => {
                     const navSection = layout.sections.find(s => s.type === 'NavSection');
                     if (navSection) {
@@ -154,19 +175,22 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                         isLayersOpen={showLayers}
                         mode={containerMode}
                         hasSplash={layout.sections.some(s => s.type === 'SplashSection')}
+                        isDark={editorIsDark}
                     />
                 )}
 
                 <main
                     className={cn(
-                        "flex-1 overflow-auto bg-gray-200/50 flex flex-col items-center transition-all duration-300",
+                        "flex-1 overflow-auto flex flex-col items-center transition-all duration-300",
+                        editorIsDark ? "bg-[#0f1115]" : "bg-gray-200/50",
                         !isPreviewOnly && "py-12",
                         containerMode === 'mobile' && "px-4"
                     )}
                 >
                     <div
                         className={cn(
-                            "transition-all duration-500 bg-white shadow-2xl relative",
+                            "transition-all duration-500 relative",
+                            editorIsDark ? "bg-[#1a1d23] shadow-black/40" : "bg-white shadow-2xl",
                             // Use container mode to force mobile view if container is small
                             (device === 'mobile' || containerMode === 'mobile') ? "w-[375px]" :
                                 (device === 'tablet' || containerMode === 'compact') ? "w-[768px]" :
@@ -182,6 +206,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                             onSectionUpdate={updateSectionContent}
                             onSectionSelect={setActiveSectionId}
                             onInteraction={emitInteraction}
+                            isDark={editorIsDark}
                         />
                     </div>
                 </main>
@@ -190,16 +215,20 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                 {activeSection && !isPreviewOnly && (
                     <div
                         className={cn(
-                            "bg-white z-20 shadow-xl overflow-y-auto no-scrollbar transition-all duration-300",
+                            "z-20 shadow-xl overflow-y-auto no-scrollbar transition-all duration-300",
+                            editorIsDark ? "bg-[#1a1d23] border-[#2d333b]" : "bg-white border-l",
                             containerMode === 'wide'
-                                ? "w-96 border-l p-8 relative"
+                                ? "w-96 p-8 relative"
                                 : "absolute inset-y-0 right-0 w-80 shadow-2xl border-l transform translate-x-0 h-full"
                         )}
                     >
                         {containerMode !== 'wide' && (
                             <button
                                 onClick={() => setActiveSectionId(null)}
-                                className="absolute top-4 right-4 p-2 bg-gray-100 rounded-full hover:bg-gray-200 z-50"
+                                className={cn(
+                                    "absolute top-4 right-4 p-2 rounded-full z-50 transition-colors",
+                                    editorIsDark ? "bg-gray-800 hover:bg-gray-700 text-gray-400" : "bg-gray-100 hover:bg-gray-200 text-gray-500"
+                                )}
                             >
                                 <span className="sr-only">Close</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -211,6 +240,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                             onUpdateStyles={(styles) => updateSectionStyles(activeSection.id, styles)}
                             onDelete={() => deleteSection(activeSection.id)}
                             onMove={(direction) => moveSection(activeSectionIndex, direction)}
+                            isDark={editorIsDark}
                         />
                     </div>
                 )}

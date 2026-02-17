@@ -10,7 +10,7 @@ A modern, embeddable event editor built with React and TypeScript. This applicat
 - **Public View & Dynamic Rendering**: Render invitations in a standalone, read-only mode with auto-device detection or export them as a single HTML file.
 - **Rich Visual Effects**: Enhance invitations with interactive effects like confetti, sparkles, balloons, and more.
 - **Background Music**: Add atmosphere with built-in music tracks, featuring a dedicated play/pause toggle in live view.
-- **Dark Mode**: Built-in support for light and dark themes with a floating toggle and automatic system preference detection.
+- **Dark Mode**: Comprehensive support for light and dark themes across both the **Editor UI** and the **Invitation Canvas**, with automatic synchronization and system preference detection.
 - **RSVP Management**: Built-in functionality to collect and manage guest RSVPs efficiently.
 - **Gift List & Bank Details**: Provide guest with gift suggestions and bank details for contributions, fully customizable within the editor.
 - **Responsive Experience**: Adaptive editor interface and content rendering that automatically adjusts to Desktop, Tablet, and Mobile layouts.
