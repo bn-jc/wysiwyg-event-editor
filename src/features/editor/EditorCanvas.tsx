@@ -18,6 +18,8 @@ export interface EditorCanvasProps {
 export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSave }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const { mode: containerMode } = useContainerSize(containerRef);
+    const [isPlayMode, setIsPlayMode] = React.useState(false);
+    const [playKey, setPlayKey] = React.useState(0);
 
     const {
         layout,
@@ -46,8 +48,12 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
             console.log('Saving design:', JSON.stringify(layout, null, 2));
             alert('Design saved successfully! (Default Handler)');
         }
-        // Notify parent via API if needed (handled in useEditorApi if triggered via message)
     }, [layout, onSave]);
+
+    const handlePlay = useCallback(() => {
+        setPlayKey(prev => prev + 1);
+        setIsPlayMode(true);
+    }, []);
 
     // Initialize Editor API
     const { emitInteraction } = useEditorApi({
@@ -61,6 +67,44 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
     const activeSection = layout.sections.find(s => s.id === activeSectionId);
     const activeSectionIndex = layout.sections.findIndex(s => s.id === activeSectionId);
 
+    if (isPlayMode) {
+        return (
+            <div className="fixed inset-0 z-[100] bg-white overflow-hidden flex flex-col">
+                <button
+                    onClick={() => setIsPlayMode(false)}
+                    className="absolute top-6 right-6 z-[110] bg-black/60 hover:bg-black/80 backdrop-blur-md p-3 rounded-full text-white shadow-2xl transition-all hover:scale-110 active:scale-90 flex items-center justify-center group border border-white/20"
+                    title="Fechar Visualização"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="drop-shadow-lg opacity-90 group-hover:opacity-100"
+                    >
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                <div className="flex-1 overflow-hidden relative">
+                    <BackgroundMusic url={layout.musicUrl} />
+                    <DynamicRenderer
+                        key={`play-${playKey}`}
+                        layout={layout}
+                        device={device}
+                        readOnly={true}
+                        onInteraction={emitInteraction}
+                    />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div ref={containerRef} className="flex h-full flex-col bg-gray-50 overflow-hidden font-sans relative">
             <BackgroundMusic url={layout.musicUrl} />
@@ -69,13 +113,13 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                 setViewMode={setViewMode}
                 device={device}
                 setDevice={setDevice}
-                onSave={handleSave}
                 selectedCount={activeSectionId ? 1 : 0}
                 globalStyles={layout.globalStyles}
                 onUpdateGlobalStyles={updateGlobalStyles}
                 musicUrl={layout.musicUrl}
                 onUpdateMusic={updateMusic}
                 layout={layout}
+                onPlay={handlePlay}
                 onToggleNavbar={() => {
                     const navSection = layout.sections.find(s => s.type === 'NavSection');
                     if (navSection) {

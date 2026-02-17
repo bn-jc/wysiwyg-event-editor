@@ -1,8 +1,7 @@
 import React from 'react';
-import { LayoutGrid, Save, Smartphone, Tablet, Monitor, Eye, Type, Music, Palette, Code, Navigation } from 'lucide-react';
+import { LayoutGrid, Smartphone, Tablet, Monitor, Eye, Type, Music, Palette, Navigation } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import type { DeviceType, ViewMode, EventLayout } from '../types';
-import { generateStandaloneHtml } from '../utils/exportHtml';
 import type { ContainerMode } from '../hooks/useContainerSize';
 import { ColorPicker } from './common/ColorPicker';
 
@@ -11,7 +10,6 @@ interface EditorToolbarProps {
     setViewMode: (mode: ViewMode) => void;
     device: DeviceType;
     setDevice: (device: DeviceType) => void;
-    onSave: () => void;
     selectedCount: number;
     globalStyles: EventLayout['globalStyles'];
     onUpdateGlobalStyles: (styles: Partial<EventLayout['globalStyles']>) => void;
@@ -20,6 +18,7 @@ interface EditorToolbarProps {
     layout: EventLayout;
     containerMode?: ContainerMode;
     onToggleNavbar: () => void;
+    onPlay: () => void;
 }
 
 export const EditorToolbar: React.FC<EditorToolbarProps> = ({
@@ -27,14 +26,14 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
     setViewMode,
     device,
     setDevice,
-    onSave,
     globalStyles,
     onUpdateGlobalStyles,
     musicUrl,
     onUpdateMusic,
     layout,
     containerMode = 'wide',
-    onToggleNavbar
+    onToggleNavbar,
+    onPlay
 }) => {
     const navSection = layout.sections.find(s => s.type === 'NavSection');
     const isNavHidden = navSection?.isHidden;
@@ -54,17 +53,6 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
     const isPreview = viewMode === 'preview';
     const isMobile = containerMode === 'mobile';
     const isCompact = containerMode === 'compact';
-
-    const handleExport = () => {
-        const html = generateStandaloneHtml(layout);
-        const blob = new Blob([html], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${layout.name || 'convite'}.html`;
-        a.click();
-        URL.revokeObjectURL(url);
-    };
 
     return (
         <div className={cn(
@@ -239,26 +227,14 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                 {!isMobile && <div className="w-[1px] h-6 bg-gray-200" />}
 
                 <button
-                    onClick={handleExport}
+                    onClick={onPlay}
                     className={cn(
-                        "flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-xs font-bold transition-all",
-                        isMobile && "px-2"
-                    )}
-                    title="Exportar HTML"
-                >
-                    <Code size={14} />
-                    {!isMobile && <span>HTML</span>}
-                </button>
-
-                <button
-                    onClick={onSave}
-                    className={cn(
-                        "flex items-center gap-2 bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-black/10 transition-all hover:scale-105 active:scale-95",
+                        "flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-2xl text-xs font-black shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95",
                         isMobile && "px-3"
                     )}
                 >
-                    <Save size={14} />
-                    {!isMobile && <span>GUARDAR</span>}
+                    <LayoutGrid size={16} className="fill-current" />
+                    {!isMobile && <span>PLAY</span>}
                 </button>
             </div>
         </div>

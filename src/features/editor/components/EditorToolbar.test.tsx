@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { EditorToolbar } from './EditorToolbar';
-import { EventLayout } from '../types';
+import type { EventLayout } from '../types';
 
 // Mock dependencies
 vi.mock('@/utils/exportHtml', () => ({
@@ -9,8 +9,8 @@ vi.mock('@/utils/exportHtml', () => ({
 }));
 
 // Mock URL.createObjectURL and revokeObjectURL
-global.URL.createObjectURL = vi.fn(() => 'blob:http://localhost/mock-blob');
-global.URL.revokeObjectURL = vi.fn();
+globalThis.URL.createObjectURL = vi.fn(() => 'blob:http://localhost/mock-blob');
+globalThis.URL.revokeObjectURL = vi.fn();
 
 // Mock console.log to avoid clutter
 console.log = vi.fn();
@@ -36,15 +36,14 @@ describe('EditorToolbar', () => {
         setViewMode: vi.fn(),
         device: 'desktop' as const,
         setDevice: vi.fn(),
-        onSave: vi.fn(),
         selectedCount: 0,
         globalStyles: mockLayout.globalStyles,
         onUpdateGlobalStyles: vi.fn(),
         musicUrl: undefined,
         onUpdateMusic: vi.fn(),
-        effects: undefined,
-        onUpdateEffects: vi.fn(),
-        layout: mockLayout
+        layout: mockLayout,
+        onToggleNavbar: vi.fn(),
+        onPlay: vi.fn()
     };
 
     it('renders all main controls', () => {
@@ -52,8 +51,14 @@ describe('EditorToolbar', () => {
 
         expect(screen.getByText('EDITAR')).toBeDefined();
         expect(screen.getByText('PREVER')).toBeDefined();
-        expect(screen.getByText('GUARDAR')).toBeDefined();
-        expect(screen.getByTitle('Exportar HTML')).toBeDefined();
+        expect(screen.getByText('PLAY')).toBeDefined();
+    });
+
+    it('does not render removed buttons', () => {
+        render(<EditorToolbar {...defaultProps} />);
+
+        expect(screen.queryByText('GUARDAR')).toBeNull();
+        expect(screen.queryByTitle('Exportar HTML')).toBeNull();
     });
 
     it('switches view mode when buttons are clicked', () => {
@@ -70,24 +75,11 @@ describe('EditorToolbar', () => {
         expect(defaultProps.setDevice).toHaveBeenCalledWith('mobile');
     });
 
-    it('triggers save callback', () => {
+    it('triggers play callback', () => {
         render(<EditorToolbar {...defaultProps} />);
 
-        fireEvent.click(screen.getByText('GUARDAR'));
-        expect(defaultProps.onSave).toHaveBeenCalled();
-    });
-
-    it('triggers HTML export', () => {
-        render(<EditorToolbar {...defaultProps} />);
-
-        // Mock the anchor click
-        const linkClickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click');
-
-        const exportBtn = screen.getByTitle('Exportar HTML');
-        fireEvent.click(exportBtn);
-
-        expect(global.URL.createObjectURL).toHaveBeenCalled();
-        expect(linkClickSpy).toHaveBeenCalled();
+        fireEvent.click(screen.getByText('PLAY'));
+        expect(defaultProps.onPlay).toHaveBeenCalled();
     });
 
     it('updates text when inputs change', () => {
