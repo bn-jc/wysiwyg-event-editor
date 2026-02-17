@@ -4,6 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;

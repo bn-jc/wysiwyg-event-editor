@@ -49,7 +49,7 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
                     style={{ textAlign: section.styles?.textAlign || 'center' }}
                 >
                     {items.map((item: any, idx: number) => (
-                        <div key={idx} className="flex gap-6 group">
+                        <div key={idx} className="flex gap-4 md:gap-6 group">
                             <div className="flex flex-col items-center">
                                 <div
                                     className="w-3 h-3 rounded-full mt-2"
@@ -59,7 +59,7 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
                                     <div className="w-[1px] flex-1 bg-gray-300 my-2" />
                                 )}
                             </div>
-                            <div className="pb-12 pt-1 transition-transform group-hover:translate-x-1 w-full">
+                            <div className="pb-10 md:pb-12 pt-1 transition-transform group-hover:translate-x-1 w-full">
                                 <InlineText
                                     tagName="span"
                                     value={item.time}

@@ -46,7 +46,7 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
                     tagName="h2"
                     value={content.title}
                     onChange={(val) => onUpdate({ title: val })}
-                    className={isMobile ? "text-4xl" : "text-5xl"}
+                    className={isMobile ? "text-3xl" : "text-5xl"}
                     readOnly={readOnly}
                     style={{
                         fontFamily: globalStyles.fontFamilyTitle,

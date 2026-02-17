@@ -113,7 +113,7 @@ export const GiftsSection: React.FC<SectionRendererProps> = ({
 
                 {content.showBankDetails && (
                     <div
-                        className="w-full max-w-2xl p-8 rounded-3xl border flex flex-col gap-6"
+                        className="w-full max-w-2xl p-6 md:p-8 rounded-3xl border flex flex-col gap-6"
                         style={{
                             borderColor: `${globalStyles.primaryColor}33`,
                             backgroundColor: `${globalStyles.primaryColor}05`

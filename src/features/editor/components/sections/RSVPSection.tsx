@@ -108,7 +108,7 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                     )}
                 </div>
 
-                <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-gray-100">
+                <div className="bg-white rounded-[2.5rem] p-6 md:p-12 shadow-sm border border-gray-100">
                     <div className="space-y-6">
 
                         <div className="group">
@@ -125,7 +125,7 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                             </label>
                             <div className="relative">
                                 <select
-                                    className="w-full bg-gray-50 border border-transparent rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500 hover:border-gray-200 transition-all outline-none pl-12 appearance-none cursor-pointer disabled:cursor-default"
+                                    className="w-full bg-gray-50 border border-transparent rounded-2xl p-4 text-base md:text-sm focus:ring-2 focus:ring-blue-500 hover:border-gray-200 transition-all outline-none pl-12 appearance-none cursor-pointer disabled:cursor-default"
                                     value={attendance}
                                     onChange={(e) => setAttendance(e.target.value)}
                                     disabled={!readOnly}
@@ -157,7 +157,7 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                                     onChange={(e) => setName(e.target.value)}
                                     placeholder={content.namePlaceholder || "Ex: Maria & João Silva"}
                                     readOnly={!readOnly}
-                                    className={`w-full bg-gray-50 border border-transparent rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500 hover:border-gray-200 transition-all outline-none pl-12 ${readOnly ? 'cursor-text' : 'cursor-default'}`}
+                                    className={`w-full bg-gray-50 border border-transparent rounded-2xl p-4 text-base md:text-sm focus:ring-2 focus:ring-blue-500 hover:border-gray-200 transition-all outline-none pl-12 ${readOnly ? 'cursor-text' : 'cursor-default'}`}
                                 />
                                 <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-hover:text-blue-500 transition-colors" size={18} />
                             </div>
@@ -179,7 +179,7 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder={content.emailPlaceholder || "seu-email@exemplo.com"}
                                     readOnly={!readOnly}
-                                    className={`w-full bg-gray-50 border border-transparent rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-400 hover:border-gray-200 transition-all outline-none pl-12 ${readOnly ? 'cursor-text' : 'cursor-default'}`}
+                                    className={`w-full bg-gray-50 border border-transparent rounded-2xl p-4 text-base md:text-sm focus:ring-2 focus:ring-blue-400 hover:border-gray-200 transition-all outline-none pl-12 ${readOnly ? 'cursor-text' : 'cursor-default'}`}
                                 />
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-hover:text-blue-400 transition-colors" size={18} />
                             </div>
@@ -202,7 +202,7 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                                         onChange={(e) => setMessage(e.target.value)}
                                         placeholder={content.messagePlaceholder || "Alguma restrição alimentar ou mensagem especial?"}
                                         readOnly={!readOnly}
-                                        className={`w-full bg-gray-50 border border-transparent rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-400 hover:border-gray-200 transition-all outline-none pl-12 resize-none ${readOnly ? 'cursor-text' : 'cursor-default'}`}
+                                        className={`w-full bg-gray-50 border border-transparent rounded-2xl p-4 text-base md:text-sm focus:ring-2 focus:ring-blue-400 hover:border-gray-200 transition-all outline-none pl-12 resize-none ${readOnly ? 'cursor-text' : 'cursor-default'}`}
                                     />
                                     <MessageSquare className="absolute left-4 top-4 text-gray-300 group-hover:text-blue-400 transition-colors" size={18} />
                                 </div>

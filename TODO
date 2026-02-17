@@ -1,4 +1,4 @@
-1. Navbar has desapeared. Toggle Navbar section to be visible or not. Highlight current section in the navbar-DynamicRenderer. [Done]
+
 2. Ensure that when the page is is in play mode, the editor UI is not visible.
 3. Ensure that even when the elements are big, when the screen is small, the elements are not cutted. Ensure that the elements are responsive.
 4. The white color in the palate is not visible, there's no contrast with the border/editor.

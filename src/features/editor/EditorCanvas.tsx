@@ -67,6 +67,20 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
     const activeSection = layout.sections.find(s => s.id === activeSectionId);
     const activeSectionIndex = layout.sections.findIndex(s => s.id === activeSectionId);
 
+    // Disable body scroll when in Play Mode
+    React.useEffect(() => {
+        if (isPlayMode) {
+            document.body.style.overflow = 'hidden';
+            // Also prevent touchmove if necessary for iOS
+            const preventDefault = (e: TouchEvent) => e.preventDefault();
+            document.addEventListener('touchmove', preventDefault, { passive: false });
+            return () => {
+                document.body.style.overflow = '';
+                document.removeEventListener('touchmove', preventDefault);
+            };
+        }
+    }, [isPlayMode]);
+
     if (isPlayMode) {
         return (
             <div className="fixed inset-0 z-[100] bg-white overflow-hidden flex flex-col">
