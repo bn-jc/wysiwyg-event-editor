@@ -148,4 +148,58 @@ describe('useEditorState', () => {
         // Still index 0
         expect(result.current.layout.sections[0].id).toBe(splashId);
     });
+
+    it('should add a new section after the active one', () => {
+        const { result } = renderHook(() => useEditorState());
+
+        // Initial: Splash, Hero
+        act(() => {
+            result.current.addSection('AgendaSection');
+        });
+        // Now: Splash, Hero, Agenda (Active: Agenda)
+
+        // Select Hero
+        const heroId = result.current.layout.sections[1].id;
+        act(() => {
+            result.current.setActiveSectionId(heroId);
+        });
+
+        // Add Gifts after Hero
+        act(() => {
+            result.current.addSection('GiftsSection');
+        });
+
+        expect(result.current.layout.sections[2].type).toBe('GiftsSection');
+        expect(result.current.layout.sections[3].type).toBe('AgendaSection');
+    });
+
+    it('should reorder sections correctly', () => {
+        const { result } = renderHook(() => useEditorState());
+
+        act(() => {
+            result.current.addSection('AgendaSection'); // index 2
+            result.current.addSection('GiftsSection');  // index 3
+        });
+
+        // Current: [Splash, Hero, Agenda, Gifts]
+        const agendaId = result.current.layout.sections[2].id;
+
+        act(() => {
+            result.current.reorderSections(2, 3); // Move Agenda to index 3
+        });
+
+        expect(result.current.layout.sections[3].id).toBe(agendaId);
+        expect(result.current.layout.sections[2].type).toBe('GiftsSection');
+    });
+
+    it('should NOT allow reordering Splash Section', () => {
+        const { result } = renderHook(() => useEditorState());
+        const splashId = result.current.layout.sections[0].id;
+
+        act(() => {
+            result.current.reorderSections(0, 1);
+        });
+
+        expect(result.current.layout.sections[0].id).toBe(splashId);
+    });
 });

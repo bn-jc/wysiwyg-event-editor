@@ -8,6 +8,7 @@ import { cn } from '@/utils/cn';
 import { PropertyEditor } from './components/PropertyEditor';
 import { useEditorApi } from './hooks/useEditorApi';
 import { useContainerSize } from './hooks/useContainerSize';
+import { SectionLayersPanel } from './SectionLayersPanel';
 
 export interface EditorCanvasProps {
     initialLayout?: import('./types').EventLayout;
@@ -47,6 +48,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
         showLayers,
         setShowLayers,
         addSection,
+        reorderSections,
         updateSectionContent,
         updateSectionStyles,
         deleteSection,
@@ -175,6 +177,16 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                         isLayersOpen={showLayers}
                         mode={containerMode}
                         hasSplash={layout.sections.some(s => s.type === 'SplashSection')}
+                        isDark={editorIsDark}
+                    />
+                )}
+
+                {showLayers && !isPreviewOnly && (
+                    <SectionLayersPanel
+                        sections={layout.sections}
+                        activeSectionId={activeSectionId}
+                        onSelect={setActiveSectionId}
+                        onReorder={reorderSections}
                         isDark={editorIsDark}
                     />
                 )}

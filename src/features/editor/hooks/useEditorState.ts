@@ -104,12 +104,34 @@ export const useEditorState = (initialLayout?: EventLayout) => {
                 // Force splash to the beginning
                 newSections.unshift(newSection);
             } else {
-                newSections.push(newSection);
+                // Find index of active section to insert after
+                const activeIndex = prev.sections.findIndex(s => s.id === activeSectionId);
+                if (activeIndex !== -1) {
+                    newSections.splice(activeIndex + 1, 0, newSection);
+                } else {
+                    newSections.push(newSection);
+                }
             }
             return { ...prev, sections: newSections };
         });
         setActiveSectionId(newSection.id);
-    }, [layout.sections]);
+    }, [layout.sections, activeSectionId]);
+
+    const reorderSections = useCallback((startIndex: number, endIndex: number) => {
+        setLayout(prev => {
+            const newSections = [...prev.sections];
+
+            // Prevent reordering splash section out of index 0
+            if (newSections[startIndex]?.type === 'SplashSection' || (endIndex === 0 && newSections[0]?.type === 'SplashSection')) {
+                return prev;
+            }
+
+            const [removed] = newSections.splice(startIndex, 1);
+            newSections.splice(endIndex, 0, removed);
+
+            return { ...prev, sections: newSections };
+        });
+    }, []);
 
     const updateSectionContent = useCallback((sectionId: string, newContent: Partial<SectionContent>) => {
         setLayout(prev => ({
@@ -184,6 +206,7 @@ export const useEditorState = (initialLayout?: EventLayout) => {
         showLayers,
         setShowLayers,
         addSection,
+        reorderSections,
         updateSectionContent,
         updateSectionStyles,
         deleteSection,
