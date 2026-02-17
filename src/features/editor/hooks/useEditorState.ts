@@ -39,13 +39,24 @@ export const useEditorState = (initialLayout?: EventLayout) => {
     const [showLayers, setShowLayers] = useState(true);
 
     const addSection = useCallback((type: SectionType) => {
+        const hasSplash = layout.sections.some(s => s.type === 'SplashSection');
+
+        // Prevent multiple splash sections
+        if (type === 'SplashSection' && hasSplash) return;
+
         const newSection = createSection(type);
-        setLayout(prev => ({
-            ...prev,
-            sections: [...prev.sections, newSection]
-        }));
+        setLayout(prev => {
+            const newSections = [...prev.sections];
+            if (type === 'SplashSection') {
+                // Force splash to the beginning
+                newSections.unshift(newSection);
+            } else {
+                newSections.push(newSection);
+            }
+            return { ...prev, sections: newSections };
+        });
         setActiveSectionId(newSection.id);
-    }, []);
+    }, [layout.sections]);
 
     const updateSectionContent = useCallback((sectionId: string, newContent: Partial<SectionContent>) => {
         setLayout(prev => ({
@@ -83,6 +94,12 @@ export const useEditorState = (initialLayout?: EventLayout) => {
             const targetIndex = direction === 'up' ? index - 1 : index + 1;
 
             if (targetIndex < 0 || targetIndex >= newSections.length) return prev;
+
+            const section = newSections[index];
+
+            // Constraint: SplashSection must always be at index 0
+            if (section.type === 'SplashSection') return prev; // Cannot move splash
+            if (targetIndex === 0 && newSections[0]?.type === 'SplashSection') return prev; // Cannot move anything above splash
 
             // Simple swap
             [newSections[index], newSections[targetIndex]] = [newSections[targetIndex], newSections[index]];

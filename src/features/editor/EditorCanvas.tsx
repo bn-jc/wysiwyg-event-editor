@@ -89,8 +89,8 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                         onAddSection={addSection}
                         onToggleLayers={() => setShowLayers(!showLayers)}
                         isLayersOpen={showLayers}
-                        // @ts-ignore - Prop will be added in next step
                         mode={containerMode}
+                        hasSplash={layout.sections.some(s => s.type === 'SplashSection')}
                     />
                 )}
 

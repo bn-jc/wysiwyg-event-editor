@@ -13,6 +13,9 @@ A modern, embeddable event editor built with React and TypeScript. This applicat
 - **RSVP Management**: Built-in functionality to collect and manage guest RSVPs efficiently.
 - **Responsive Experience**: Adaptive editor interface and content rendering that automatically adjusts to Desktop, Tablet, and Mobile layouts.
 - **Auto-Device Detection**: The `DynamicRenderer` component intelligently detects its container size to serve the optimal layout.
+- **Full Viewport Options**: Support for "Boxed" (standard) and "Full Width" (immersive) layout modes.
+- **In-Page Navigation**: New `NavSection` component for smooth scrolling between invitation sections.
+- **Standalone Examples**: Comprehensive HTML examples demonstrating specific integration patterns.
 
 ## Getting Started
 

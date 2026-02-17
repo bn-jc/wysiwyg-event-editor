@@ -94,21 +94,33 @@ describe('EditorCanvas Integration', () => {
         expect(screen.queryByTestId('property-editor')).not.toBeInTheDocument();
     });
 
-    it('should move a section when clicking move buttons in property editor', () => {
+    it('should NOT move a section when it violates Splash constraints', () => {
         render(<EditorCanvas />);
 
         // Initially we have Splash (index 0) and Hero (index 1)
         const splashSection = screen.getByTestId('section-SplashSection');
         fireEvent.click(splashSection);
 
-        // Move splash down
+        // Try to move splash down
         const moveDownBtn = screen.getByTitle('Mover para baixo');
         fireEvent.click(moveDownBtn);
 
-        // Now first section should be HeroSection
-        const sections = screen.getAllByTestId(/section-/);
-        expect(sections[0]).toHaveAttribute('data-testid', 'section-HeroSection');
-        expect(sections[1]).toHaveAttribute('data-testid', 'section-SplashSection');
+        // Splash should STILL be at index 0
+        let sections = screen.getAllByTestId(/section-/);
+        expect(sections[0]).toHaveAttribute('data-testid', 'section-SplashSection');
+        expect(sections[1]).toHaveAttribute('data-testid', 'section-HeroSection');
+
+        // Now select Hero and try to move UP
+        const heroSection = screen.getByTestId('section-HeroSection');
+        fireEvent.click(heroSection);
+
+        const moveUpBtn = screen.getByTitle('Mover para cima');
+        fireEvent.click(moveUpBtn);
+
+        // Hero should STILL be at index 1 (below Splash)
+        sections = screen.getAllByTestId(/section-/);
+        expect(sections[0]).toHaveAttribute('data-testid', 'section-SplashSection');
+        expect(sections[1]).toHaveAttribute('data-testid', 'section-HeroSection');
     });
 
     it('should add new section to the bottom and select it', () => {

@@ -23,6 +23,7 @@ interface SidebarProps {
     isLayersOpen: boolean;
     readOnly?: boolean;
     mode?: ContainerMode;
+    hasSplash?: boolean;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -30,7 +31,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     onToggleLayers,
     isLayersOpen,
     readOnly = false,
-    mode = 'wide'
+    mode = 'wide',
+    hasSplash = false
 }) => {
     if (readOnly) return null;
     const [collapsed, setCollapsed] = React.useState(mode !== 'wide');
@@ -114,22 +116,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <div key={cat.id} className={cn("flex flex-col items-center gap-2 w-full", !isMobile && "mb-4", isMobile && "flex-row gap-1 border-r pr-2 last:border-0")}>
                         {!collapsed && !isMobile && <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{cat.name}</span>}
 
-                        {cat.items.map(item => (
-                            <div key={item.id} className="flex flex-col items-center gap-1 group relative px-1">
-                                <button
-                                    onClick={() => onAddSection(item.id)}
-                                    className={cn(
-                                        "p-3 rounded-xl bg-gray-50 hover:bg-white text-gray-700 hover:text-blue-600 transition-all border border-gray-100 hover:border-blue-200 shadow-sm active:scale-95",
-                                        !collapsed && "hover:scale-110",
-                                        isMobile && "p-2"
+                        {cat.items.map(item => {
+                            const isDisabled = item.id === 'SplashSection' && hasSplash;
+                            return (
+                                <div key={item.id} className="flex flex-col items-center gap-1 group relative px-1">
+                                    <button
+                                        onClick={() => !isDisabled && onAddSection(item.id)}
+                                        disabled={isDisabled}
+                                        className={cn(
+                                            "p-3 rounded-xl bg-gray-50 hover:bg-white text-gray-700 hover:text-blue-600 transition-all border border-gray-100 hover:border-blue-200 shadow-sm active:scale-95",
+                                            !collapsed && "hover:scale-110",
+                                            isMobile && "p-2",
+                                            isDisabled && "opacity-40 cursor-not-allowed grayscale"
+                                        )}
+                                        title={isDisabled ? "Apenas uma Portão é permitida" : `Adicionar ${item.name}`}
+                                    >
+                                        <item.icon size={isMobile ? 18 : 22} />
+                                    </button>
+                                    {!collapsed && !isMobile && (
+                                        <span className={cn("text-[10px] font-medium text-gray-500", isDisabled && "opacity-40")}>
+                                            {item.name}
+                                        </span>
                                     )}
-                                    title={`Adicionar ${item.name}`}
-                                >
-                                    <item.icon size={isMobile ? 18 : 22} />
-                                </button>
-                                {!collapsed && !isMobile && <span className="text-[10px] font-medium text-gray-500">{item.name}</span>}
-                            </div>
-                        ))}
+                                </div>
+                            );
+                        })}
                     </div>
                 ))}
             </div>

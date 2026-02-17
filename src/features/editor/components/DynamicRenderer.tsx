@@ -25,9 +25,9 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
 
     const [hasOpened, setHasOpened] = React.useState(false);
 
-    // Check if the first section is a splash screen
-    const firstSection = layout.sections[0];
-    const hasSplash = firstSection?.type === 'SplashSection';
+    // Check for splash screen anywhere in the sections
+    const splashSection = layout.sections.find(s => s.type === 'SplashSection');
+    const hasSplash = !!splashSection;
     const showOnlySplash = readOnly && hasSplash && !hasOpened;
 
     // Scroll to active section or top when splash is dismissed
@@ -56,16 +56,16 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
                 color: layout.globalStyles.primaryColor
             }}
         >
-            {showOnlySplash ? (
-                <div key={firstSection.id} data-section-id={firstSection.id} className="h-full w-full">
+            {showOnlySplash && splashSection ? (
+                <div key={splashSection.id} data-section-id={splashSection.id} className="h-full w-full">
                     <SectionRenderer
-                        section={firstSection}
+                        section={splashSection}
                         globalStyles={layout.globalStyles}
                         isActive={false} // Splash is never "active" in read-only mode in the editor sense
                         onSelect={() => { }}
                         onUpdate={() => { }}
                         readOnly={true}
-                        index={0}
+                        index={layout.sections.indexOf(splashSection)}
                         device={device}
                         onOpen={() => setHasOpened(true)}
                     />
@@ -73,7 +73,8 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
             ) : (
                 layout.sections.map((section, index) => {
                     // If in read-only mode and we have a splash screen, don't show it in the main list
-                    if (readOnly && hasSplash && index === 0) return null;
+                    // (Detect by ID to be safe across reorders)
+                    if (readOnly && hasSplash && section.id === splashSection?.id) return null;
 
                     return (
                         <div key={section.id} data-section-id={section.id}>
@@ -86,7 +87,7 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
                                 readOnly={readOnly}
                                 index={index}
                                 device={device}
-                                // Pass onOpen just in case, though mostly used by Splash
+                                // Pass onOpen just in case
                                 onOpen={() => setHasOpened(true)}
                             />
                         </div>

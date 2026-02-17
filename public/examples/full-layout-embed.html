@@ -93,6 +93,22 @@
             },
             sections: [
                 {
+                    id: 'nav-main',
+                    type: 'NavSection',
+                    content: {
+                        links: [
+                            { label: 'Início', targetId: 'splash-1' },
+                            { label: 'Cerimónia', targetId: 'agenda-1' },
+                            { label: 'RSVP', targetId: 'rsvp-1' },
+                            { label: 'Mensagens', targetId: 'guestbook-1' }
+                        ],
+                        style: 'floating',
+                        alignment: 'center',
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        textColor: '#333'
+                    }
+                },
+                {
                     id: 'splash-1',
                     type: 'SplashSection',
                     content: {

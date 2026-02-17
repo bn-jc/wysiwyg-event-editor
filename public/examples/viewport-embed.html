@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viewport Layout Embed Example</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Viewport Embed Example</title>
     <style>
         body,
         html {
@@ -14,9 +13,10 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            background-color: #000;
         }
 
-        #preview-frame {
+        iframe {
             width: 100%;
             height: 100%;
             border: none;
@@ -26,37 +26,52 @@
 </head>
 
 <body>
-    <!-- The Full Screen Iframe Container -->
     <iframe id="preview-frame" src="/?view=public" title="Event Invitation"></iframe>
 
     <script>
         const frame = document.getElementById('preview-frame');
 
-        // Full Layout Definition from full-layout-embed.html
+        // Full Layout Definition with updated configuration
         const fullLayout = {
-            id: 'full-layout-' + Date.now(),
-            name: 'Complete Showcase',
+            id: 'viewport-layout-' + Date.now(),
+            name: 'Immersive Showcase',
             eventType: 'wedding',
             language: 'pt-MZ',
             globalStyles: {
                 fontFamilyTitle: 'Playfair Display',
                 fontFamilyBody: 'Lato',
-                primaryColor: '#4a4a4a',
-                secondaryColor: '#7a7a7a',
-                backgroundColor: '#ffffff'
+                primaryColor: '#e11d48',
+                secondaryColor: '#9f1239',
+                backgroundColor: '#ffffff',
+                layoutMode: 'full' // New feature: Full width layout
             },
             sections: [
+                {
+                    id: 'nav-1',
+                    type: 'NavSection',
+                    content: {
+                        links: [
+                            { label: 'Topo', targetId: 'splash-1' },
+                            { label: 'Agenda', targetId: 'agenda-1' },
+                            { label: 'RSVP', targetId: 'rsvp-1' }
+                        ],
+                        style: 'floating',
+                        alignment: 'center',
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        textColor: '#1f2937'
+                    }
+                },
                 {
                     id: 'splash-1',
                     type: 'SplashSection',
                     content: {
-                        title: 'Bem-vindos',
-                        names: 'Ana & Pedro',
-                        date: '2025-12-12',
-                        buttonLabel: 'Abrir Convite',
-                        lineVariant: 'heart',
-                        icon: 'heart',
-                        backgroundImage: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80'
+                        title: 'Cerimónia de Sonho',
+                        names: 'Sofia & Miguel',
+                        date: '2026-06-20',
+                        buttonLabel: 'Entrar',
+                        lineVariant: 'flourish',
+                        icon: 'rings',
+                        backgroundImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=80'
                     },
                     styles: {
                         color: '#ffffff'
@@ -66,103 +81,54 @@
                     id: 'hero-1',
                     type: 'HeroSection',
                     content: {
-                        title: 'O Nosso Casamento',
-                        subtitle: 'Vamos celebrar o amor!',
-                        backgroundImage: 'https://images.unsplash.com/photo-1519225421980-715cb0202128?auto=format&fit=crop&q=80',
+                        title: 'O Nosso Dia',
+                        subtitle: 'Junte-se a nós nesta celebração de amor',
+                        backgroundImage: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1920&q=80',
                         layout: 'centered'
                     },
                     styles: {
                         color: '#ffffff',
-                        height: '600px',
-                        paddingTop: '80px',
-                        paddingBottom: '80px',
-                        gap: '48px',
-                        backgroundColor: '#374151' // Dark background for contrast with white text
+                        height: '100vh',
+                        backgroundColor: '#1f2937'
                     },
-                },
-                {
-                    id: 'countdown-1',
-                    type: 'CountdownSection',
-                    content: {
-                        title: 'A Contagem Decrescente',
-                        targetDate: '2026-12-12T15:00:00'
-                    },
-                    styles: {
-                        backgroundColor: '#f8f9fa'
-                    }
                 },
                 {
                     id: 'agenda-1',
                     type: 'AgendaSection',
                     content: {
-                        title: 'Programa do Dia',
+                        title: 'Agenda',
                         items: [
-                            { time: '15:00', label: 'Cerimónia', location: 'Igreja Matriz', icon: 'church' },
-                            { time: '17:00', label: 'Cocktail', location: 'Jardim do Palácio', icon: 'cocktail' },
-                            { time: '19:00', label: 'Jantar', location: 'Salão Nobre', icon: 'utensils' },
-                            { time: '22:00', label: 'Festa', location: 'Pista de Dança', icon: 'music' }
+                            { time: '14:00', label: 'Chegada', location: 'Jardins', icon: 'map-pin' },
+                            { time: '15:00', label: 'Cerimónia', location: 'Capela', icon: 'heart' },
+                            { time: '17:00', label: 'Cocktail', location: 'Terraço', icon: 'cocktail' }
                         ]
                     },
                     styles: {
-                        backgroundColor: '#f3f4f6', // Light gray background for visibility
-                        paddingTop: '80px',
-                        paddingBottom: '80px'
-                    }
-                },
-                {
-                    id: 'separator-1',
-                    type: 'SeparatorSection',
-                    content: {
-                        style: 'flower',
-                        color: '#e11d48'
+                        backgroundColor: '#f3f4f6',
+                        paddingTop: '100px',
+                        paddingBottom: '100px'
                     }
                 },
                 {
                     id: 'rsvp-1',
                     type: 'RSVPSection',
                     content: {
-                        title: 'Confirme a Presença',
-                        deadline: '01/11/2025',
-                        buttonLabel: 'Confirmar Agora'
+                        title: 'RSVP',
+                        deadline: '2026-05-01',
+                        buttonLabel: 'Confirmar Presença'
                     },
                     styles: {
-                        backgroundColor: '#fff1f2'
-                    }
-                },
-                {
-                    id: 'guestbook-1',
-                    type: 'GuestbookSection',
-                    content: {
-                        title: 'Livro de Visitas',
-                        subtitle: 'Deixe uma mensagem para os noivos',
-                        messages: [
-                            { name: 'Maria Silva', message: 'Muitas felicidades aos dois!', date: '2025-01-10', id: 'msg-1' },
-                            { name: 'João Santos', message: 'Ansioso pelo grande dia!', date: '2025-01-11', id: 'msg-2' }
-                        ]
-                    }
-                },
-                {
-                    id: 'custom-1',
-                    type: 'CustomSection',
-                    content: {
-                        elements: [
-                            { type: 'heading', content: 'Informações Úteis', style: 'heading' },
-                            { type: 'text', content: 'Para quem vem de fora, recomendamos o Hotel Central.', style: 'paragraph' },
-                            { type: 'list', items: ['Dress Code: Formal', 'Parking: Gratuito no local', 'Ofertas: A vossa presença é o melhor presente'], listType: 'bullet' }
-                        ]
-                    },
-                    styles: {
-                        backgroundColor: '#f0fdf4'
+                        backgroundColor: '#fff1f2',
+                        paddingTop: '100px',
+                        paddingBottom: '100px'
                     }
                 }
             ]
         };
 
-        // Send layout when frame is ready
         window.addEventListener('message', (event) => {
             const { type } = event.data;
             if (type === 'EDITOR_READY') {
-                console.log('Editor ready, sending layout...');
                 frame.contentWindow.postMessage({
                     type: 'EDITOR_LOAD_LAYOUT',
                     payload: fullLayout
@@ -170,13 +136,12 @@
             }
         });
 
-        // Fallback: Try sending after a short delay in case EDITOR_READY was missed
         setTimeout(() => {
             frame.contentWindow.postMessage({
                 type: 'EDITOR_LOAD_LAYOUT',
                 payload: fullLayout
             }, '*');
-        }, 1000);
+        }, 1500);
 
     </script>
 </body>
