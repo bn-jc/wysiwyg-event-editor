@@ -7,7 +7,6 @@ import { cn } from '@/utils/cn';
 
 import { PropertyEditor } from './components/PropertyEditor';
 import { BackgroundMusic } from './components/BackgroundMusic';
-import { EffectsOverlay } from './components/EffectsOverlay';
 import { useEditorApi } from './hooks/useEditorApi';
 import { useContainerSize } from './hooks/useContainerSize';
 
@@ -37,8 +36,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
         deleteSection,
         moveSection,
         updateGlobalStyles,
-        updateMusic,
-        updateEffects
+        updateMusic
     } = useEditorState(initialLayout);
 
     const handleSave = useCallback(() => {
@@ -52,7 +50,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
     }, [layout, onSave]);
 
     // Initialize Editor API
-    useEditorApi({
+    const { emitInteraction } = useEditorApi({
         layout,
         setLayout,
         updateSectionContent,
@@ -66,7 +64,6 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
     return (
         <div ref={containerRef} className="flex h-full flex-col bg-gray-50 overflow-hidden font-sans relative">
             <BackgroundMusic url={layout.musicUrl} />
-            <EffectsOverlay effects={layout.effects} />
             <EditorToolbar
                 viewMode={viewMode}
                 setViewMode={setViewMode}
@@ -78,9 +75,20 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                 onUpdateGlobalStyles={updateGlobalStyles}
                 musicUrl={layout.musicUrl}
                 onUpdateMusic={updateMusic}
-                effects={layout.effects}
-                onUpdateEffects={updateEffects}
                 layout={layout}
+                onToggleNavbar={() => {
+                    const navSection = layout.sections.find(s => s.type === 'NavSection');
+                    if (navSection) {
+                        setLayout(prev => ({
+                            ...prev,
+                            sections: prev.sections.map(s =>
+                                s.id === navSection.id ? { ...s, isHidden: !s.isHidden } : s
+                            )
+                        }));
+                    } else {
+                        addSection('NavSection');
+                    }
+                }}
             />
 
             <div className="flex flex-1 overflow-hidden relative">
@@ -118,6 +126,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                             activeSectionId={activeSectionId}
                             onSectionUpdate={updateSectionContent}
                             onSectionSelect={setActiveSectionId}
+                            onInteraction={emitInteraction}
                         />
                     </div>
                 </main>

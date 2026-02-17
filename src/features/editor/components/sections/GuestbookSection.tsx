@@ -7,6 +7,7 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
     section,
     globalStyles,
     onUpdate,
+    onInteraction,
     readOnly
 }) => {
     const { content } = section;
@@ -27,6 +28,12 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
 
         onUpdate({
             messages: [newMessage, ...messages]
+        });
+
+        onInteraction?.({
+            type: 'GUESTBOOK_SUBMIT',
+            payload: { name, message },
+            timestamp: Date.now()
         });
 
         setName('');

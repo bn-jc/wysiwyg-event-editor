@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import type { EventLayout, SectionContent } from '../types';
+import type { EventLayout, SectionContent, EditorInteraction } from '../types';
 
 interface EditorApiProps {
     layout: EventLayout;
@@ -64,4 +64,18 @@ export const useEditorApi = ({ layout, setLayout, updateSectionContent, onSave, 
             payload: layout
         }, '*');
     }, [layout, enabled]);
+
+    const emitInteraction = useCallback((interaction: Omit<EditorInteraction, 'timestamp'>) => {
+        if (!enabled) return;
+
+        window.parent.postMessage({
+            type: 'EDITOR_INTERACTION',
+            payload: {
+                ...interaction,
+                timestamp: Date.now()
+            }
+        }, '*');
+    }, [enabled]);
+
+    return { emitInteraction };
 };

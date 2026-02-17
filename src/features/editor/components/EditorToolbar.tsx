@@ -1,9 +1,10 @@
 import React from 'react';
-import { LayoutGrid, Save, Smartphone, Tablet, Monitor, Eye, Type, Music, Palette, Sparkle, Code } from 'lucide-react';
+import { LayoutGrid, Save, Smartphone, Tablet, Monitor, Eye, Type, Music, Palette, Code, Navigation } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import type { DeviceType, ViewMode, EventLayout } from '../types';
 import { generateStandaloneHtml } from '../utils/exportHtml';
 import type { ContainerMode } from '../hooks/useContainerSize';
+import { ColorPicker } from './common/ColorPicker';
 
 interface EditorToolbarProps {
     viewMode: ViewMode;
@@ -16,10 +17,9 @@ interface EditorToolbarProps {
     onUpdateGlobalStyles: (styles: Partial<EventLayout['globalStyles']>) => void;
     musicUrl?: string;
     onUpdateMusic: (url?: string) => void;
-    effects?: EventLayout['effects'];
-    onUpdateEffects: (effects: EventLayout['effects']) => void;
     layout: EventLayout;
     containerMode?: ContainerMode;
+    onToggleNavbar: () => void;
 }
 
 export const EditorToolbar: React.FC<EditorToolbarProps> = ({
@@ -32,11 +32,25 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
     onUpdateGlobalStyles,
     musicUrl,
     onUpdateMusic,
-    effects,
-    onUpdateEffects,
     layout,
-    containerMode = 'wide'
+    containerMode = 'wide',
+    onToggleNavbar
 }) => {
+    const navSection = layout.sections.find(s => s.type === 'NavSection');
+    const isNavHidden = navSection?.isHidden;
+    const [showColorPicker, setShowColorPicker] = React.useState(false);
+    const pickerRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
+                setShowColorPicker(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
     const isPreview = viewMode === 'preview';
     const isMobile = containerMode === 'mobile';
     const isCompact = containerMode === 'compact';
@@ -97,15 +111,30 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                 {/* Global Theme Controls - Hide on mobile/compact to save space */}
                 {!isPreview && !isMobile && !isCompact && (
                     <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
-                            <Palette size={14} className="text-gray-400" />
-                            <input
-                                type="color"
-                                value={globalStyles.primaryColor}
-                                onChange={(e) => onUpdateGlobalStyles({ primaryColor: e.target.value })}
-                                className="w-4 h-4 rounded-full overflow-hidden p-0 border-none cursor-pointer"
-                            />
-                            <span className="text-[10px] font-bold text-gray-400 uppercase">Tema</span>
+                        <div className="relative" ref={pickerRef}>
+                            <button
+                                onClick={() => setShowColorPicker(!showColorPicker)}
+                                className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100 hover:bg-white transition-all shadow-sm"
+                            >
+                                <Palette size={14} className="text-gray-400" />
+                                <div
+                                    className="w-4 h-4 rounded-full border border-gray-200"
+                                    style={{ backgroundColor: globalStyles.primaryColor }}
+                                />
+                                <span className="text-[10px] font-bold text-gray-400 uppercase">Tema</span>
+                            </button>
+
+                            {showColorPicker && (
+                                <div className="absolute top-full left-0 mt-2 p-4 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 w-64 animate-in fade-in zoom-in-95">
+                                    <div className="mb-2">
+                                        <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Cor do Tema</span>
+                                    </div>
+                                    <ColorPicker
+                                        value={globalStyles.primaryColor}
+                                        onChange={(color) => onUpdateGlobalStyles({ primaryColor: color })}
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         {/* Layout Mode Toggle */}
@@ -139,8 +168,6 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                             </div>
                         </div>
 
-                        {/* Language - Optional for now */}
-
                         <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
                             <Music size={14} className="text-gray-400" />
                             <select
@@ -154,19 +181,20 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                             </select>
                         </div>
 
-                        <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
-                            <Sparkle size={14} className="text-gray-400" />
-                            <select
-                                value={effects || 'none'}
-                                onChange={(e) => onUpdateEffects(e.target.value as any)}
-                                className="bg-transparent text-[10px] font-bold text-gray-500 border-none p-0 focus:ring-0 cursor-pointer w-20"
-                            >
-                                <option value="none">Sem Efeitos</option>
-                                <option value="confetti">Confetes</option>
-                                <option value="hearts">Corações</option>
-                                <option value="balloons">Balões</option>
-                            </select>
-                        </div>
+                        {/* Navbar Toggle */}
+                        <button
+                            onClick={onToggleNavbar}
+                            className={cn(
+                                "flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all shadow-sm",
+                                isNavHidden
+                                    ? "bg-gray-50 border-gray-100 text-gray-400 opacity-60"
+                                    : "bg-blue-50 border-blue-100 text-blue-600"
+                            )}
+                            title={isNavHidden ? "Mostrar Navbar" : "Ocultar Navbar"}
+                        >
+                            <Navigation size={14} className={cn(isNavHidden ? "text-gray-400" : "text-blue-600")} />
+                            <span className="text-[10px] font-bold uppercase">Navbar</span>
+                        </button>
                     </div>
                 )}
             </div>

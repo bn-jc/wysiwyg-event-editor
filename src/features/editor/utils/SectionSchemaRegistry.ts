@@ -25,7 +25,17 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
             imageMask: 'heart',
             showRecipient: false,
             recipientPrefix: 'Convidado:',
-            recipientName: '[Nome]'
+            recipientName: '[Nome]',
+            imageScale: 1,
+            imageDecoration: 'none',
+            imageFeather: 0,
+            backgroundEffect: 'none',
+            backgroundEffectColor: '#FFC0CB',
+            backgroundEffectDirection: 'up',
+            backgroundEffectStart: 0,
+            backgroundEffectEnd: 0,
+            backgroundParticles: 'none',
+            backgroundParticlesColor: '#60A5FA'
         }
     },
     AgendaSection: {
@@ -35,7 +45,14 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
             items: [
                 { time: '10:00', label: 'Cerimónia Religiosa', location: 'Igreja de Santo António' },
                 { time: '13:00', label: 'Almoço e Recepção', location: 'Salão de Festas Central' }
-            ]
+            ],
+            backgroundEffect: 'none',
+            backgroundEffectColor: '#FFC0CB',
+            backgroundEffectDirection: 'up',
+            backgroundEffectStart: 0,
+            backgroundEffectEnd: 0,
+            backgroundParticles: 'none',
+            backgroundParticlesColor: '#60A5FA'
         }
     },
     RSVPSection: {
@@ -52,9 +69,17 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
             emailPlaceholder: 'seu-email@exemplo.com',
             messageLabel: 'Mensagem para os Noivos',
             messagePlaceholder: 'Alguma restrição alimentar ou mensagem especial?',
+            showMessageField: true,
             footerText: 'Estamos ansiosos por celebrar este dia especial convosco!',
             attendanceLabel: 'Você vai?',
-            attendanceOptions: ['Sim, Eu vou!', 'Desculpe, não posso ir']
+            attendanceOptions: ['Sim, Eu vou!', 'Desculpe, não posso ir'],
+            backgroundEffect: 'none',
+            backgroundEffectColor: '#FFC0CB',
+            backgroundEffectDirection: 'up',
+            backgroundEffectStart: 0,
+            backgroundEffectEnd: 0,
+            backgroundParticles: 'none',
+            backgroundParticlesColor: '#60A5FA'
         }
     },
     GuestbookSection: {
@@ -69,7 +94,14 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
             messages: [
                 { name: 'Tia Maria', message: 'Muitas felicidades aos noivos! Que Deus abençoe esta união.', date: '2 horas atrás' },
                 { name: 'João & Ana', message: 'Ansiosos pelo grande dia! Vai ser lindo.', date: '5 horas atrás' }
-            ]
+            ],
+            backgroundEffect: 'none',
+            backgroundEffectColor: '#FFC0CB',
+            backgroundEffectDirection: 'up',
+            backgroundEffectStart: 0,
+            backgroundEffectEnd: 0,
+            backgroundParticles: 'none',
+            backgroundParticlesColor: '#60A5FA'
         }
     },
     CountdownSection: {
@@ -78,6 +110,13 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
             title: 'Faltam apenas...',
             targetDate: '2026-12-12T10:00:00',
             finishMessage: 'O Grande Dia Chegou!',
+            backgroundEffect: 'none',
+            backgroundEffectColor: '#FFC0CB',
+            backgroundEffectDirection: 'up',
+            backgroundEffectStart: 0,
+            backgroundEffectEnd: 0,
+            backgroundParticles: 'none',
+            backgroundParticlesColor: '#60A5FA'
         }
     },
     SeparatorSection: {
@@ -86,7 +125,14 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
             variant: 'line', // 'line', 'flourish', 'dots'
             padding: 'medium', // 'small', 'medium', 'large'
             color: '',
-            gradient: 'none'
+            gradient: 'none',
+            backgroundEffect: 'none',
+            backgroundEffectColor: '#FFC0CB',
+            backgroundEffectDirection: 'up',
+            backgroundEffectStart: 0,
+            backgroundEffectEnd: 0,
+            backgroundParticles: 'none',
+            backgroundParticlesColor: '#60A5FA'
         }
     },
     CustomSection: {
@@ -102,7 +148,14 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
                     format: 'disc',
                     items: ['Amizade', 'Parceria', 'Amor']
                 }
-            ]
+            ],
+            backgroundEffect: 'none',
+            backgroundEffectColor: '#FFC0CB',
+            backgroundEffectDirection: 'up',
+            backgroundEffectStart: 0,
+            backgroundEffectEnd: 0,
+            backgroundParticles: 'none',
+            backgroundParticlesColor: '#60A5FA'
         }
     },
     NavSection: {
@@ -116,7 +169,14 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
             style: 'floating', // 'sticky', 'fixed', 'floating'
             alignment: 'center',
             backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            textColor: '#333333'
+            textColor: '#333333',
+            backgroundEffect: 'none',
+            backgroundEffectColor: '#FFC0CB',
+            backgroundEffectDirection: 'up',
+            backgroundEffectStart: 0,
+            backgroundEffectEnd: 0,
+            backgroundParticles: 'none',
+            backgroundParticlesColor: '#60A5FA'
         }
     },
     GiftsSection: {
@@ -136,7 +196,14 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
                 iban: 'MZ59 0001 0002 0003 0004 0005 6'
             },
             showBankDetails: true,
-            showGifts: true
+            showGifts: true,
+            backgroundEffect: 'none',
+            backgroundEffectColor: '#FFC0CB',
+            backgroundEffectDirection: 'up',
+            backgroundEffectStart: 0,
+            backgroundEffectEnd: 0,
+            backgroundParticles: 'none',
+            backgroundParticlesColor: '#60A5FA'
         }
     }
 };

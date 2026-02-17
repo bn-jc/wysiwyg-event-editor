@@ -44,9 +44,11 @@ export const SECTION_EXAMPLES: Record<string, SectionDefinition[]> = {
                 subtitle: 'Desde o primeiro dia até ao sempre.',
                 imageUrl: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800',
                 imageMask: 'heart',
+                imageScale: 1.2,
+                imageDecoration: 'none',
+                imageFeather: 10,
                 showRecipient: true,
                 recipientPrefix: 'Convidado:',
-                recipientName: '[Nome]'
             },
             styles: { paddingTop: '100px', paddingBottom: '100px' }
         },
@@ -57,7 +59,13 @@ export const SECTION_EXAMPLES: Record<string, SectionDefinition[]> = {
                 title: 'Sejam Bem-vindos',
                 subtitle: 'É uma honra ter-vos connosco neste dia especial.',
                 imageUrl: 'https://images.unsplash.com/photo-1519225421980-715cb0202128?w=800',
-                imageMask: 'circle'
+                imageMask: 'circle',
+                imageScale: 1,
+                imageDecoration: 'dots',
+                backgroundEffect: 'wine',
+                backgroundEffectColor: '#800020',
+                backgroundParticles: 'flowers',
+                backgroundParticlesColor: '#FFD700'
             }
         }
     ],

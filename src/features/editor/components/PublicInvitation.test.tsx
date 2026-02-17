@@ -16,9 +16,6 @@ vi.mock('./BackgroundMusic', () => ({
     BackgroundMusic: ({ url }: any) => <div data-testid="background-music">{url}</div>
 }));
 
-vi.mock('./EffectsOverlay', () => ({
-    EffectsOverlay: ({ effects }: any) => <div data-testid="effects-overlay">{effects}</div>
-}));
 
 describe('PublicInvitation', () => {
     const mockLayout: EventLayout = {
@@ -27,7 +24,6 @@ describe('PublicInvitation', () => {
         eventType: 'wedding',
         language: 'pt-PT',
         musicUrl: 'http://music.com/song.mp3',
-        effects: 'confetti',
         globalStyles: {
             primaryColor: '#000',
             secondaryColor: '#fff',
@@ -43,7 +39,6 @@ describe('PublicInvitation', () => {
 
         expect(screen.getByTestId('dynamic-renderer')).toBeDefined();
         expect(screen.getByTestId('background-music')).toBeDefined();
-        expect(screen.getByTestId('effects-overlay')).toBeDefined();
     });
 
     it('passes correct props to DynamicRenderer', () => {
@@ -54,11 +49,10 @@ describe('PublicInvitation', () => {
         expect(renderer.textContent).toContain('Device: desktop'); // Auto-detected as desktop (default mock size)
     });
 
-    it('passes layout data to music and effects', () => {
+    it('passes layout data to music', () => {
         render(<PublicInvitation layout={mockLayout} />);
 
         expect(screen.getByTestId('background-music').textContent).toBe(mockLayout.musicUrl);
-        expect(screen.getByTestId('effects-overlay').textContent).toBe(mockLayout.effects);
     });
 
     it('applies background color from global styles', () => {

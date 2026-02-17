@@ -89,4 +89,25 @@ describe('GuestbookSection', () => {
         fireEvent.blur(subtitle);
         expect(onUpdate).toHaveBeenCalledWith({ subtitle: 'Novas palavras' });
     });
+
+    it('calls onInteraction when message is submitted', () => {
+        const onInteraction = vi.fn();
+        render(<GuestbookSection {...defaultProps} onInteraction={onInteraction} />);
+
+        const nameInput = screen.getByPlaceholderText('Ex: Tio Manel');
+        const messageInput = screen.getByPlaceholderText('Escreva algo bonito...');
+        const button = screen.getByRole('button', { name: /Publicar Mensagem/i });
+
+        fireEvent.change(nameInput, { target: { value: 'Tester' } });
+        fireEvent.change(messageInput, { target: { value: 'Hello world' } });
+        fireEvent.click(button);
+
+        expect(onInteraction).toHaveBeenCalledWith(expect.objectContaining({
+            type: 'GUESTBOOK_SUBMIT',
+            payload: {
+                name: 'Tester',
+                message: 'Hello world'
+            }
+        }));
+    });
 });

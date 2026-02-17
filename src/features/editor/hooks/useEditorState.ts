@@ -1,6 +1,17 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { createSection } from '../utils/SectionSchemaRegistry';
-import type { DeviceType, ViewMode, EventLayout, SectionDefinition, SectionContent, SectionType } from '../types';
+import type { DeviceType, ViewMode, EventLayout, SectionContent, SectionType } from '../types';
+
+const NAV_LABELS: Record<string, string> = {
+    HeroSection: 'Início',
+    AgendaSection: 'Agenda',
+    RSVPSection: 'RSVP',
+    GuestbookSection: 'Mural',
+    CountdownSection: 'Contagem',
+    GiftsSection: 'Presentes',
+    CustomSection: 'Extras',
+    SplashSection: 'Boas-vindas'
+};
 
 const INITIAL_LAYOUT: EventLayout = {
     id: 'invitation-1',
@@ -37,6 +48,48 @@ export const useEditorState = (initialLayout?: EventLayout) => {
     const [viewMode, setViewMode] = useState<ViewMode>('split');
     const [device, setDevice] = useState<DeviceType>('desktop');
     const [showLayers, setShowLayers] = useState(true);
+
+    // Sync Navbar links with existing sections
+    const sectionsHash = JSON.stringify(layout.sections.map(s => ({
+        id: s.id,
+        type: s.type,
+        title: s.content.title
+    })));
+
+    useEffect(() => {
+        const navSection = layout.sections.find(s => s.type === 'NavSection');
+        if (!navSection) return;
+
+        const newLinks = layout.sections
+            .filter(s => s.type !== 'NavSection' && s.type !== 'SeparatorSection' && s.type !== 'SplashSection')
+            .map(s => ({
+                label: (s.content.title && typeof s.content.title === 'string' && s.content.title.length > 0 && s.content.title.length < 20)
+                    ? s.content.title
+                    : (NAV_LABELS[s.type] || s.type.replace('Section', '')),
+                targetId: s.id
+            }));
+
+        const currentLinksHash = JSON.stringify(navSection.content.links);
+        const newLinksHash = JSON.stringify(newLinks);
+
+        if (currentLinksHash !== newLinksHash) {
+            setLayout(prev => {
+                const navIndex = prev.sections.findIndex(s => s.type === 'NavSection');
+                if (navIndex === -1) return prev;
+
+                const newSections = [...prev.sections];
+                newSections[navIndex] = {
+                    ...newSections[navIndex],
+                    content: {
+                        ...newSections[navIndex].content,
+                        links: newLinks
+                    }
+                };
+
+                return { ...prev, sections: newSections };
+            });
+        }
+    }, [sectionsHash]);
 
     const addSection = useCallback((type: SectionType) => {
         const hasSplash = layout.sections.some(s => s.type === 'SplashSection');
@@ -119,10 +172,6 @@ export const useEditorState = (initialLayout?: EventLayout) => {
         setLayout(prev => ({ ...prev, musicUrl: url }));
     }, []);
 
-    const updateEffects = useCallback((effects: EventLayout['effects']) => {
-        setLayout(prev => ({ ...prev, effects }));
-    }, []);
-
     return {
         layout,
         setLayout,
@@ -140,7 +189,6 @@ export const useEditorState = (initialLayout?: EventLayout) => {
         deleteSection,
         moveSection,
         updateGlobalStyles,
-        updateMusic,
-        updateEffects
+        updateMusic
     };
 };

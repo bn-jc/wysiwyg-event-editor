@@ -1,5 +1,6 @@
 import React from 'react';
 import type { SectionDefinition, SectionContent } from '../types';
+import { ColorPicker } from './common/ColorPicker';
 import { SECTION_TEMPLATES } from '../utils/SectionSchemaRegistry';
 import { Trash2, ChevronDown, ChevronUp, Plus, Image as ImageIcon, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
 
@@ -48,8 +49,37 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
             giftItems: 'Itens de Presente',
             bankDetails: 'Dados Bancários',
             showBankDetails: 'Mostrar Dados Bancários',
-            showGifts: 'Mostrar Lista de Sugestões'
+            showGifts: 'Mostrar Lista de Sugestões',
+            imageScale: 'Tamanho da Foto',
+            imageDecoration: 'Decoração da Foto',
+            imageFeather: 'Suavização das Bordas',
+            backgroundEffect: 'Efeito de Fundo (Animado)',
+            backgroundEffectColor: 'Cor do Efeito',
+            backgroundEffectDirection: 'Direção do Efeito',
+            backgroundParticles: 'Elementos de Fundo (Estáticos)',
+            backgroundParticlesColor: 'Cor dos Elementos',
+            backgroundEffectStart: 'Início do Efeito (s)',
+            backgroundEffectEnd: 'Fim do Efeito (s)',
+            deadlineLabel: 'Rótulo do Prazo',
+            attendanceLabel: 'Rótulo de Comparecimento',
+            attendanceOptions: 'Opções de Resposta',
+            nameLabel: 'Rótulo do Nome',
+            namePlaceholder: 'Dica do Nome',
+            emailLabel: 'Rótulo do E-mail',
+            emailPlaceholder: 'Dica do E-mail',
+            showMessageField: 'Campo de Mensagem',
+            messageLabel: 'Rótulo da Mensagem',
+            messagePlaceholder: 'Dica da Mensagem',
+            footerText: 'Texto de Rodapé'
         };
+
+        if (key === 'messageLabel' || key === 'messagePlaceholder') {
+            if (section.content.showMessageField === false) return null;
+        }
+
+        if (['backgroundEffectColor', 'backgroundParticlesColor', 'backgroundEffectDirection', 'backgroundEffectStart', 'backgroundEffectEnd'].includes(key)) {
+            return null;
+        }
 
         const label = labelMap[key] || key;
 
@@ -74,6 +104,33 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                             <option value="cloud">Nuvem</option>
                             <option value="squircle">Squircle</option>
                             <option value="shield">Escudo</option>
+                            <option value="triangle">Triângulo</option>
+                            <option value="pentagon">Pentágono</option>
+                            <option value="octagon">Octágono</option>
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                </div>
+            );
+        }
+
+        if (key === 'imageDecoration') {
+            return (
+                <div key={key} className="flex flex-col gap-2 mb-6">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                    <div className="relative">
+                        <select
+                            value={value}
+                            onChange={(e) => handleChange(key, e.target.value)}
+                            className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer hover:bg-white transition-all shadow-sm"
+                        >
+                            <option value="none">Nenhuma</option>
+                            <option value="gold">Moldura Dourada</option>
+                            <option value="floral">Arranjo Floral</option>
+                            <option value="leaf">Folhas Orgânicas</option>
+                            <option value="outline">Contorno da Forma</option>
+                            <option value="glow">Brilho Sutil (Aura)</option>
+                            <option value="dots">Linha de Pontos</option>
                         </select>
                         <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                     </div>
@@ -182,25 +239,121 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
             );
         }
 
+        if (key === 'backgroundEffect' || key === 'backgroundParticles') {
+            const colorKey = key === 'backgroundEffect' ? 'backgroundEffectColor' : 'backgroundParticlesColor';
+            const showColorPicker = value && value !== 'none';
+
+            return (
+                <div key={key} className="flex flex-col gap-0">
+                    <div className="flex flex-col gap-2 mb-6">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                        <div className="relative">
+                            <select
+                                value={value || 'none'}
+                                onChange={(e) => handleChange(key, e.target.value)}
+                                className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer hover:bg-white transition-all shadow-sm"
+                            >
+                                <option value="none">Nenhum</option>
+                                <option value="hearts">Corações</option>
+                                <option value="wine">Taças de Vinho</option>
+                                <option value="birds">Pássaros</option>
+                                <option value="flowers">Flores</option>
+                                <option value="bubbles">Bolhas</option>
+                                <option value="confetti">Confetes</option>
+                                <option value="stars">Estrelas/Brilhos</option>
+                                <option value="leaves">Folhas</option>
+                                <option value="balloons">Balões</option>
+                                <option value="hats">Hats/Capelos</option>
+                                <option value="roses">Rosas</option>
+                                <option value="rings">Alianças</option>
+                                <option value="cakes">Bolos</option>
+                                <option value="sparkles">Brilhos</option>
+                                <option value="fireworks">Fogo de Artifício</option>
+                            </select>
+                            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                        </div>
+                    </div>
+                    {showColorPicker && (
+                        <div className="contents">
+                            <ColorPicker
+                                label={labelMap[colorKey]}
+                                value={section.content[colorKey] || '#FFFFFF'}
+                                onChange={(color) => handleChange(colorKey, color)}
+                            />
+                            {key === 'backgroundEffect' && (
+                                <>
+                                    <div className="flex flex-col gap-2 mb-6">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">
+                                            {labelMap['backgroundEffectDirection']}
+                                        </label>
+                                        <div className="relative">
+                                            <select
+                                                value={section.content.backgroundEffectDirection || 'up'}
+                                                onChange={(e) => handleChange('backgroundEffectDirection', e.target.value)}
+                                                className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer hover:bg-white transition-all shadow-sm"
+                                            >
+                                                <option value="up">De Baixo para Cima (Padrão)</option>
+                                                <option value="down">De Cima para Baixo</option>
+                                                <option value="left">Da Direita para Esquerda</option>
+                                                <option value="right">Da Esquerda para Direita</option>
+                                                <option value="random">Aleatório (Misto)</option>
+                                            </select>
+                                            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                        </div>
+                                    </div>
+
+                                    {/* timing controls */}
+                                    <div className="grid grid-cols-2 gap-4 mb-6">
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">
+                                                {labelMap['backgroundEffectStart']}
+                                            </label>
+                                            <div className="flex items-center gap-2">
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    max="300"
+                                                    value={section.content.backgroundEffectStart || 0}
+                                                    onChange={(e) => handleChange('backgroundEffectStart', parseInt(e.target.value) || 0)}
+                                                    className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 hover:bg-white transition-all shadow-sm font-mono"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">
+                                                {labelMap['backgroundEffectEnd']}
+                                            </label>
+                                            <div className="flex items-center gap-2">
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    max="300"
+                                                    value={section.content.backgroundEffectEnd || 0}
+                                                    onChange={(e) => handleChange('backgroundEffectEnd', parseInt(e.target.value) || 0)}
+                                                    className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 hover:bg-white transition-all shadow-sm font-mono"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p className="text-[10px] text-gray-400 mb-6 -mt-4 italic">
+                                        * Use 0 para sempre ativos. O fim deve ser maior que o início.
+                                    </p>
+                                </>
+                            )}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
         if (key === 'color' && section.type === 'SeparatorSection') {
             return (
-                <div key={key} className="flex flex-col gap-2 mb-6">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">Cor da Divisória</label>
-                    <div className="flex gap-2 items-center">
-                        <input
-                            type="color"
-                            value={value || '#000000'}
-                            onChange={(e) => handleChange(key, e.target.value)}
-                            className="w-12 h-12 bg-transparent border-none p-0 cursor-pointer rounded-lg overflow-hidden"
-                        />
-                        <input
-                            type="text"
-                            value={value || ''}
-                            onChange={(e) => handleChange(key, e.target.value)}
-                            className="flex-1 bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs focus:ring-2 focus:ring-blue-500 hover:bg-white transition-all shadow-sm"
-                            placeholder="Hex Code (ex: #FF0000)"
-                        />
-                    </div>
+                <div key={key}>
+                    <ColorPicker
+                        label="Cor da Divisória"
+                        value={value || '#000000'}
+                        onChange={(color) => handleChange(key, color)}
+                    />
                 </div>
             );
         }
@@ -223,6 +376,29 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                             <option value="lavender">Lavender (Roxo/Coral)</option>
                         </select>
                         <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                </div>
+            );
+        }
+
+        if (key === 'imageScale' || key === 'imageFeather') {
+            const isFeather = key === 'imageFeather';
+            return (
+                <div key={key} className="flex flex-col gap-2 mb-6">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                    <div className="flex gap-4 items-center">
+                        <input
+                            type="range"
+                            min={isFeather ? "0" : "0.5"}
+                            max={isFeather ? "40" : "2"}
+                            step={isFeather ? "1" : "0.1"}
+                            value={value || (isFeather ? 0 : 1)}
+                            onChange={(e) => handleChange(key, parseFloat(e.target.value))}
+                            className="flex-1 h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                        />
+                        <span className="text-xs font-mono text-gray-400 w-8">
+                            {isFeather ? `${value || 0}px` : `${Math.round((value || 1) * 100)}%`}
+                        </span>
                     </div>
                 </div>
             );
@@ -254,181 +430,196 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
                     {value.map((item: any, idx: number) => (
                         <div key={idx} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 mb-2 group shadow-sm hover:shadow-md transition-all relative">
-                            {Object.entries(item).map(([iKey, iVal]) => (
-                                <div key={iKey} className="mb-2 last:mb-0">
-                                    <span className="text-[8px] font-black text-gray-300 uppercase tracking-tighter mb-1 block">{iKey}</span>
-                                    {iKey === 'icon' ? (
-                                        <div className="relative">
-                                            <select
-                                                value={iVal as string}
-                                                onChange={(e) => {
-                                                    const newList = [...value];
-                                                    newList[idx] = { ...item, [iKey]: e.target.value };
-                                                    handleChange(key, newList);
-                                                }}
-                                                className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
-                                            >
-                                                <option value="gift">Presente Default</option>
-                                                <option value="plane">Viagem / Avião</option>
-                                                <option value="utensils">Cozinha / Jantar</option>
-                                                <option value="home">Casa / Lar</option>
-                                                <option value="dollar">Dinheiro / Cash</option>
-                                                <option value="bank">Banco / Transferência</option>
-                                                <option value="card">Cartão</option>
-                                                <option value="info">Informação</option>
-                                            </select>
-                                            <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
-                                        </div>
-                                    ) : iKey === 'type' ? (
-                                        <div className="relative">
-                                            <select
-                                                value={iVal as string}
-                                                onChange={(e) => {
-                                                    const newList = [...value];
-                                                    const newType = e.target.value;
-
-                                                    if (newType === 'list') {
-                                                        newList[idx] = {
-                                                            type: 'list',
-                                                            listType: 'unordered',
-                                                            format: 'disc',
-                                                            items: ['Novo item']
-                                                        };
-                                                    } else if (newType === 'image') {
-                                                        newList[idx] = { type: 'image', url: 'https://images.unsplash.com/photo-1522673607200-164883eeba4c?w=800' };
-                                                    } else {
-                                                        newList[idx] = { type: 'text', content: 'Novo texto', style: 'paragraph' };
-                                                    }
-                                                    handleChange(key, newList);
-                                                }}
-                                                className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
-                                            >
-                                                <option value="text">Texto</option>
-                                                <option value="image">Imagem</option>
-                                                <option value="list">Lista</option>
-                                            </select>
-                                            <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
-                                        </div>
-                                    ) : iKey === 'style' ? (
-                                        <div className="relative">
-                                            <select
-                                                value={iVal as string}
-                                                onChange={(e) => {
-                                                    const newList = [...value];
-                                                    newList[idx] = { ...item, [iKey]: e.target.value };
-                                                    handleChange(key, newList);
-                                                }}
-                                                className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
-                                            >
-                                                <option value="heading">Título</option>
-                                                <option value="paragraph">Parágrafo</option>
-                                            </select>
-                                            <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
-                                        </div>
-                                    ) : iKey === 'listType' ? (
-                                        <div className="relative">
-                                            <select
-                                                value={iVal as string}
-                                                onChange={(e) => {
-                                                    const newList = [...value];
-                                                    const newType = e.target.value;
-                                                    newList[idx] = {
-                                                        ...item,
-                                                        listType: newType,
-                                                        format: newType === 'ordered' ? 'decimal' : 'disc'
-                                                    };
-                                                    handleChange(key, newList);
-                                                }}
-                                                className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
-                                            >
-                                                <option value="ordered">Numerada</option>
-                                                <option value="unordered">Simples (Marcadores)</option>
-                                            </select>
-                                            <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
-                                        </div>
-                                    ) : iKey === 'format' ? (
-                                        <div className="relative">
-                                            <select
-                                                value={iVal as string}
-                                                onChange={(e) => {
-                                                    const newList = [...value];
-                                                    newList[idx] = { ...item, [iKey]: e.target.value };
-                                                    handleChange(key, newList);
-                                                }}
-                                                className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
-                                            >
-                                                {item.listType === 'ordered' ? (
-                                                    <>
-                                                        <option value="decimal">1, 2, 3... (Algébrico)</option>
-                                                        <option value="upper-roman">I, II, III... (Romano)</option>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <option value="disc">Círculo (Ponto)</option>
-                                                        <option value="square">Quadrado</option>
-                                                        <option value="triangle">Triângulo</option>
-                                                        <option value="diamond">Diamante</option>
-                                                    </>
-                                                )}
-                                            </select>
-                                            <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
-                                        </div>
-                                    ) : iKey === 'items' ? (
-                                        <div className="flex flex-col gap-2">
-                                            {(iVal as string[]).map((listItem, lIdx) => (
-                                                <div key={lIdx} className="flex gap-2 items-center">
-                                                    <input
-                                                        type="text"
-                                                        value={listItem}
-                                                        onChange={(e) => {
-                                                            const newList = [...value];
-                                                            const newItems = [...(newList[idx].items as string[])];
-                                                            newItems[lIdx] = e.target.value;
-                                                            newList[idx] = { ...item, items: newItems };
-                                                            handleChange(key, newList);
-                                                        }}
-                                                        className="flex-1 bg-white/50 border border-gray-100 rounded-lg px-2 py-1 text-[10px] font-medium"
-                                                    />
-                                                    <button
-                                                        onClick={() => {
-                                                            const newList = [...value];
-                                                            const newItems = (newList[idx].items as string[]).filter((_, i) => i !== lIdx);
-                                                            newList[idx] = { ...item, items: newItems };
-                                                            handleChange(key, newList);
-                                                        }}
-                                                        className="text-gray-300 hover:text-red-500"
-                                                    >
-                                                        <Trash2 size={10} />
-                                                    </button>
-                                                </div>
-                                            ))}
-                                            <button
-                                                onClick={() => {
-                                                    const newList = [...value];
-                                                    const newItems = [...(newList[idx].items as string[]), 'Novo item'];
-                                                    newList[idx] = { ...item, items: newItems };
-                                                    handleChange(key, newList);
-                                                }}
-                                                className="text-[8px] text-blue-500 font-bold flex items-center gap-1 mt-1"
-                                            >
-                                                <Plus size={10} /> ADD ITEM DA LISTA
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <input
-                                            type="text"
-                                            value={iVal as string}
-                                            onChange={(e) => {
-                                                const newList = [...value];
-                                                newList[idx] = { ...item, [iKey]: e.target.value };
-                                                handleChange(key, newList);
-                                            }}
-                                            className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 placeholder:text-gray-300"
-                                            placeholder={`Digitar ${iKey}...`}
-                                        />
-                                    )}
+                            {typeof item === 'string' ? (
+                                <div className="flex gap-2 items-center">
+                                    <input
+                                        type="text"
+                                        value={item}
+                                        onChange={(e) => {
+                                            const newList = [...value];
+                                            newList[idx] = e.target.value;
+                                            handleChange(key, newList);
+                                        }}
+                                        className="flex-1 bg-white/50 border border-gray-100 rounded-lg px-2 py-2 text-xs font-medium"
+                                    />
                                 </div>
-                            ))}
+                            ) : (
+                                Object.entries(item).map(([iKey, iVal]) => (
+                                    <div key={iKey} className="mb-2 last:mb-0">
+                                        <span className="text-[8px] font-black text-gray-300 uppercase tracking-tighter mb-1 block">{iKey}</span>
+                                        {iKey === 'icon' ? (
+                                            <div className="relative">
+                                                <select
+                                                    value={iVal as string}
+                                                    onChange={(e) => {
+                                                        const newList = [...value];
+                                                        newList[idx] = { ...item, [iKey]: e.target.value };
+                                                        handleChange(key, newList);
+                                                    }}
+                                                    className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
+                                                >
+                                                    <option value="gift">Presente Default</option>
+                                                    <option value="plane">Viagem / Avião</option>
+                                                    <option value="utensils">Cozinha / Jantar</option>
+                                                    <option value="home">Casa / Lar</option>
+                                                    <option value="dollar">Dinheiro / Cash</option>
+                                                    <option value="bank">Banco / Transferência</option>
+                                                    <option value="card">Cartão</option>
+                                                    <option value="info">Informação</option>
+                                                </select>
+                                                <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
+                                            </div>
+                                        ) : iKey === 'type' ? (
+                                            <div className="relative">
+                                                <select
+                                                    value={iVal as string}
+                                                    onChange={(e) => {
+                                                        const newList = [...value];
+                                                        const newType = e.target.value;
+
+                                                        if (newType === 'list') {
+                                                            newList[idx] = {
+                                                                type: 'list',
+                                                                listType: 'unordered',
+                                                                format: 'disc',
+                                                                items: ['Novo item']
+                                                            };
+                                                        } else if (newType === 'image') {
+                                                            newList[idx] = { type: 'image', url: 'https://images.unsplash.com/photo-1522673607200-164883eeba4c?w=800' };
+                                                        } else {
+                                                            newList[idx] = { type: 'text', content: 'Novo texto', style: 'paragraph' };
+                                                        }
+                                                        handleChange(key, newList);
+                                                    }}
+                                                    className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
+                                                >
+                                                    <option value="text">Texto</option>
+                                                    <option value="image">Imagem</option>
+                                                    <option value="list">Lista</option>
+                                                </select>
+                                                <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
+                                            </div>
+                                        ) : iKey === 'style' ? (
+                                            <div className="relative">
+                                                <select
+                                                    value={iVal as string}
+                                                    onChange={(e) => {
+                                                        const newList = [...value];
+                                                        newList[idx] = { ...item, [iKey]: e.target.value };
+                                                        handleChange(key, newList);
+                                                    }}
+                                                    className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
+                                                >
+                                                    <option value="heading">Título</option>
+                                                    <option value="paragraph">Parágrafo</option>
+                                                </select>
+                                                <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
+                                            </div>
+                                        ) : iKey === 'listType' ? (
+                                            <div className="relative">
+                                                <select
+                                                    value={iVal as string}
+                                                    onChange={(e) => {
+                                                        const newList = [...value];
+                                                        const newType = e.target.value;
+                                                        newList[idx] = {
+                                                            ...item,
+                                                            listType: newType,
+                                                            format: newType === 'ordered' ? 'decimal' : 'disc'
+                                                        };
+                                                        handleChange(key, newList);
+                                                    }}
+                                                    className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
+                                                >
+                                                    <option value="ordered">Numerada</option>
+                                                    <option value="unordered">Simples (Marcadores)</option>
+                                                </select>
+                                                <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
+                                            </div>
+                                        ) : iKey === 'format' ? (
+                                            <div className="relative">
+                                                <select
+                                                    value={iVal as string}
+                                                    onChange={(e) => {
+                                                        const newList = [...value];
+                                                        newList[idx] = { ...item, [iKey]: e.target.value };
+                                                        handleChange(key, newList);
+                                                    }}
+                                                    className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
+                                                >
+                                                    {item.listType === 'ordered' ? (
+                                                        <>
+                                                            <option value="decimal">1, 2, 3... (Algébrico)</option>
+                                                            <option value="upper-roman">I, II, III... (Romano)</option>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <option value="disc">Círculo (Ponto)</option>
+                                                            <option value="square">Quadrado</option>
+                                                            <option value="triangle">Triângulo</option>
+                                                            <option value="diamond">Diamante</option>
+                                                        </>
+                                                    )}
+                                                </select>
+                                                <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
+                                            </div>
+                                        ) : iKey === 'items' ? (
+                                            <div className="flex flex-col gap-2">
+                                                {(iVal as string[]).map((listItem, lIdx) => (
+                                                    <div key={lIdx} className="flex gap-2 items-center">
+                                                        <input
+                                                            type="text"
+                                                            value={listItem}
+                                                            onChange={(e) => {
+                                                                const newList = [...value];
+                                                                const newItems = [...(newList[idx].items as string[])];
+                                                                newItems[lIdx] = e.target.value;
+                                                                newList[idx] = { ...item, items: newItems };
+                                                                handleChange(key, newList);
+                                                            }}
+                                                            className="flex-1 bg-white/50 border border-gray-100 rounded-lg px-2 py-1 text-[10px] font-medium"
+                                                        />
+                                                        <button
+                                                            onClick={() => {
+                                                                const newList = [...value];
+                                                                const newItems = (newList[idx].items as string[]).filter((_, i) => i !== lIdx);
+                                                                newList[idx] = { ...item, items: newItems };
+                                                                handleChange(key, newList);
+                                                            }}
+                                                            className="text-gray-300 hover:text-red-500"
+                                                        >
+                                                            <Trash2 size={10} />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                                <button
+                                                    onClick={() => {
+                                                        const newList = [...value];
+                                                        const newItems = [...(newList[idx].items as string[]), 'Novo item'];
+                                                        newList[idx] = { ...item, items: newItems };
+                                                        handleChange(key, newList);
+                                                    }}
+                                                    className="text-[8px] text-blue-500 font-bold flex items-center gap-1 mt-1"
+                                                >
+                                                    <Plus size={10} /> ADD ITEM DA LISTA
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <input
+                                                type="text"
+                                                value={iVal as string}
+                                                onChange={(e) => {
+                                                    const newList = [...value];
+                                                    newList[idx] = { ...item, [iKey]: e.target.value };
+                                                    handleChange(key, newList);
+                                                }}
+                                                className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 placeholder:text-gray-300"
+                                                placeholder={`Digitar ${iKey}...`}
+                                            />
+                                        )}
+                                    </div>
+                                ))
+                            )}
                             <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
                                 <button
                                     onClick={() => {
@@ -513,6 +704,17 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                             <Plus size={12} /> ADD SUGESTÃO DE PRESENTE
                         </button>
                     )}
+
+                    {section.type === 'RSVPSection' && key === 'attendanceOptions' && (
+                        <button
+                            onClick={() => {
+                                handleChange(key, [...value, 'Nova Opção']);
+                            }}
+                            className="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-100 rounded-2xl text-[8px] text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-all font-black tracking-widest leading-tight mt-2"
+                        >
+                            <Plus size={12} /> ADD OPÇÃO DE RESPOSTA
+                        </button>
+                    )}
                 </div>
             );
         }
@@ -539,7 +741,7 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
             );
         }
 
-        if (key === 'showRecipient' || (section.type === 'GiftsSection' && (key === 'showBankDetails' || key === 'showGifts'))) {
+        if (key === 'showRecipient' || key === 'showMessageField' || (section.type === 'GiftsSection' && (key === 'showBankDetails' || key === 'showGifts'))) {
             return (
                 <div key={key} className="flex items-center justify-between mb-6 p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50">
                     <label className="text-[10px] font-black text-blue-600 uppercase tracking-widest">{label}</label>
@@ -628,7 +830,7 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                         <input
                             type="range"
                             min="0"
-                            max="100"
+                            max="64"
                             step="4"
                             value={parseInt(String(section.styles?.gap || '24'))}
                             onChange={(e) => onUpdateStyles({ gap: `${e.target.value}px` })}
@@ -636,83 +838,56 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                         />
                     </div>
 
-                    <div className="flex flex-col gap-2 mb-6">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">Cor de Fundo</label>
-                        <div className="flex gap-2 items-center">
-                            <input
-                                type="color"
-                                value={(section.styles?.backgroundColor as string) || '#ffffff'}
-                                onChange={(e) => onUpdateStyles({ backgroundColor: e.target.value })}
-                                className="w-12 h-12 bg-transparent border-none p-0 cursor-pointer rounded-lg overflow-hidden"
-                            />
-                            <input
-                                type="text"
-                                value={(section.styles?.backgroundColor as string) || ''}
-                                onChange={(e) => onUpdateStyles({ backgroundColor: e.target.value })}
-                                className="flex-1 bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs focus:ring-2 focus:ring-blue-500 hover:bg-white transition-all shadow-sm"
-                                placeholder="Hex Code (ex: #FFFFFF)"
-                            />
-                        </div>
-                    </div>
+                    <ColorPicker
+                        label="Cor de Fundo"
+                        value={(section.styles?.backgroundColor as string) || '#ffffff'}
+                        onChange={(color) => onUpdateStyles({ backgroundColor: color })}
+                    />
 
-                    {/* Text Color Input */}
-                    <div className="flex flex-col gap-2 mb-6">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">Cor do Texto</label>
-                        <div className="flex gap-2 items-center">
-                            <input
-                                type="color"
-                                value={(section.styles?.color as string) || '#000000'}
-                                onChange={(e) => onUpdateStyles({ color: e.target.value })}
-                                className="w-12 h-12 bg-transparent border-none p-0 cursor-pointer rounded-lg overflow-hidden"
-                            />
-                            <input
-                                type="text"
-                                value={(section.styles?.color as string) || ''}
-                                onChange={(e) => onUpdateStyles({ color: e.target.value })}
-                                className="flex-1 bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs focus:ring-2 focus:ring-blue-500 hover:bg-white transition-all shadow-sm"
-                                placeholder="Hex Code (ex: #000000)"
-                            />
-                        </div>
-                    </div>
+                    <ColorPicker
+                        label="Cor do Texto"
+                        value={(section.styles?.color as string) || '#000000'}
+                        onChange={(color) => onUpdateStyles({ color: color })}
+                    />
 
                     {section.type === 'AgendaSection' && (
                         <div className="flex flex-col gap-2 mb-6">
-                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">Alinhamento do Texto</label>
-                            <div className="flex gap-1 p-1 bg-gray-50 rounded-xl border border-gray-100">
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">
+                                Alinhamento do Texto
+                            </label>
+                            <div className="flex gap-2 p-1 bg-gray-50 rounded-xl border border-gray-100">
                                 <button
                                     onClick={() => onUpdateStyles({ textAlign: 'left' })}
-                                    className={`flex-1 flex justify-center py-2 rounded-lg transition-all ${section.styles?.textAlign === 'left' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'
-                                        }`}
+                                    className={`flex-1 flex justify-center p-2 rounded-lg transition-all ${section.styles?.textAlign === 'left' ? 'bg-white text-blue-500 shadow-sm' : 'text-gray-400 hover:bg-white'}`}
                                 >
-                                    <AlignLeft size={18} />
+                                    <AlignLeft size={16} />
                                 </button>
                                 <button
                                     onClick={() => onUpdateStyles({ textAlign: 'center' })}
-                                    className={`flex-1 flex justify-center py-2 rounded-lg transition-all ${(!section.styles?.textAlign || section.styles?.textAlign === 'center') ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'
-                                        }`}
+                                    className={`flex-1 flex justify-center p-2 rounded-lg transition-all ${section.styles?.textAlign === 'center' || !section.styles?.textAlign ? 'bg-white text-blue-500 shadow-sm' : 'text-gray-400 hover:bg-white'}`}
                                 >
-                                    <AlignCenter size={18} />
+                                    <AlignCenter size={16} />
                                 </button>
                                 <button
                                     onClick={() => onUpdateStyles({ textAlign: 'right' })}
-                                    className={`flex-1 flex justify-center py-2 rounded-lg transition-all ${section.styles?.textAlign === 'right' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'
-                                        }`}
+                                    className={`flex-1 flex justify-center p-2 rounded-lg transition-all ${section.styles?.textAlign === 'right' ? 'bg-white text-blue-500 shadow-sm' : 'text-gray-400 hover:bg-white'}`}
                                 >
-                                    <AlignRight size={18} />
+                                    <AlignRight size={16} />
                                 </button>
                             </div>
                         </div>
                     )}
-                </div>
-            </div>
 
-            <div className="mt-8 pt-8 border-t border-gray-100">
-                <button
-                    onClick={onDelete}
-                    className="w-full flex items-center justify-center gap-3 p-4 bg-red-50 hover:bg-red-500 text-red-600 hover:text-white rounded-2xl transition-all font-black text-xs tracking-[0.1em] shadow-sm hover:shadow-red-200"
-                >
-                    <Trash2 size={18} /> ELIMINAR SEÇÃO
-                </button>
+                    <div className="mt-8">
+                        <button
+                            onClick={onDelete}
+                            className="w-full flex items-center justify-center gap-2 p-4 text-xs font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all border border-transparent hover:border-red-100 group"
+                        >
+                            <Trash2 size={16} className="group-hover:scale-110 transition-transform" />
+                            ELIMINAR ESTA SEÇÃO
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );

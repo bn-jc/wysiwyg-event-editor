@@ -1,9 +1,12 @@
 import React from 'react';
 import type { SectionRendererProps } from '../types';
+import { cn } from '@/utils/cn';
 import { SplashSection, HeroSection, AgendaSection, RSVPSection, GuestbookSection, CountdownSection, SeparatorSection, NavSection, CustomSection, GiftsSection } from './sections';
+import { ParticlesBackground } from './common/ParticlesBackground';
 
 export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
     const { section, isActive, onSelect, readOnly } = props;
+    const { content } = section;
 
     const renderContent = () => {
         switch (section.type) {
@@ -22,7 +25,7 @@ export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
             case 'SeparatorSection':
                 return <SeparatorSection {...props} />;
             case 'NavSection':
-                return <NavSection {...props} />;
+                return <NavSection {...props} activeScrollSectionId={props.activeScrollSectionId} onNavigate={props.onNavigate} />;
             case 'CustomSection':
                 return <CustomSection {...props} />;
             case 'GiftsSection':
@@ -40,10 +43,30 @@ export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
         <div
             onClick={onSelect}
             id={section.id}
-            className={`relative group cursor-pointer transition-all ${isActive && !readOnly ? 'ring-2 ring-blue-500 ring-inset shadow-lg z-10' : ''
-                }`}
+            className={cn(
+                "relative group cursor-pointer transition-all",
+                section.type !== 'NavSection' && "overflow-hidden",
+                isActive && !readOnly ? 'ring-2 ring-blue-500 ring-inset shadow-lg z-10' : ''
+            )}
             style={section.styles}
         >
+            {section.type !== 'SplashSection' && (
+                <>
+                    <ParticlesBackground
+                        type={content.backgroundEffect || 'none'}
+                        animated={true}
+                        color={content.backgroundEffectColor}
+                        direction={content.backgroundEffectDirection as any}
+                        startTime={content.backgroundEffectStart}
+                        endTime={content.backgroundEffectEnd}
+                    />
+                    <ParticlesBackground
+                        type={content.backgroundParticles || 'none'}
+                        animated={false}
+                        color={content.backgroundParticlesColor}
+                    />
+                </>
+            )}
             {renderContent()}
 
             {/* Hover Indicator */}

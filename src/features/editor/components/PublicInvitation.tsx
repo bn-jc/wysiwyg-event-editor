@@ -1,7 +1,6 @@
 import React from 'react';
 import { DynamicRenderer } from './DynamicRenderer';
 import { BackgroundMusic } from './BackgroundMusic';
-import { EffectsOverlay } from './EffectsOverlay';
 import type { EventLayout } from '../types';
 
 interface PublicInvitationProps {
@@ -19,8 +18,6 @@ export const PublicInvitation: React.FC<PublicInvitationProps> = ({ layout }) =>
             {/* Background Music */}
             <BackgroundMusic url={layout.musicUrl} />
 
-            {/* Visual Effects */}
-            <EffectsOverlay effects={layout.effects} />
 
             {/* Main Content */}
             <main className={`relative z-10 mx-auto w-full ${layout.globalStyles.layoutMode === 'full' ? '' : 'max-w-6xl'}`}>

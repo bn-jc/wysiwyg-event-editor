@@ -67,8 +67,40 @@ window.addEventListener('message', (event) => {
     case 'EDITOR_LAYOUT_CHANGE':
       console.log('Editor state updated (autosave/live sync):', payload);
       break;
+
+    case 'EDITOR_INTERACTION':
+      handleInteraction(payload);
+      break;
   }
 });
+```
+
+## 4. Handling User Interactions
+When the editor is in `preview` mode (read-only), it broadcasts user actions via `EDITOR_INTERACTION`.
+
+### Interaction Types
+
+| Type | Description | Payload Example |
+| :--- | :--- | :--- |
+| `INVITATION_OPENED` | User dismissed the Splash Screen. | `{ timestamp: 1700000000000 }` |
+| `RSVP_SUBMIT` | User submitted the RSVP form. | `{ attendance: "Sim", name: "John", ... }` |
+| `GUESTBOOK_SUBMIT` | User posted a message. | `{ name: "Maria", message: "Parabéns!", ... }` |
+| `CLICK_ELEMENT` | User clicked any element. | `{ tagName: "button", textContent: "RSVP", ... }` |
+
+### Interaction Schema
+Every interaction contains a `type`, a `payload`, and a `timestamp`.
+
+```javascript
+{
+  "type": "RSVP_SUBMIT",
+  "payload": {
+    "attendance": "Sim, Eu vou!",
+    "name": "João Silva",
+    "email": "joao@exemplo.com",
+    "message": "Mal podemos esperar!"
+  },
+  "timestamp": 1708212456789
+}
 ```
 
 ---

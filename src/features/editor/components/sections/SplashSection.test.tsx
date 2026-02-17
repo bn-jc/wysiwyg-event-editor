@@ -105,4 +105,14 @@ describe('SplashSection', () => {
         fireEvent.blur(name);
         expect(onUpdate).toHaveBeenCalledWith({ recipientName: 'Maria' });
     });
+
+    it('calls onOpen when the button is clicked', () => {
+        const onOpen = vi.fn();
+        render(<SplashSection {...defaultProps} onOpen={onOpen} />);
+
+        const button = screen.getByText('Ver Convite');
+        fireEvent.click(button);
+
+        expect(onOpen).toHaveBeenCalled();
+    });
 });

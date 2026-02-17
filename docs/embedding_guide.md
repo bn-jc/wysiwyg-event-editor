@@ -47,6 +47,7 @@ function MyEditorPage() {
 |------|------|-------------|
 | `initialLayout` | `EventLayout` (Optional) | The starting state of the editor. If omitted, a default wedding template is used. |
 | `onSave` | `(layout: EventLayout) => void` (Optional) | Callback triggered when the user clicks the "GUARDAR" button in the toolbar. |
+| `onInteraction` | `(interaction: Interaction) => void` (Optional) | Callback for user events like guestbook/RSVP submissions or element clicks. |
 
 ### Styling
 Ensure your application has Tailwind CSS configured, as the editor relies on it for styling.
@@ -71,6 +72,9 @@ function InvitationView({ layout }) {
           layout={layout} 
           readOnly={true} 
           device="desktop" // or 'mobile'
+          onInteraction={(event) => {
+            console.log('Interaction caught:', event.type, event.payload);
+          }}
        />
     </div>
   );

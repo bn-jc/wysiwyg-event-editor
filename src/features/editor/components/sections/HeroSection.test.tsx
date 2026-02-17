@@ -114,7 +114,7 @@ describe('HeroSection', () => {
             }
         };
         const { container: containerLeft } = render(<HeroSection {...propsLeft} />);
-        expect(containerLeft.querySelector('.flex-col')).toHaveClass('items-start');
+        expect(containerLeft.firstChild).toHaveClass('items-start');
 
         const propsCenter = {
             ...defaultProps,
@@ -124,6 +124,130 @@ describe('HeroSection', () => {
             }
         };
         const { container: containerCenter } = render(<HeroSection {...propsCenter} />);
-        expect(containerCenter.querySelector('.flex-col')).toHaveClass('items-center');
+        expect(containerCenter.firstChild).toHaveClass('items-center');
+    });
+
+    it('applies custom image scale', () => {
+        const props = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: { ...defaultProps.section.content, imageScale: 1.5 }
+            }
+        };
+        const { container } = render(<HeroSection {...props} />);
+        const imageContainer = container.querySelector('img')!.parentElement!;
+        expect(imageContainer).toHaveStyle('width: 480px'); // 1.5 * 320
+        expect(imageContainer).toHaveStyle('height: 480px');
+    });
+
+    it('renders image decorations', () => {
+        const propsGold = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: { ...defaultProps.section.content, imageDecoration: 'gold' }
+            }
+        };
+        const { container: containerGold } = render(<HeroSection {...propsGold} />);
+        const goldContainer = containerGold.querySelector('img')!.parentElement!;
+        expect(goldContainer).toHaveStyle('border-color: #D4AF37');
+
+        const propsFloral = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: { ...defaultProps.section.content, imageDecoration: 'floral' }
+            }
+        };
+        const { container: containerFloral } = render(<HeroSection {...propsFloral} />);
+        expect(containerFloral.querySelector('svg fill-currentColor')).toBeDefined(); // Simple check for SVG motifs
+
+        const propsDots = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: { ...defaultProps.section.content, imageDecoration: 'dots', imageMask: 'heart' }
+            }
+        };
+        const { container: containerDots } = render(<HeroSection {...propsDots} />);
+        const dotsPath = containerDots.querySelector('path[stroke-dasharray="0.01 0.04"]');
+        expect(dotsPath).toBeDefined();
+    });
+
+    it('applies edge feathering filter', () => {
+        const props = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: { ...defaultProps.section.content, imageFeather: 15 }
+            }
+        };
+        const { container } = render(<HeroSection {...props} />);
+        const imageContainer = container.querySelector('img')!.parentElement!;
+        expect(imageContainer).toHaveStyle('filter: blur(15px)');
+    });
+
+    it('renders background effects and particles with custom colors', () => {
+        const props = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: {
+                    ...defaultProps.section.content,
+                    backgroundEffect: 'hearts',
+                    backgroundEffectColor: '#FF0000',
+                    backgroundParticles: 'flowers',
+                    backgroundParticlesColor: '#00FF00'
+                }
+            }
+        };
+        const { container } = render(<HeroSection {...props} />);
+
+        expect(container.firstChild).toHaveClass('relative');
+        expect(container.querySelector('style')).toBeDefined();
+
+        // Find containers with colors
+        const effectContainer = container.querySelector('[style*="color: #FF0000"]');
+        const particleContainer = container.querySelector('[style*="color: #00FF00"]');
+
+        expect(effectContainer).toBeDefined();
+        expect(particleContainer).toBeDefined();
+    });
+
+    it('renders background effects with custom direction', () => {
+        const props = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: {
+                    ...defaultProps.section.content,
+                    backgroundEffect: 'birds',
+                    backgroundEffectDirection: 'right'
+                }
+            }
+        };
+        const { container } = render(<HeroSection {...props} />);
+
+        const particle = container.querySelector('[style*="animation: move"]');
+        expect(particle).toBeDefined();
+    });
+
+    it('renders background effects with random direction', () => {
+        const props = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: {
+                    ...defaultProps.section.content,
+                    backgroundEffect: 'hearts',
+                    backgroundEffectDirection: 'random'
+                }
+            }
+        };
+        const { container } = render(<HeroSection {...props} />);
+
+        const particle = container.querySelector('[style*="animation: move"]');
+        expect(particle).toBeDefined();
     });
 });

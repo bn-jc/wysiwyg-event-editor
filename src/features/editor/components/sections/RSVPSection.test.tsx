@@ -75,4 +75,34 @@ describe('RSVPSection', () => {
 
         expect(onUpdate).toHaveBeenCalledWith({ deadline: 'Até 15 de Outubro' });
     });
+
+    it('calls onInteraction when form is submitted in read-only mode', () => {
+        const onInteraction = vi.fn();
+        render(<RSVPSection {...defaultProps} readOnly={true} onInteraction={onInteraction} />);
+
+        // Fill form
+        const nameInput = screen.getByPlaceholderText(/Ex: Maria & João Silva/i);
+        const emailInput = screen.getByPlaceholderText(/seu-email@exemplo.com/i);
+        const submitButton = screen.getByText(/Confirmar Agora/i);
+
+        fireEvent.change(nameInput, { target: { value: 'John Doe' } });
+        fireEvent.change(emailInput, { target: { value: 'john@example.com' } });
+
+        // Select attendance
+        const dropdown = screen.getByRole('combobox');
+        fireEvent.change(dropdown, { target: { value: 'Sim, Eu vou!' } });
+
+        fireEvent.click(submitButton);
+
+        expect(onInteraction).toHaveBeenCalledWith(expect.objectContaining({
+            type: 'RSVP_SUBMIT',
+            payload: expect.objectContaining({
+                name: 'John Doe',
+                email: 'john@example.com',
+                attendance: 'Sim, Eu vou!'
+            })
+        }));
+
+        expect(screen.getByText('Obrigado!')).toBeInTheDocument();
+    });
 });

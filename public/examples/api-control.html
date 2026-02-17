@@ -28,6 +28,13 @@
         }
 
         /* Sent */
+
+        .log-entry.interaction {
+            color: #d97706;
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding-left: 8px;
+        }
     </style>
 </head>
 
@@ -111,7 +118,10 @@
             const entry = document.createElement('div');
             entry.className = `log-entry ${type}`;
             const time = new Date().toLocaleTimeString().split(' ')[0];
-            const prefix = type === 'out' ? '→ SENT' : '← RECV';
+
+            let prefix = '← RECV';
+            if (type === 'out') prefix = '→ SENT';
+            if (type === 'interaction') prefix = '⚡ ACT';
 
             entry.textContent = `[${time}] ${prefix}: ${JSON.stringify(message)}`;
             logs.prepend(entry);
@@ -207,7 +217,8 @@
 
             // Filter out react-devtools or webpack messages
             if (typeof type === 'string' && type.startsWith('EDITOR_')) {
-                log(event.data, 'in');
+                const logType = type === 'EDITOR_INTERACTION' ? 'interaction' : 'in';
+                log(event.data, logType);
 
                 if (type === 'EDITOR_READY') {
                     log({ info: 'Editor initialized! API is ready.' }, 'in');
