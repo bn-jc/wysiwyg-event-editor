@@ -7,3 +7,4 @@ export * from './CountdownSection';
 export * from './SeparatorSection';
 export * from './NavSection';
 export * from './CustomSection';
+export * from './GiftsSection';

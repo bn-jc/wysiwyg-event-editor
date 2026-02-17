@@ -19,6 +19,7 @@ export type SectionType =
     | 'CountdownSection'
     | 'SeparatorSection'
     | 'NavSection'
+    | 'GiftsSection'
     | 'CustomSection';
 
 export interface SectionDefinition {

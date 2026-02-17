@@ -86,12 +86,10 @@ describe('HeroSection', () => {
                     ...defaultProps.section.content,
                     showRecipient: true,
                     recipientPrefix: 'Para:',
-                    recipientName: Sofia
+                    recipientName: 'Sofia'
                 }
             }
         };
-        // wait, I noticed a tiny typo in my planned replacement (Sofia vs 'Sofia'). Fixing it here.
-        props.section.content.recipientName = 'Sofia';
         render(<HeroSection {...props} />);
 
         const prefix = screen.getByText('Para:');

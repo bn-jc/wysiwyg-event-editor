@@ -9,6 +9,15 @@ describe('SectionSchemaRegistry', () => {
         expect(sectionTypes).toContain('AgendaSection');
         expect(sectionTypes).toContain('RSVPSection');
         expect(sectionTypes).toContain('GuestbookSection');
+        expect(sectionTypes).toContain('GiftsSection');
+    });
+
+    it('should create a valid gifts section', () => {
+        const section = createSection('GiftsSection');
+        expect(section.type).toBe('GiftsSection');
+        expect(section.content.title).toBe('Lista de Presentes');
+        expect(section.content.giftItems).toHaveLength(2);
+        expect(section.content.bankDetails).toBeDefined();
     });
 
     it('should create a valid section from a template', () => {

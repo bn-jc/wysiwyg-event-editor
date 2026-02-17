@@ -1,6 +1,6 @@
 import React from 'react';
 import type { SectionRendererProps } from '../types';
-import { SplashSection, HeroSection, AgendaSection, RSVPSection, GuestbookSection, CountdownSection, SeparatorSection, NavSection, CustomSection } from './sections';
+import { SplashSection, HeroSection, AgendaSection, RSVPSection, GuestbookSection, CountdownSection, SeparatorSection, NavSection, CustomSection, GiftsSection } from './sections';
 
 export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
     const { section, isActive, onSelect, readOnly } = props;
@@ -25,6 +25,8 @@ export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
                 return <NavSection {...props} />;
             case 'CustomSection':
                 return <CustomSection {...props} />;
+            case 'GiftsSection':
+                return <GiftsSection {...props} />;
             default:
                 return (
                     <div className="p-8 border-2 border-dashed border-gray-200 text-gray-400 text-center">

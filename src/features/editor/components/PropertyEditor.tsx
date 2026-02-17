@@ -43,7 +43,12 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
             elements: 'Elementos da Seção',
             showRecipient: 'Personalizar p/ Convidado',
             recipientPrefix: 'Rótulo (ex: Para:)',
-            recipientName: 'Nome do Destinatário'
+            recipientName: 'Nome do Destinatário',
+            description: 'Descrição / Convite',
+            giftItems: 'Itens de Presente',
+            bankDetails: 'Dados Bancários',
+            showBankDetails: 'Mostrar Dados Bancários',
+            showGifts: 'Mostrar Lista de Sugestões'
         };
 
         const label = labelMap[key] || key;
@@ -252,7 +257,29 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                             {Object.entries(item).map(([iKey, iVal]) => (
                                 <div key={iKey} className="mb-2 last:mb-0">
                                     <span className="text-[8px] font-black text-gray-300 uppercase tracking-tighter mb-1 block">{iKey}</span>
-                                    {iKey === 'type' ? (
+                                    {iKey === 'icon' ? (
+                                        <div className="relative">
+                                            <select
+                                                value={iVal as string}
+                                                onChange={(e) => {
+                                                    const newList = [...value];
+                                                    newList[idx] = { ...item, [iKey]: e.target.value };
+                                                    handleChange(key, newList);
+                                                }}
+                                                className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
+                                            >
+                                                <option value="gift">Presente Default</option>
+                                                <option value="plane">Viagem / Avião</option>
+                                                <option value="utensils">Cozinha / Jantar</option>
+                                                <option value="home">Casa / Lar</option>
+                                                <option value="dollar">Dinheiro / Cash</option>
+                                                <option value="bank">Banco / Transferência</option>
+                                                <option value="card">Cartão</option>
+                                                <option value="info">Informação</option>
+                                            </select>
+                                            <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
+                                        </div>
+                                    ) : iKey === 'type' ? (
                                         <div className="relative">
                                             <select
                                                 value={iVal as string}
@@ -476,11 +503,43 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                             </button>
                         </div>
                     )}
+                    {section.type === 'GiftsSection' && key === 'giftItems' && (
+                        <button
+                            onClick={() => {
+                                handleChange(key, [...value, { id: Date.now().toString(), name: 'Nova Sugestão', description: 'Detalhes aqui...', icon: 'gift' }]);
+                            }}
+                            className="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-100 rounded-2xl text-[8px] text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-all font-black tracking-widest leading-tight mt-2"
+                        >
+                            <Plus size={12} /> ADD SUGESTÃO DE PRESENTE
+                        </button>
+                    )}
                 </div>
             );
         }
 
-        if (key === 'showRecipient') {
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+            return (
+                <div key={key} className="flex flex-col gap-2 mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{label}</label>
+                    {Object.entries(value).map(([iKey, iVal]) => (
+                        <div key={iKey} className="flex flex-col gap-1 mb-3 last:mb-0">
+                            <span className="text-[8px] font-black text-gray-300 uppercase tracking-tighter">{iKey}</span>
+                            <input
+                                type="text"
+                                value={iVal as string}
+                                onChange={(e) => {
+                                    handleChange(key, { ...value, [iKey]: e.target.value });
+                                }}
+                                className="w-full bg-white border border-gray-100 rounded-lg p-2 text-xs focus:ring-2 focus:ring-blue-500 hover:bg-white transition-all shadow-sm font-medium text-gray-700"
+                                placeholder={`Digitar ${iKey}...`}
+                            />
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        if (key === 'showRecipient' || (section.type === 'GiftsSection' && (key === 'showBankDetails' || key === 'showGifts'))) {
             return (
                 <div key={key} className="flex items-center justify-between mb-6 p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50">
                     <label className="text-[10px] font-black text-blue-600 uppercase tracking-widest">{label}</label>

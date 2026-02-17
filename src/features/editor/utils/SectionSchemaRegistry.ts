@@ -118,6 +118,26 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
             backgroundColor: 'rgba(255, 255, 255, 0.95)',
             textColor: '#333333'
         }
+    },
+    GiftsSection: {
+        name: 'Lista de Presentes',
+        defaultData: {
+            title: 'Lista de Presentes',
+            description: 'A sua presença é o nosso maior presente, mas se desejar mimos, aqui estão algumas sugestões:',
+            giftItems: [
+                { id: '1', name: 'Contribuição para Lua de Mel', description: 'Ajude-nos a realizar a viagem dos nossos sonhos.', icon: 'plane' },
+                { id: '2', name: 'Artigos de Cozinha', description: 'Para as nossas futuras jantaradas.', icon: 'utensils' }
+            ],
+            bankDetails: {
+                bankName: 'Banco ABC',
+                accountName: 'John & Jane',
+                accountNumber: '123456789',
+                nib: '0001 0002 0003 0004 0005 6',
+                iban: 'MZ59 0001 0002 0003 0004 0005 6'
+            },
+            showBankDetails: true,
+            showGifts: true
+        }
     }
 };
 

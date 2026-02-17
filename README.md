@@ -11,6 +11,7 @@ A modern, embeddable event editor built with React and TypeScript. This applicat
 - **Rich Visual Effects**: Enhance invitations with interactive effects like confetti, sparkles, balloons, and more.
 - **Background Music**: Add atmosphere with built-in music tracks.
 - **RSVP Management**: Built-in functionality to collect and manage guest RSVPs efficiently.
+- **Gift List & Bank Details**: Provide guest with gift suggestions and bank details for contributions, fully customizable within the editor.
 - **Responsive Experience**: Adaptive editor interface and content rendering that automatically adjusts to Desktop, Tablet, and Mobile layouts.
 - **Auto-Device Detection**: The `DynamicRenderer` component intelligently detects its container size to serve the optimal layout.
 - **Full Viewport Options**: Support for "Boxed" (standard) and "Full Width" (immersive) layout modes.
