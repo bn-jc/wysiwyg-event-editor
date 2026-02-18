@@ -1,7 +1,7 @@
 import React from 'react';
 import type { SectionRendererProps } from '../../types';
 import { cn } from '@/utils/cn';
-import { Mail, Users, MessageSquare } from 'lucide-react';
+import { Mail, Users, MessageSquare, Phone, Smartphone, MessageCircle } from 'lucide-react';
 import { InlineText } from '../common/InlineText';
 
 
@@ -10,6 +10,7 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
     globalStyles,
     onUpdate,
     onInteraction,
+    onValidate,
     readOnly,
     isDark
 }) => {
@@ -18,22 +19,35 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
     // Form state
     const [attendance, setAttendance] = React.useState('');
     const [name, setName] = React.useState('');
-    const [email, setEmail] = React.useState('');
+    const [contact, setContact] = React.useState('');
     const [message, setMessage] = React.useState('');
     const [isSubmitted, setIsSubmitted] = React.useState(false);
+    const [error, setError] = React.useState<string | null>(null);
 
     const handleSubmit = () => {
-        if (!attendance || !name || !email) {
-            alert('Por favor, preencha todos os campos obrigatórios.');
+        if (!attendance || !name || !contact) {
+            setError('Por favor, preencha todos os campos obrigatórios.');
             return;
         }
+
+        if (onValidate && !onValidate('rsvp-contact', contact, { contactType: content.contactType || 'email' })) {
+            setError(
+                (content.contactType || 'email') === 'email'
+                    ? 'Por favor, insira um e-mail válido.'
+                    : 'Por favor, insira um número de telefone válido.'
+            );
+            return;
+        }
+
+        setError(null);
 
         onInteraction?.({
             type: 'RSVP_SUBMIT',
             payload: {
                 attendance,
                 name,
-                email,
+                contact,
+                contactType: content.contactType || 'email',
                 message
             },
             timestamp: Date.now()
@@ -177,30 +191,70 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
                         </div>
 
                         <div className="group">
-                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block ml-1">
-                                <InlineText
-                                    tagName="span"
-                                    value={content.emailLabel || 'E-mail para Contacto'}
-                                    onChange={(val) => onUpdate({ emailLabel: val })}
-                                    readOnly={readOnly}
-                                />
-                            </label>
+                            <div className="flex justify-between items-end mb-2 ml-1">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                    <InlineText
+                                        tagName="span"
+                                        value={
+                                            content.contactType === 'email' ? (content.emailLabel || 'E-mail para Contacto') :
+                                                (content.phoneLabel || 'Telemóvel para Contacto')
+                                        }
+                                        onChange={(val) => {
+                                            if (content.contactType === 'email') onUpdate({ emailLabel: val });
+                                            else onUpdate({ phoneLabel: val });
+                                        }}
+                                        readOnly={readOnly}
+                                    />
+                                </label>
+                                {!readOnly && (
+                                    <div className="flex gap-2 text-[10px] font-bold">
+                                        {['email', 'phone', 'sms', 'whatsapp'].map((type) => (
+                                            <button
+                                                key={type}
+                                                onClick={() => onUpdate({ contactType: type })}
+                                                className={cn(
+                                                    "transition-colors",
+                                                    content.contactType === type ? "text-blue-500" : "text-gray-300 hover:text-gray-400"
+                                                )}
+                                            >
+                                                {type.toUpperCase()}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                             <div className="relative">
                                 <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder={content.emailPlaceholder || "seu-email@exemplo.com"}
+                                    type={content.contactType === 'email' ? 'email' : 'tel'}
+                                    value={contact}
+                                    onChange={(e) => setContact(e.target.value)}
+                                    placeholder={
+                                        content.contactType === 'email'
+                                            ? (content.emailPlaceholder || "seu-email@exemplo.com")
+                                            : (content.phonePlaceholder || "Ex: +258 84 123 4567")
+                                    }
                                     readOnly={!readOnly}
                                     className={cn(
                                         "w-full border border-transparent rounded-2xl p-4 text-base md:text-sm focus:ring-2 transition-all outline-none pl-12",
                                         isDark ? "bg-black/40 text-gray-200 focus:ring-blue-400/50" : "bg-gray-50 text-gray-900 focus:ring-blue-400",
-                                        readOnly ? 'cursor-text' : 'cursor-default'
+                                        readOnly ? 'cursor-text' : 'cursor-default',
+                                        error && !contact && "border-red-500/50"
                                     )}
                                 />
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-hover:text-blue-400 transition-colors" size={18} />
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-hover:text-blue-400 transition-colors">
+                                    {content.contactType === 'email' && <Mail size={18} />}
+                                    {content.contactType === 'phone' && <Phone size={18} />}
+                                    {content.contactType === 'sms' && <Smartphone size={18} />}
+                                    {content.contactType === 'whatsapp' && <MessageCircle size={18} />}
+                                </div>
                             </div>
                         </div>
+
+                        {error && (
+                            <p data-testid="contact-error" className="text-red-500 text-[10px] font-bold uppercase tracking-wider ml-1 mt-1 animate-pulse">
+                                {error}
+                            </p>
+                        )}
 
                         {(content.showMessageField !== false) && (
                             <div className="group">

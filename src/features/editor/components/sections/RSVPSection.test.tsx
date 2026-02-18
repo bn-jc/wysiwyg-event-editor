@@ -78,15 +78,16 @@ describe('RSVPSection', () => {
 
     it('calls onInteraction when form is submitted in read-only mode', () => {
         const onInteraction = vi.fn();
-        render(<RSVPSection {...defaultProps} readOnly={true} onInteraction={onInteraction} />);
+        const onValidate = vi.fn().mockReturnValue(true);
+        render(<RSVPSection {...defaultProps} readOnly={true} onInteraction={onInteraction} onValidate={onValidate} />);
 
         // Fill form
         const nameInput = screen.getByPlaceholderText(/Ex: Maria & João Silva/i);
-        const emailInput = screen.getByPlaceholderText(/seu-email@exemplo.com/i);
+        const contactInput = screen.getByPlaceholderText(/seu-email@exemplo.com/i);
         const submitButton = screen.getByText(/Confirmar Agora/i);
 
         fireEvent.change(nameInput, { target: { value: 'John Doe' } });
-        fireEvent.change(emailInput, { target: { value: 'john@example.com' } });
+        fireEvent.change(contactInput, { target: { value: 'john@example.com' } });
 
         // Select attendance
         const dropdown = screen.getByRole('combobox');
@@ -94,15 +95,41 @@ describe('RSVPSection', () => {
 
         fireEvent.click(submitButton);
 
+        expect(onValidate).toHaveBeenCalledWith('rsvp-contact', 'john@example.com', expect.any(Object));
         expect(onInteraction).toHaveBeenCalledWith(expect.objectContaining({
             type: 'RSVP_SUBMIT',
             payload: expect.objectContaining({
                 name: 'John Doe',
-                email: 'john@example.com',
+                contact: 'john@example.com',
+                contactType: 'email',
                 attendance: 'Sim, Eu vou!'
             })
         }));
 
         expect(screen.getByText('Obrigado!')).toBeInTheDocument();
+    });
+
+    it('shows error message when validation fails', () => {
+        const onInteraction = vi.fn();
+        const onValidate = vi.fn().mockReturnValue(false);
+        render(<RSVPSection {...defaultProps} readOnly={true} onInteraction={onInteraction} onValidate={onValidate} />);
+
+        const nameInput = screen.getByPlaceholderText(/Ex: Maria & João Silva/i);
+        const contactInput = screen.getByPlaceholderText(/seu-email@exemplo.com/i);
+        const submitButton = screen.getByText(/Confirmar Agora/i);
+
+        fireEvent.change(nameInput, { target: { value: 'John Doe' } });
+        fireEvent.change(contactInput, { target: { value: 'invalid-email' } });
+
+        // Select attendance
+        const dropdown = screen.getByRole('combobox');
+        fireEvent.change(dropdown, { target: { value: 'Sim, Eu vou!' } });
+
+        fireEvent.click(submitButton);
+
+        expect(onInteraction).not.toHaveBeenCalled();
+        const errorMsg = screen.getByTestId('contact-error');
+        expect(errorMsg).toBeInTheDocument();
+        expect(errorMsg).toHaveTextContent(/e-mail válido/i);
     });
 });

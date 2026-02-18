@@ -5,6 +5,7 @@ import { SectionRenderer } from './SectionRenderer';
 import { BackgroundMusic } from './BackgroundMusic';
 import { useContainerSize } from '../hooks/useContainerSize';
 import type { CanvasRendererProps, DeviceType } from '../types';
+import { validateContact } from '../utils/validation';
 
 
 export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
@@ -15,6 +16,7 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
     onSectionSelect,
     onOpen,
     onInteraction,
+    onValidate: propOnValidate,
     device: propDevice,
     isDark: isDarkProp
 }) => {
@@ -111,6 +113,18 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
             element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }, [layout.sections]);
+
+    const handleValidate = React.useCallback((type: string, value: any, options?: any) => {
+        if (propOnValidate) {
+            return propOnValidate(type, value, options);
+        }
+
+        if (type === 'rsvp-contact') {
+            return validateContact(value, options?.contactType || 'email');
+        }
+
+        return true;
+    }, [propOnValidate]);
 
     // Check for splash screen anywhere in the sections
     const splashSection = layout.sections.find(s => s.type === 'SplashSection');
@@ -211,6 +225,7 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
                                     activeScrollSectionId={activeScrollSectionId}
                                     onNavigate={handleNavigate}
                                     onInteraction={onInteraction}
+                                    onValidate={handleValidate}
                                     onSelect={() => onSectionSelect?.(section.id)}
                                     onUpdate={(newContent) => onSectionUpdate?.(section.id, newContent)}
                                     readOnly={readOnly}

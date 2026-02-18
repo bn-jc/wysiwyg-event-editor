@@ -73,7 +73,10 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
             showMessageField: 'Campo de Mensagem',
             messageLabel: 'Rótulo da Mensagem',
             messagePlaceholder: 'Dica da Mensagem',
-            footerText: 'Texto de Rodapé'
+            footerText: 'Texto de Rodapé',
+            contactType: 'Tipo de Contacto',
+            phoneLabel: 'Rótulo do Telefone',
+            phonePlaceholder: 'Dica do Telefone'
         };
 
         if (key === 'messageLabel' || key === 'messagePlaceholder') {
@@ -238,6 +241,30 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                             <option value="double-line">Linha Dupla</option>
                             <option value="wave">Onda Suave</option>
                             <option value="none">Nenhum</option>
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                </div>
+            );
+        }
+
+        if (key === 'contactType' && section.type === 'RSVPSection') {
+            return (
+                <div key={key} className="flex flex-col gap-2 mb-6">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                    <div className="relative">
+                        <select
+                            value={value}
+                            onChange={(e) => handleChange(key, e.target.value)}
+                            className={cn(
+                                "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
+                        >
+                            <option value="email">E-mail</option>
+                            <option value="phone">Chamada Telefónica</option>
+                            <option value="sms">SMS</option>
+                            <option value="whatsapp">WhatsApp</option>
                         </select>
                         <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                     </div>

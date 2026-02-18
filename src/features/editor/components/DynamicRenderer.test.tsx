@@ -35,8 +35,8 @@ vi.mock('./BackgroundMusic', () => ({
 
 // Mock SectionRenderer
 vi.mock('./SectionRenderer', () => ({
-    SectionRenderer: ({ section, onOpen }: any) => (
-        <div data-testid={`section-${section.type}`}>
+    SectionRenderer: ({ section, onOpen, onValidate }: any) => (
+        <div data-testid={`section-${section.type}`} data-has-validate={!!onValidate}>
             {section.type}
             {onOpen && (
                 <button data-testid="open-btn" onClick={onOpen}>
@@ -163,7 +163,21 @@ describe('DynamicRenderer', () => {
         expect(screen.getByTitle('Mudar para modo claro')).toBeInTheDocument();
 
         // Rerender with light mode
-        rerender(<DynamicRenderer layout={mockLayout} isDark={false} />);
+        rerender(<DynamicRenderer layout={mockLayout} isDark={false} readOnly={true} />);
         expect(screen.getByTitle('Mudar para modo escuro')).toBeInTheDocument();
+    });
+
+    it('should pass onValidate to SectionRenderer', () => {
+        const onValidate = vi.fn();
+        const fullLayout: EventLayout = {
+            ...mockLayout,
+            sections: [{ id: '4', type: 'RSVPSection', content: {} }]
+        };
+
+        render(<DynamicRenderer layout={fullLayout} readOnly={false} onValidate={onValidate} />);
+
+        // Check if SectionRenderer mock received onValidate (via data-has-validate attribute)
+        const section = screen.getByTestId('section-RSVPSection');
+        expect(section).toHaveAttribute('data-has-validate', 'true');
     });
 });

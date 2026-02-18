@@ -72,6 +72,7 @@ export interface CanvasRendererProps {
     onSectionSelect?: (sectionId: string) => void;
     onOpen?: () => void;
     onInteraction?: (interaction: EditorInteraction) => void;
+    onValidate?: (type: string, value: any, options?: any) => boolean;
     isDark?: boolean;
 }
 
@@ -87,6 +88,7 @@ export interface SectionRendererProps {
     activeScrollSectionId?: string | null;
     onNavigate?: (target: string) => void;
     onInteraction?: (interaction: EditorInteraction) => void;
+    onValidate?: (type: string, value: any, options?: any) => boolean;
     onOpen?: () => void;
     isDark?: boolean;
 }

@@ -71,8 +71,10 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
             messagePlaceholder: 'Alguma restrição alimentar ou mensagem especial?',
             showMessageField: true,
             footerText: 'Estamos ansiosos por celebrar este dia especial convosco!',
-            attendanceLabel: 'Você vai?',
             attendanceOptions: ['Sim, Eu vou!', 'Desculpe, não posso ir'],
+            contactType: 'email', // 'email', 'phone', 'sms', 'whatsapp'
+            phoneLabel: 'Telemóvel para Contacto',
+            phonePlaceholder: 'Ex: +258 84 123 4567',
             backgroundEffect: 'none',
             backgroundEffectColor: '#FFC0CB',
             backgroundEffectDirection: 'up',
