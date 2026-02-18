@@ -20,6 +20,15 @@ export interface TranslationSchema {
         desktop: string;
         tablet: string;
         mobile: string;
+        corners: string;
+        roundedNone: string;
+        roundedSm: string;
+        roundedMd: string;
+        roundedLg: string;
+        roundedXl: string;
+        rounded2xl: string;
+        rounded3xl: string;
+        roundedFull: string;
     };
     sidebar: {
         sections: string;
@@ -70,7 +79,16 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
             full: 'Full Width Layout',
             desktop: 'Desktop',
             tablet: 'Tablet',
-            mobile: 'Smartphone'
+            mobile: 'Smartphone',
+            corners: 'Corners',
+            roundedNone: 'Square',
+            roundedSm: 'Small',
+            roundedMd: 'Medium',
+            roundedLg: 'Large',
+            roundedXl: 'XL',
+            rounded2xl: '2XL',
+            rounded3xl: '3XL',
+            roundedFull: 'Pill'
         },
         sidebar: {
             sections: 'SECTIONS',
@@ -119,7 +137,16 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
             full: 'Layout Inteiro',
             desktop: 'Desktop',
             tablet: 'Tablet',
-            mobile: 'Smartphone'
+            mobile: 'Smartphone',
+            corners: 'Cantos',
+            roundedNone: 'Quadrado',
+            roundedSm: 'Pequeno',
+            roundedMd: 'Médio',
+            roundedLg: 'Grande',
+            roundedXl: 'XL',
+            rounded2xl: '2XL',
+            rounded3xl: '3XL',
+            roundedFull: 'Pílula'
         },
         sidebar: {
             sections: 'SECÇÕES',
@@ -169,7 +196,16 @@ export const TRANSLATIONS: Record<Locale, TranslationSchema> = {
             full: 'Layout Inteiro',
             desktop: 'Desktop',
             tablet: 'Tablet',
-            mobile: 'Smartphone'
+            mobile: 'Smartphone',
+            corners: 'Cantos',
+            roundedNone: 'Quadrado',
+            roundedSm: 'Pequeno',
+            roundedMd: 'Médio',
+            roundedLg: 'Grande',
+            roundedXl: 'XL',
+            rounded2xl: '2XL',
+            rounded3xl: '3XL',
+            roundedFull: 'Pílula'
         },
         sidebar: {
             sections: 'SECÇÕES',

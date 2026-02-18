@@ -37,7 +37,7 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
 
     return (
         <div
-            className="relative h-[100vh] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden bg-transparent"
+            className="relative min-h-[100dvh] w-full flex flex-col items-center justify-center overflow-hidden bg-transparent"
             style={{
                 backgroundColor: isDark
                     ? (globalStyles.themeShades?.dark.background || '#121212')
@@ -126,7 +126,7 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
                     onSelectElement={() => onElementSelect?.('names')}
                     className={cn(
                         "py-4",
-                        content.namesSize && content.namesSize !== 'inherit' ? content.namesSize : "text-6xl md:text-8xl"
+                        content.namesSize && content.namesSize !== 'inherit' ? content.namesSize : "text-5xl md:text-7xl"
                     )}
                     readOnly={readOnly}
                     style={{

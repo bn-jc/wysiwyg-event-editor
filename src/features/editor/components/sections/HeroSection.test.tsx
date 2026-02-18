@@ -137,8 +137,8 @@ describe('HeroSection', () => {
         };
         const { container } = render(<HeroSection {...props} />);
         const imageContainer = container.querySelector('img')!.parentElement!;
-        expect(imageContainer).toHaveStyle('width: 480px'); // 1.5 * 320
-        expect(imageContainer).toHaveStyle('height: 480px');
+        expect(imageContainer).toHaveStyle('width: 30rem'); // 1.5 * 20
+        expect(imageContainer).toHaveStyle('height: 30rem');
     });
 
     it('renders image decorations', () => {

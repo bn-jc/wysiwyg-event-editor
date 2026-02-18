@@ -18,4 +18,195 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Custom scrollbar for property editor */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+  }
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Splash Transitions */
+.perspective-2000 {
+  perspective: 2000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.origin-left {
+  transform-origin: left;
+}
+
+.origin-top {
+  transform-origin: top;
+}
+
+/* Envelope Flap Animation */
+@keyframes flap-open {
+  from {
+    transform: rotateX(0);
+  }
+
+  to {
+    transform: rotateX(180deg);
+  }
+}
+
+.animate-flap-open {
+  animation: flap-open 1s forwards cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Book Flip Animation */
+@keyframes book-flip {
+  from {
+    transform: rotateY(0);
+  }
+
+  to {
+    transform: rotateY(-180deg);
+  }
+}
+
+.animate-book-flip {
+  animation: book-flip 1.2s forwards cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Slide Up (Curtain) */
+@keyframes curtain-slide-up {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+.animate-curtain-slide-up {
+  animation: curtain-slide-up 0.8s forwards cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Zoom Reveal */
+@keyframes immersive-zoom-reveal {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.animate-zoom-reveal {
+  animation: immersive-zoom-reveal 1s forwards ease-in-out;
+}
+
+/* Blur Dissolve */
+@keyframes soft-blur-dissolve {
+  from {
+    filter: blur(0);
+    opacity: 1;
+  }
+
+  to {
+    filter: blur(20px);
+    opacity: 0;
+  }
+}
+
+.animate-blur-dissolve {
+  animation: soft-blur-dissolve 1s forwards ease-in-out;
+}
+
+/* Heart Reveal */
+@keyframes heart-reveal {
+  0% {
+    clip-path: path('M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+    transform: scale(1);
+  }
+
+  100% {
+    clip-path: path('M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+    transform: scale(50);
+    opacity: 0;
+  }
+}
+
+/* Note: clip-path path is tricky with scale. Better approach: use a mask or scale SVG */
+/* Let's use a simpler scale-only reveal for now or a circular iris */
+@keyframes iris-reveal {
+  from {
+    clip-path: circle(100%);
+  }
+
+  to {
+    clip-path: circle(0%);
+  }
+}
+
+.animate-iris-reveal {
+  animation: iris-reveal 1s forwards ease-in-out;
+}
+
+@keyframes star-reveal {
+  0% {
+    clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%);
+  }
+
+  100% {
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    transform: scale(30);
+    opacity: 0;
+  }
+}
+
+.animate-star-reveal {
+  animation: star-reveal 1.2s forwards cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Fade Scale Exit */
+.animate-fade-scale-exit {
+  animation: fade-scale-exit 1s forwards ease-in-out;
+}
+
+@keyframes fade-scale-exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.1);
+    filter: blur(8px);
+  }
 }

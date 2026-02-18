@@ -34,6 +34,7 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
     );
 
     const [hasOpened, setHasOpened] = React.useState(false);
+    const [isTransitioning, setIsTransitioning] = React.useState(false);
     const [activeScrollSectionId, setActiveScrollSectionId] = React.useState<string | null>(null);
 
     // Theme state - synchronized with prop for editor mode
@@ -183,6 +184,19 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
     }, [activeSectionId, showOnlySplash]);
 
     const isBoxed = layout.globalStyles.layoutMode === 'boxed';
+    const borderRadiusMap: Record<string, string> = {
+        none: 'rounded-none',
+        sm: 'rounded-sm',
+        md: 'rounded-md',
+        lg: 'rounded-lg',
+        xl: 'rounded-xl',
+        '2xl': 'rounded-2xl',
+        '3xl': 'rounded-3xl',
+        full: 'rounded-full'
+    };
+    const radiusClass = layout.globalStyles.containerBorderRadius
+        ? borderRadiusMap[layout.globalStyles.containerBorderRadius]
+        : 'rounded-[2rem]';
 
     return (
         <div className={cn(
@@ -192,9 +206,12 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
             <div
                 ref={containerRef}
                 className={cn(
-                    "flex flex-col overflow-y-auto no-scrollbar scroll-smooth transition-all duration-500",
-                    !showOnlySplash && isBoxed ? "w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] max-w-6xl h-[calc(100%-2rem)] md:h-[calc(100%-4rem)] shadow-[0_20px_50px_rgba(0,0,0,0.1)] my-4 md:my-8 rounded-[2rem] border border-gray-100/10 relative" : "w-full h-full",
-                    showOnlySplash && "overflow-hidden"
+                    "flex flex-col no-scrollbar scroll-smooth transition-all duration-500 mx-auto",
+                    !showOnlySplash
+                        ? (isBoxed
+                            ? cn("w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] max-w-6xl h-[calc(100%-2rem)] md:h-[calc(100%-4rem)] shadow-[0_20px_50px_rgba(0,0,0,0.1)] my-4 md:my-8 border border-gray-100/10 relative overflow-y-auto", radiusClass)
+                            : "w-full h-full max-w-6xl overflow-y-auto")
+                        : "w-full h-full overflow-hidden"
                 )}
                 style={{
                     backgroundColor: themeColors.background,
@@ -202,80 +219,107 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
                     color: themeColors.text
                 }}
             >
-                {showOnlySplash && splashSection ? (
-                    <div key={splashSection.id} data-section-id={splashSection.id} className="h-full w-full">
-                        <SectionRenderer
-                            section={splashSection}
-                            globalStyles={layout.globalStyles}
-                            isActive={false}
-                            onSelect={() => { }}
-                            onUpdate={() => { }}
-                            selectedElementKey={selectedElementKey}
-                            onElementSelect={onElementSelect}
-                            readOnly={true}
-                            index={layout.sections.indexOf(splashSection)}
-                            device={device}
-                            isDark={isDark}
-                            externalInputState={externalInputState}
-                            sections={layout.sections}
-                            onOpen={() => {
-                                setHasOpened(true);
-                                onOpen?.(); // Call the prop
-                                onInteraction?.({
-                                    type: 'INVITATION_OPENED',
-                                    payload: { timestamp: Date.now() },
-                                    timestamp: Date.now()
-                                });
-                            }}
-                        />
-                    </div>
-                ) : (
-                    layout.sections.map((section, index) => {
-                        // If in read-only mode and we have a splash screen, don't show it in the main list
-                        // (Detect by ID to be safe across reorders)
-                        if (readOnly && hasSplash && section.id === splashSection?.id) return null;
+                {(showOnlySplash || isTransitioning) && splashSection ? (
+                    <div
+                        key={splashSection.id}
+                        data-section-id={splashSection.id}
+                        className={cn(
+                            "h-full w-full transition-all",
+                            isTransitioning && (splashSection.content.transitionType === 'book' ? "perspective-2000" : "")
+                        )}
+                    >
+                        <div className={cn(
+                            "h-full w-full relative",
+                            isTransitioning && splashSection.content.transitionType === 'fade' && "animate-fade-scale-exit",
+                            isTransitioning && splashSection.content.transitionType === 'book' && "animate-book-flip preserve-3d origin-left",
+                            isTransitioning && splashSection.content.transitionType === 'envelope' && "transition-transform duration-1000 translate-y-full",
+                            isTransitioning && splashSection.content.transitionType === 'curtain' && "animate-curtain-slide-up",
+                            isTransitioning && splashSection.content.transitionType === 'zoom' && "animate-zoom-reveal",
+                            isTransitioning && splashSection.content.transitionType === 'blur' && "animate-blur-dissolve",
+                            isTransitioning && splashSection.content.transitionType === 'heart' && "animate-iris-reveal",
+                            isTransitioning && splashSection.content.transitionType === 'star' && "animate-star-reveal"
+                        )}>
+                            {/* Envelope Flap Animation Overlay */}
+                            {isTransitioning && splashSection.content.transitionType === 'envelope' && (
+                                <div className="absolute inset-x-0 top-0 h-1/2 bg-white/10 backdrop-blur-md z-50 origin-top animate-flap-open preserve-3d">
+                                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent" />
+                                </div>
+                            )}
 
-                        // NAV SECTION IS RENDERED SEPARATELY AT THE TOP LEVEL OF DynamicRenderer
-                        if (section.type === 'NavSection') return null;
+                            <SectionRenderer
+                                section={splashSection}
+                                globalStyles={layout.globalStyles}
+                                isActive={false}
+                                onSelect={() => { }}
+                                onUpdate={() => { }}
+                                selectedElementKey={selectedElementKey}
+                                onElementSelect={onElementSelect}
+                                readOnly={true}
+                                index={layout.sections.indexOf(splashSection)}
+                                device={device}
+                                isDark={isDark}
+                                externalInputState={externalInputState}
+                                sections={layout.sections}
+                                onOpen={() => {
+                                    const duration = splashSection.content.transitionDuration || 1000;
+                                    setIsTransitioning(true);
 
-                        if (section.isHidden) return null;
-
-                        return (
-                            <div key={section.id} data-section-id={section.id}>
-                                <SectionRenderer
-                                    section={section}
-                                    globalStyles={layout.globalStyles}
-                                    isActive={activeSectionId === section.id}
-                                    activeScrollSectionId={activeScrollSectionId}
-                                    onNavigate={handleNavigate}
-                                    onInteraction={onInteraction}
-                                    onValidate={handleValidate}
-                                    onSelect={() => onSectionSelect?.(section.id)}
-                                    onUpdate={(newContent) => onSectionUpdate?.(section.id, newContent)}
-                                    selectedElementKey={selectedElementKey}
-                                    onElementSelect={onElementSelect}
-                                    readOnly={readOnly}
-                                    index={index}
-                                    device={device}
-                                    isDark={isDark}
-                                    externalInputState={externalInputState}
-                                    sections={layout.sections}
-                                    onOpen={() => {
+                                    setTimeout(() => {
                                         setHasOpened(true);
+                                        setIsTransitioning(false);
                                         onOpen?.(); // Call the prop
                                         onInteraction?.({
                                             type: 'INVITATION_OPENED',
                                             payload: { timestamp: Date.now() },
                                             timestamp: Date.now()
                                         });
-                                    }}
-                                />
-                            </div>
-                        );
-                    })
+                                    }, duration);
+                                }}
+                            />
+                        </div>
+                    </div>
+                ) : (
+                    <div
+                        className={cn(
+                            "flex flex-col flex-1 relative transition-transform duration-1000",
+                            isTransitioning && splashSection?.content.transitionType === 'parallax' && "-translate-y-full"
+                        )}
+                    >
+                        {layout.sections.map((section, index) => {
+                            // If in read-only mode and we have a splash screen, don't show it in the main list
+                            if (readOnly && hasSplash && section.id === splashSection?.id) return null;
+
+                            // NAV SECTION IS RENDERED SEPARATELY AT THE TOP LEVEL OF DynamicRenderer
+                            if (section.type === 'NavSection') return null;
+
+                            if (section.isHidden) return null;
+
+                            return (
+                                <div key={section.id} data-section-id={section.id}>
+                                    <SectionRenderer
+                                        section={section}
+                                        globalStyles={layout.globalStyles}
+                                        isActive={activeSectionId === section.id}
+                                        activeScrollSectionId={activeScrollSectionId}
+                                        onNavigate={handleNavigate}
+                                        onInteraction={onInteraction}
+                                        onValidate={handleValidate}
+                                        onSelect={() => onSectionSelect?.(section.id)}
+                                        onUpdate={(newContent) => onSectionUpdate?.(section.id, newContent)}
+                                        selectedElementKey={selectedElementKey}
+                                        onElementSelect={onElementSelect}
+                                        readOnly={readOnly}
+                                        index={index}
+                                        device={device}
+                                        isDark={isDark}
+                                        externalInputState={externalInputState}
+                                        sections={layout.sections}
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
                 )}
-                {/* Hidden debug info for verification if needed */}
-                <div className="hidden" data-testid="detected-device">{device}</div>
             </div>
 
             {/* Floating NavSection */}
@@ -291,7 +335,7 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
                         bottom: navSection.content.navPosition === 'bottom' ? 0 : 'auto'
                     }}
                 >
-                    <div className="pointer-events-auto max-w-full">
+                    <div className="pointer-events-auto max-w-6xl w-full px-4 md:px-8">
                         <SectionRenderer
                             section={navSection}
                             globalStyles={layout.globalStyles}
@@ -309,6 +353,7 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
                             device={device}
                             isDark={isDark}
                             externalInputState={externalInputState}
+                            sections={layout.sections}
                         />
                     </div>
                 </div>
@@ -318,7 +363,6 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
             {readOnly && layout.musicUrl && !showOnlySplash && (
                 <BackgroundMusic url={layout.musicUrl} isDark={isDark} />
             )}
-
 
             {/* Dark Mode Toggle */}
             {readOnly && (
@@ -333,6 +377,9 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
                     {isDark ? <Sun size={20} /> : <Moon size={20} />}
                 </button>
             )}
+
+            {/* Hidden debug info for verification if needed */}
+            <div className="hidden" data-testid="detected-device">{device}</div>
         </div>
     );
 };

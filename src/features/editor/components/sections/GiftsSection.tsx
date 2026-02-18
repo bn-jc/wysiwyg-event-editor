@@ -54,8 +54,8 @@ export const GiftsSection: React.FC<SectionRendererProps> = ({
         <section
             className="px-6 py-20 bg-transparent"
             style={{
-                paddingTop: section.styles?.paddingTop || '80px',
-                paddingBottom: section.styles?.paddingBottom || '80px',
+                paddingTop: section.styles?.paddingTop || '5rem',
+                paddingBottom: section.styles?.paddingBottom || '5rem',
                 color: isDark
                     ? (globalStyles.themeShades?.dark.text || '#E0E0E0')
                     : (section.styles?.color || globalStyles.themeShades?.light.text || '#1a1a1a')

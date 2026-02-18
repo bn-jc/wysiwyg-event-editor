@@ -62,6 +62,7 @@ export interface EventLayout {
         fontFamilyBody: string;
         backgroundColor?: string;
         layoutMode?: 'boxed' | 'full'; // 'boxed' = max-w-6xl mx-auto, 'full' = w-full
+        containerBorderRadius?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full';
         themeShades?: {
             light: { background: string; text: string };
             dark: { background: string; text: string };

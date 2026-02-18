@@ -25,6 +25,7 @@ const INITIAL_LAYOUT: EventLayout = {
         fontFamilyTitle: "'Sacramento', cursive",
         fontFamilyBody: "'Josefin Sans', sans-serif",
         backgroundColor: '#ffffff',
+        containerBorderRadius: '2xl',
         themeShades: {
             light: { background: '#ffffff', text: '#1a1a1a' },
             dark: { background: '#121212', text: '#e0e0e0' }

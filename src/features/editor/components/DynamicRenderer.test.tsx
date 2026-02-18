@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { DynamicRenderer } from './DynamicRenderer';
 import type { EventLayout } from '../types';
 
@@ -58,7 +58,8 @@ describe('DynamicRenderer', () => {
             secondaryColor: '#fff',
             fontFamilyTitle: 'Arial',
             fontFamilyBody: 'Arial',
-            backgroundColor: '#fff'
+            backgroundColor: '#fff',
+            containerBorderRadius: '2xl'
         },
         sections: [
             { id: '1', type: 'SplashSection', content: {} },
@@ -77,10 +78,15 @@ describe('DynamicRenderer', () => {
     });
 
     it('should show all sections after clicking open in read-only mode', () => {
+        vi.useFakeTimers();
         render(<DynamicRenderer layout={mockLayout} readOnly={true} />);
 
         const openBtn = screen.getByTestId('open-btn');
-        fireEvent.click(openBtn);
+        act(() => {
+            fireEvent.click(openBtn);
+            vi.advanceTimersByTime(1000);
+        });
+        vi.useRealTimers();
 
         // Splash should be GONE
         expect(screen.queryByTestId('section-SplashSection')).not.toBeInTheDocument();
@@ -97,6 +103,7 @@ describe('DynamicRenderer', () => {
         expect(screen.getByTestId('section-HeroSection')).toBeInTheDocument();
         expect(screen.getByTestId('section-AgendaSection')).toBeInTheDocument();
     });
+
     it('should show all section types in a full layout', () => {
         const fullLayout: EventLayout = {
             ...mockLayout,
@@ -131,6 +138,7 @@ describe('DynamicRenderer', () => {
             musicUrl: 'https://example.com/music.mp3'
         };
 
+        vi.useFakeTimers();
         render(<DynamicRenderer layout={musicLayout} readOnly={true} />);
 
         // Should NOT render music yet because splash is showing
@@ -138,7 +146,11 @@ describe('DynamicRenderer', () => {
 
         // Dismiss splash
         const openBtn = screen.getByTestId('open-btn');
-        fireEvent.click(openBtn);
+        act(() => {
+            fireEvent.click(openBtn);
+            vi.advanceTimersByTime(1000);
+        });
+        vi.useRealTimers();
 
         // Now music should be visible
         expect(screen.getByTestId('background-music')).toBeInTheDocument();

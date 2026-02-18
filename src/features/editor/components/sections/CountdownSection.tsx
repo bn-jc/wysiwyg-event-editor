@@ -55,8 +55,8 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
         <section
             className="px-6 bg-transparent overflow-hidden"
             style={{
-                paddingTop: section.styles?.paddingTop || '80px',
-                paddingBottom: section.styles?.paddingBottom || '80px',
+                paddingTop: section.styles?.paddingTop || '5rem',
+                paddingBottom: section.styles?.paddingBottom || '5rem',
                 color: isDark
                     ? (globalStyles.themeShades?.dark.text || '#E0E0E0')
                     : (section.styles?.color || globalStyles.themeShades?.light.text || '#1a1a1a')
@@ -64,7 +64,7 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
         >
             <div
                 className="max-w-4xl mx-auto flex flex-col items-center text-center"
-                style={{ gap: section.styles?.gap || '48px' }}
+                style={{ gap: section.styles?.gap || '3rem' }}
             >
                 <InlineText
                     tagName="h2"
@@ -83,7 +83,7 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
                 {!isFinished ? (
                     <div className="flex flex-wrap justify-center gap-4 md:gap-8">
                         {timerItems.map((item, idx) => (
-                            <div key={idx} className="flex flex-col items-center min-w-[80px] md:min-w-[120px]">
+                            <div key={idx} className="flex flex-col items-center min-w-[5rem] md:min-w-[7.5rem]">
                                 <div
                                     className={cn(
                                         "mb-2 tabular-nums transition-all duration-300 font-bold",

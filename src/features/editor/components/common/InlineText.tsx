@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Bold, Italic, Underline } from 'lucide-react';
+import { cn } from '@/utils/cn';
 
 interface InlineTextProps {
     value: string;
@@ -101,8 +102,20 @@ export const InlineText: React.FC<InlineTextProps> = ({
             )}
             <Tag
                 ref={contentRef}
-                className={`${className || ''} ${!readOnly ? 'hover:outline hover:outline-2 hover:outline-blue-300 hover:outline-dashed cursor-text transition-all rounded px-1 -mx-1' : ''} ${isEditing ? 'outline outline-2 outline-blue-500 outline-dashed bg-white/50 z-20 relative' : ''}`}
-                style={{ ...style, minWidth: '1em', display: 'inline-block', whiteSpace: multiline ? 'pre-wrap' : 'nowrap' }}
+                className={cn(
+                    className,
+                    "break-words max-w-full",
+                    !readOnly && 'hover:outline hover:outline-2 hover:outline-blue-300 hover:outline-dashed cursor-text transition-all rounded px-1 -mx-1',
+                    isEditing && 'outline outline-2 outline-blue-500 outline-dashed bg-white/50 z-20 relative'
+                )}
+                style={{
+                    ...style,
+                    minWidth: '1em',
+                    display: 'inline-block',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'anywhere'
+                }}
                 contentEditable={!readOnly}
                 onFocus={() => {
                     setIsEditing(true);

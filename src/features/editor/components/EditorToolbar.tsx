@@ -183,6 +183,32 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                                             </div>
                                         </div>
 
+                                        {globalStyles.layoutMode === 'boxed' && (
+                                            <div className="pt-2 border-t border-gray-100">
+                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3">{t.toolbar.corners}</span>
+                                                <div className="relative">
+                                                    <select
+                                                        value={globalStyles.containerBorderRadius || '2xl'}
+                                                        onChange={(e) => onUpdateGlobalStyles({ containerBorderRadius: e.target.value as any })}
+                                                        className={cn(
+                                                            "w-full border rounded-xl p-2 text-xs appearance-none cursor-pointer transition-all shadow-sm",
+                                                            isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200" : "bg-gray-50 border-gray-100 text-gray-700"
+                                                        )}
+                                                    >
+                                                        <option value="none">{t.toolbar.roundedNone}</option>
+                                                        <option value="sm">{t.toolbar.roundedSm}</option>
+                                                        <option value="md">{t.toolbar.roundedMd}</option>
+                                                        <option value="lg">{t.toolbar.roundedLg}</option>
+                                                        <option value="xl">{t.toolbar.roundedXl}</option>
+                                                        <option value="2xl">{t.toolbar.rounded2xl}</option>
+                                                        <option value="3xl">{t.toolbar.rounded3xl}</option>
+                                                        <option value="full">{t.toolbar.roundedFull}</option>
+                                                    </select>
+                                                    <LayoutGrid size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                                </div>
+                                            </div>
+                                        )}
+
                                         <div className="pt-2 border-t border-gray-100">
                                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3">{t.toolbar.darkMode}</span>
                                             <div className="grid grid-cols-2 gap-x-3 gap-y-0">

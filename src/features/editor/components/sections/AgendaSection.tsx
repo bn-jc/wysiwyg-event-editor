@@ -26,8 +26,8 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
         <section
             className="px-6 bg-transparent"
             style={{
-                paddingTop: section.styles?.paddingTop || '80px',
-                paddingBottom: section.styles?.paddingBottom || '80px',
+                paddingTop: section.styles?.paddingTop || '5rem',
+                paddingBottom: section.styles?.paddingBottom || '5rem',
                 color: isDark
                     ? (globalStyles.themeShades?.dark.text || '#E0E0E0')
                     : (section.styles?.color || globalStyles.themeShades?.light.text || '#1a1a1a')
@@ -35,7 +35,7 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
         >
             <div
                 className="max-w-2xl mx-auto flex flex-col items-center"
-                style={{ gap: section.styles?.gap || '48px' }}
+                style={{ gap: section.styles?.gap || '3rem' }}
             >
                 <InlineText
                     tagName="h2"

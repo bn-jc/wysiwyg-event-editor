@@ -134,16 +134,9 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
             namesSize: 'Tamanho dos Nomes',
             dateFont: 'Fonte da Data',
             dateColor: 'Cor da Data',
-            dateSize: 'Tamanho da Data',
-            descriptionFont: 'Fonte da Descrição',
-            descriptionColor: 'Cor da Descrição',
-            descriptionSize: 'Tamanho da Descrição',
-            buttonFont: 'Fonte do Botão',
-            buttonColor: 'Cor do Botão',
-            buttonSize: 'Tamanho do Botão',
-            recipientFont: 'Fonte do Destinatário',
-            recipientColor: 'Cor do Destinatário',
             recipientSize: 'Tamanho do Destinatário',
+            transitionType: 'Efeito de Abertura',
+            transitionDuration: 'Duração da Transição (ms)',
             deadlineFont: 'Fonte do Prazo',
             deadlineColor: 'Cor do Prazo',
             deadlineSize: 'Tamanho do Prazo',
@@ -640,6 +633,55 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                         </select>
                         <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                     </div>
+                </div>
+            );
+        }
+
+        if (key === 'transitionType' && section.type === 'SplashSection') {
+            return (
+                <div key={key} className="flex flex-col gap-2 mb-6">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">{label}</label>
+                    <div className="relative">
+                        <select
+                            value={value || 'fade'}
+                            onChange={(e) => handleChange(key, e.target.value)}
+                            className={cn(
+                                "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm font-medium",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
+                        >
+                            <option value="fade">Desvanecer (Fade)</option>
+                            <option value="curtain">Cortina (Slide Up)</option>
+                            <option value="zoom">Zoom Imersivo</option>
+                            <option value="blur">Desfoque Suave</option>
+                            <option value="envelope">Abrir Envelope</option>
+                            <option value="book">Abrir Livro (Flip)</option>
+                            <option value="heart">Revelar Coração (Iris)</option>
+                            <option value="star">Revelar Estrela</option>
+                            <option value="parallax">Parallax Overlay</option>
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                </div>
+            );
+        }
+
+        if (key === 'transitionDuration' && section.type === 'SplashSection') {
+            return (
+                <div key={key} className="flex flex-col gap-2 mb-6">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">{label}</label>
+                    <input
+                        type="number"
+                        min="300"
+                        max="5000"
+                        step="100"
+                        value={value || 1000}
+                        onChange={(e) => handleChange(key, parseInt(e.target.value) || 1000)}
+                        className={cn(
+                            "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 transition-all shadow-sm font-mono",
+                            isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                        )}
+                    />
                 </div>
             );
         }
@@ -1506,7 +1548,7 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                 </div>
             </div>
 
-            <div className="relative flex-1 overflow-y-auto no-scrollbar pr-1">
+            <div className="relative flex-1 overflow-y-auto custom-scrollbar pr-1">
                 <div className="grid grid-cols-1">
                     <div className={cn(
                         "mb-8 p-5 rounded-[2rem] transition-all duration-500",

@@ -67,7 +67,9 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
             recipientName: '[Nome do Convidado]',
             recipientFont: 'inherit',
             recipientColor: '',
-            recipientSize: 'inherit'
+            recipientSize: 'inherit',
+            transitionType: 'fade', // 'fade', 'book', 'envelope', 'curtain', 'zoom', 'blur', 'parallax', 'heart', 'star'
+            transitionDuration: 1000
         }
     },
     HeroSection: {

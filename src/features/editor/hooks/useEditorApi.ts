@@ -32,6 +32,7 @@ declare global {
                 values: Record<string, Record<string, any>>;
                 statuses: Record<string, Record<string, any>>;
             };
+            setLayout: (layout: EventLayout) => void;
         };
     }
 }
@@ -57,6 +58,13 @@ export const useEditorApi = ({
             case 'EDITOR_SET_LANGUAGE':
                 if (payload?.language) {
                     updateLanguage(payload.language);
+                }
+                break;
+
+            case 'EDITOR_SET_LAYOUT':
+                if (payload) {
+                    setLayout(payload);
+                    console.log('API: Layout updated externally');
                 }
                 break;
 
@@ -154,6 +162,7 @@ export const useEditorApi = ({
                 return values[sectionId]?.[fieldKey];
             },
             getLayout: () => layout,
+            setLayout,
             save: onSave,
             externalInputState: (window as any).externalInputState // This should probably be passed from props or state
         };

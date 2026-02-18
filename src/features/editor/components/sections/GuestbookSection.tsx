@@ -60,8 +60,8 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
         <section
             className="px-6 bg-transparent"
             style={{
-                paddingTop: section.styles?.paddingTop || '96px',
-                paddingBottom: section.styles?.paddingBottom || '96px',
+                paddingTop: section.styles?.paddingTop || '6rem',
+                paddingBottom: section.styles?.paddingBottom || '6rem',
                 color: isDark
                     ? (globalStyles.themeShades?.dark.text || '#E0E0E0')
                     : (section.styles?.color || globalStyles.themeShades?.light.text || '#1a1a1a')
@@ -69,7 +69,7 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
         >
             <div
                 className="max-w-4xl mx-auto flex flex-col"
-                style={{ gap: section.styles?.gap || '64px' }}
+                style={{ gap: section.styles?.gap || '4rem' }}
             >
                 {/* Header */}
                 <div className="text-center mb-16 flex flex-col items-center gap-4">
@@ -106,7 +106,7 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
 
                 {/* Input Form */}
                 <div className={cn(
-                    "rounded-[2rem] p-8 transition-all duration-500 border relative overflow-hidden",
+                    "rounded-[2rem] p-6 md:p-8 transition-all duration-500 border relative overflow-hidden",
                     isDark ? "bg-[#1E1E1E] border-white/5 shadow-2xl" : "bg-white border-gray-100 shadow-xl shadow-gray-100"
                 )}>
                     <div className={cn("absolute top-0 left-0 w-full h-2 opacity-50", isDark ? "bg-gradient-to-r from-blue-900/40 via-purple-900/40 to-pink-900/40" : "bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100")} />

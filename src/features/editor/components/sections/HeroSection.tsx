@@ -146,8 +146,8 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
                                         : ''
                             )}
                             style={{
-                                width: `${(content.imageScale || 1) * 320}px`,
-                                height: `${(content.imageScale || 1) * 320}px`,
+                                width: `${(content.imageScale || 1) * 20}rem`,
+                                height: `${(content.imageScale || 1) * 20}rem`,
                                 maxWidth: '90vw',
                                 maxHeight: '90vw',
                                 borderColor: content.imageDecoration === 'gold' ? '#D4AF37' : isDark ? '#1E1E1E' : '#FFFFFF',

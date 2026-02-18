@@ -32,8 +32,8 @@ export const CustomSection: React.FC<SectionRendererProps> = ({
         <section
             className="px-6 bg-transparent"
             style={{
-                paddingTop: section.styles?.paddingTop || '80px',
-                paddingBottom: section.styles?.paddingBottom || '80px',
+                paddingTop: section.styles?.paddingTop || '5rem',
+                paddingBottom: section.styles?.paddingBottom || '5rem',
                 color: isDark
                     ? (globalStyles.themeShades?.dark.text || '#E0E0E0')
                     : (section.styles?.color || globalStyles.themeShades?.light.text || '#1a1a1a')
@@ -41,7 +41,7 @@ export const CustomSection: React.FC<SectionRendererProps> = ({
         >
             <div
                 className="max-w-2xl mx-auto flex flex-col"
-                style={{ gap: section.styles?.gap || '40px' }}
+                style={{ gap: section.styles?.gap || '2.5rem' }}
             >
                 {elements.map((element: any, index: number) => {
                     if (element.type === 'image') {

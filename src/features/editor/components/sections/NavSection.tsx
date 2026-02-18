@@ -62,9 +62,9 @@ export const NavSection: React.FC<NavSectionProps> = ({
         } else if (isSticky && navPosition === 'bottom') {
             classes += "sticky bottom-0 left-0 right-0 ";
         } else if (navPosition === 'left') {
-            classes += "fixed left-0 top-0 h-full w-auto ";
+            classes += (globalStyles?.layoutMode === 'boxed' ? "absolute " : "fixed ") + "left-0 top-0 h-full w-auto ";
         } else if (navPosition === 'right') {
-            classes += "fixed right-0 top-0 h-full w-auto ";
+            classes += (globalStyles?.layoutMode === 'boxed' ? "absolute " : "fixed ") + "right-0 top-0 h-full w-auto ";
         } else if (navPosition === 'top') {
             classes += "relative py-0.5 "; // Minimal vertical padding
         } else if (navPosition === 'bottom') {

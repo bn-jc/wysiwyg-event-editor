@@ -74,7 +74,7 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
     if (isSubmitted && readOnly) {
         return (
             <section className="px-6 py-24 text-center bg-transparent">
-                <div className="max-w-md mx-auto bg-white p-12 rounded-[2.5rem] shadow-xl">
+                <div className="max-w-md mx-auto bg-white p-6 md:p-12 rounded-[2.5rem] shadow-xl">
                     <div className="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
                     </div>
@@ -95,8 +95,8 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
         <section
             className="px-6 bg-transparent relative overflow-hidden"
             style={{
-                paddingTop: section.styles?.paddingTop || '96px',
-                paddingBottom: section.styles?.paddingBottom || '96px',
+                paddingTop: section.styles?.paddingTop || '6rem',
+                paddingBottom: section.styles?.paddingBottom || '6rem',
                 color: isDark
                     ? (globalStyles.themeShades?.dark.text || '#E0E0E0')
                     : (section.styles?.color || globalStyles.themeShades?.light.text || '#1a1a1a')
@@ -106,7 +106,10 @@ export const RSVPSection: React.FC<SectionRendererProps> = ({
             <div className={cn("absolute top-0 right-0 w-64 h-64 rounded-full -mr-32 -mt-32 transition-opacity duration-700", isDark ? "bg-white/5 opacity-10" : "bg-gray-50 opacity-50")} />
             <div className={cn("absolute bottom-0 left-0 w-64 h-64 rounded-full -ml-32 -mb-32 transition-opacity duration-700", isDark ? "bg-white/5 opacity-10" : "bg-gray-50 opacity-50")} />
 
-            <div className="max-w-3xl mx-auto relative z-10">
+            <div
+                className="max-w-4xl mx-auto flex flex-col"
+                style={{ gap: section.styles?.gap || '4rem' }}
+            >
                 <div className="text-center mb-16">
                     <InlineText
                         tagName="h2"
