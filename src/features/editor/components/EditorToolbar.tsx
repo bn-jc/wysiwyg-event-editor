@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, Smartphone, Tablet, Monitor, Eye, Type, Music, Palette, Navigation, Sun, Moon } from 'lucide-react';
+import { LayoutGrid, Smartphone, Tablet, Monitor, Eye, Type, Music, Palette, Sun, Moon } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import type { DeviceType, ViewMode, EventLayout } from '../types';
 import type { ContainerMode } from '../hooks/useContainerSize';
@@ -15,9 +15,7 @@ interface EditorToolbarProps {
     onUpdateGlobalStyles: (styles: Partial<EventLayout['globalStyles']>) => void;
     musicUrl?: string;
     onUpdateMusic: (url?: string) => void;
-    layout: EventLayout;
     containerMode?: ContainerMode;
-    onToggleNavbar: () => void;
     onPlay: () => void;
     isDark?: boolean;
     onToggleDark?: () => void;
@@ -32,15 +30,11 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
     onUpdateGlobalStyles,
     musicUrl,
     onUpdateMusic,
-    layout,
     containerMode = 'wide',
-    onToggleNavbar,
     onPlay,
     isDark,
     onToggleDark
 }) => {
-    const navSection = layout.sections.find(s => s.type === 'NavSection');
-    const isNavHidden = navSection?.isHidden;
     const [showColorPicker, setShowColorPicker] = React.useState(false);
     const pickerRef = React.useRef<HTMLDivElement>(null);
 
@@ -199,20 +193,6 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                             </select>
                         </div>
 
-                        {/* Navbar Toggle */}
-                        <button
-                            onClick={onToggleNavbar}
-                            className={cn(
-                                "flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all shadow-sm",
-                                isNavHidden
-                                    ? "bg-gray-50 border-gray-100 text-gray-400 opacity-60"
-                                    : "bg-blue-50 border-blue-100 text-blue-600"
-                            )}
-                            title={isNavHidden ? "Mostrar Navbar" : "Ocultar Navbar"}
-                        >
-                            <Navigation size={14} className={cn(isNavHidden ? "text-gray-400" : "text-blue-600")} />
-                            <span className="text-[10px] font-bold uppercase">Navbar</span>
-                        </button>
                     </div>
                 )}
             </div>

@@ -150,23 +150,9 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                 onUpdateGlobalStyles={updateGlobalStyles}
                 musicUrl={layout.musicUrl}
                 onUpdateMusic={updateMusic}
-                layout={layout}
                 onPlay={handlePlay}
                 isDark={editorIsDark}
                 onToggleDark={() => setEditorIsDark(!editorIsDark)}
-                onToggleNavbar={() => {
-                    const navSection = layout.sections.find(s => s.type === 'NavSection');
-                    if (navSection) {
-                        setLayout(prev => ({
-                            ...prev,
-                            sections: prev.sections.map(s =>
-                                s.id === navSection.id ? { ...s, isHidden: !s.isHidden } : s
-                            )
-                        }));
-                    } else {
-                        addSection('NavSection');
-                    }
-                }}
             />
 
             <div className="flex flex-1 overflow-hidden relative">
@@ -178,6 +164,20 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                         mode={containerMode}
                         hasSplash={layout.sections.some(s => s.type === 'SplashSection')}
                         isDark={editorIsDark}
+                        onToggleNavbar={() => {
+                            const navSection = layout.sections.find(s => s.type === 'NavSection');
+                            if (navSection) {
+                                setLayout(prev => ({
+                                    ...prev,
+                                    sections: prev.sections.map(s =>
+                                        s.id === navSection.id ? { ...s, isHidden: !s.isHidden } : s
+                                    )
+                                }));
+                            } else {
+                                addSection('NavSection');
+                            }
+                        }}
+                        isNavHidden={layout.sections.find(s => s.type === 'NavSection')?.isHidden}
                     />
                 )}
 

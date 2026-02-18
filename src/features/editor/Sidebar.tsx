@@ -25,6 +25,8 @@ interface SidebarProps {
     mode?: ContainerMode;
     hasSplash?: boolean;
     isDark?: boolean;
+    onToggleNavbar?: () => void;
+    isNavHidden?: boolean;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -34,7 +36,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     readOnly = false,
     mode = 'wide',
     hasSplash = false,
-    isDark = false
+    isDark = false,
+    onToggleNavbar,
+    isNavHidden = false
 }) => {
     if (readOnly) return null;
     const [collapsed, setCollapsed] = React.useState(mode !== 'wide');
@@ -84,7 +88,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             "flex flex-col items-center py-4 h-full shadow-sm z-20 transition-all duration-300",
             isDark ? "bg-[#1a1d23] border-r border-[#2d333b]" : "bg-white border-r border-gray-200",
             collapsed ? "w-14" : "w-24", // Slimmer when collapsed
-            isMobile && "absolute bottom-0 left-0 w-full h-auto border-r-0 border-t flex-row justify-around py-2 z-50 overflow-x-auto"
+            isMobile
+                ? "absolute bottom-0 left-0 w-full h-auto border-r-0 border-t flex-row justify-around py-2 z-50 overflow-x-auto"
+                : "overflow-y-auto no-scrollbar"
         )}>
             {/* Toggle Button for Desktop/Compact */}
             {!isMobile && (
@@ -97,6 +103,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 >
                     <Menu size={20} />
                 </button>
+            )}
+
+            {/* Navbar Toggle */}
+            {onToggleNavbar && (
+                <div className={cn("flex flex-col items-center gap-1 mb-6", isMobile && "mb-0")}>
+                    <button
+                        onClick={onToggleNavbar}
+                        className={cn(
+                            "p-3 rounded-xl transition-colors border",
+                            !isNavHidden
+                                ? (isDark ? 'bg-blue-900/40 text-blue-400 border-blue-800' : 'bg-blue-100 text-blue-600 border-blue-200 shadow-sm')
+                                : (isDark ? 'bg-[#2d333b] text-gray-400 border-[#3d444d] hover:bg-gray-700' : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-blue-50 hover:text-blue-600'),
+                            isMobile && "p-2"
+                        )}
+                        title={isNavHidden ? "Mostrar Barra de Navegação" : "Ocultar Barra de Navegação"}
+                    >
+                        < Sparkles size={isMobile ? 20 : 24} />
+                    </button>
+                    {!collapsed && !isMobile && <span className="text-[10px] font-medium text-gray-500 uppercase tracking-tighter text-center leading-tight">Barra de<br />Navegação</span>}
+                </div>
             )}
 
             {/* Layers Toggle */}
