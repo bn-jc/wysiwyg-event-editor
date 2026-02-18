@@ -143,15 +143,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                             {showColorPicker && (
                                 <div className="absolute top-full left-0 mt-2 p-4 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 w-64 animate-in fade-in zoom-in-95">
                                     <div className="space-y-4">
-                                        <div>
-                                            <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest block mb-2">{t.toolbar.themeColor}</span>
-                                            <ColorPicker
-                                                value={globalStyles.primaryColor}
-                                                onChange={(color) => onUpdateGlobalStyles({ primaryColor: color })}
-                                            />
-                                        </div>
-
-                                        <div className="pt-2 border-t border-gray-100">
+                                        <div className="pt-0">
                                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3">{t.toolbar.lightMode}</span>
                                             <div className="grid grid-cols-2 gap-3">
                                                 <div>
