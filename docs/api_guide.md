@@ -30,6 +30,15 @@ iframe.contentWindow.postMessage({
 }, '*');
 ```
 
+### Force Set Layout (Hard Reset)
+Updates the entire layout and resets the internal editor state.
+```javascript
+iframe.contentWindow.postMessage({
+  type: 'EDITOR_SET_LAYOUT',
+  payload: layout
+}, '*');
+```
+
 ### Update a Section
 Change content programmatically without a full reload.
 ```javascript
@@ -107,7 +116,7 @@ Every interaction contains a `type`, a `payload`, and a `timestamp`.
 When using the `DynamicRenderer` (preview mode), the following features are handled automatically based on the layout data:
 
 - **Dark Mode**: A floating toggle allows users to switch between light and dark themes. The theme supports automatic system preference detection, and in the editor interface, the preview is automatically synchronized with the designer's theme preference.
-- **Background Music**: If a `musicUrl` is present in the `EventLayout`, a play/pause toggle will appear after the user dismisses the splash screen.
+- **Splash Transitions**: 9 immersive styles for bridging the splash screen and main content (Fade, Curtain, Zoom, Blur, Envelope, Book, Heart, Star, Parallax).
 - **Sections**: All standard sections support bespoke dark mode styles out-of-the-box.
 
 ---

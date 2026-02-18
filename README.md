@@ -16,6 +16,7 @@ A modern, embeddable event editor built with React and TypeScript. This applicat
 - **Responsive Experience**: Adaptive editor interface and content rendering that automatically adjusts to Desktop, Tablet, and Mobile layouts.
 - **Auto-Device Detection**: The `DynamicRenderer` component intelligently detects its container size to serve the optimal layout.
 - **Full Viewport Options**: Support for "Boxed" (standard) and "Full Width" (immersive) layout modes.
+- **Splash Transitions**: 9 elegant transitions to bridge the Splash screen and main content, including 3D Envelope and Book Opening effects.
 - **In-Page Navigation**: New `NavSection` component for smooth scrolling between invitation sections.
 - **Standalone Examples**: Comprehensive HTML examples demonstrating specific integration patterns.
 
