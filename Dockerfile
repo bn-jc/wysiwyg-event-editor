@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build
 
 # Stage 3: Runner
-FROM nginx:alpine AS runner
+FROM nginx:stable-alpine AS runner
 WORKDIR /usr/share/nginx/html
 
 # Remove default nginx static assets
@@ -21,8 +21,10 @@ RUN rm -rf ./*
 # Copy static assets from builder stage
 COPY --from=builder /app/dist .
 
-# Copy custom nginx config if we had one (optional, using default for now)
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
 
 # Containers run nginx with global directives and daemon off
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
