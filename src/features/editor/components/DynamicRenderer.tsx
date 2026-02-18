@@ -192,9 +192,9 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
             <div
                 ref={containerRef}
                 className={cn(
-                    "flex flex-col w-full h-full overflow-y-auto no-scrollbar scroll-smooth transition-all duration-500",
-                    showOnlySplash ? 'overflow-hidden' : '',
-                    isBoxed && !showOnlySplash && "max-w-[1200px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] my-4 md:my-8 rounded-[2rem] border border-gray-100/10 relative"
+                    "flex flex-col overflow-y-auto no-scrollbar scroll-smooth transition-all duration-500",
+                    !showOnlySplash && isBoxed ? "w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] max-w-6xl h-[calc(100%-2rem)] md:h-[calc(100%-4rem)] shadow-[0_20px_50px_rgba(0,0,0,0.1)] my-4 md:my-8 rounded-[2rem] border border-gray-100/10 relative" : "w-full h-full",
+                    showOnlySplash && "overflow-hidden"
                 )}
                 style={{
                     backgroundColor: themeColors.background,

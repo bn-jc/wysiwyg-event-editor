@@ -145,85 +145,81 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                                     <div className="space-y-4">
                                         <div className="pt-0">
                                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3">{t.toolbar.lightMode}</span>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <div>
-                                                    <span className="text-[9px] font-bold text-gray-400 uppercase block mb-1">{t.toolbar.background}</span>
-                                                    <ColorPicker
-                                                        value={globalStyles.themeShades?.light.background || '#ffffff'}
-                                                        onChange={(color) => {
-                                                            const currentShades = globalStyles.themeShades || {
-                                                                light: { background: '#ffffff', text: '#1a1a1a' },
-                                                                dark: { background: '#121212', text: '#e0e0e0' }
-                                                            };
-                                                            onUpdateGlobalStyles({
-                                                                themeShades: {
-                                                                    ...currentShades,
-                                                                    light: { ...currentShades.light, background: color }
-                                                                }
-                                                            });
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <span className="text-[9px] font-bold text-gray-400 uppercase block mb-1">{t.toolbar.text}</span>
-                                                    <ColorPicker
-                                                        value={globalStyles.themeShades?.light.text || '#1a1a1a'}
-                                                        onChange={(color) => {
-                                                            const currentShades = globalStyles.themeShades || {
-                                                                light: { background: '#ffffff', text: '#1a1a1a' },
-                                                                dark: { background: '#121212', text: '#e0e0e0' }
-                                                            };
-                                                            onUpdateGlobalStyles({
-                                                                themeShades: {
-                                                                    ...currentShades,
-                                                                    light: { ...currentShades.light, text: color }
-                                                                }
-                                                            });
-                                                        }}
-                                                    />
-                                                </div>
+                                            <div className="grid grid-cols-2 gap-x-3 gap-y-0">
+                                                <ColorPicker
+                                                    label={t.toolbar.background}
+                                                    isDark={isDark}
+                                                    value={globalStyles.themeShades?.light.background || '#ffffff'}
+                                                    onChange={(color) => {
+                                                        const currentShades = globalStyles.themeShades || {
+                                                            light: { background: '#ffffff', text: '#1a1a1a' },
+                                                            dark: { background: '#121212', text: '#e0e0e0' }
+                                                        };
+                                                        onUpdateGlobalStyles({
+                                                            themeShades: {
+                                                                ...currentShades,
+                                                                light: { ...currentShades.light, background: color }
+                                                            }
+                                                        });
+                                                    }}
+                                                />
+                                                <ColorPicker
+                                                    label={t.toolbar.text}
+                                                    isDark={isDark}
+                                                    value={globalStyles.themeShades?.light.text || '#1a1a1a'}
+                                                    onChange={(color) => {
+                                                        const currentShades = globalStyles.themeShades || {
+                                                            light: { background: '#ffffff', text: '#1a1a1a' },
+                                                            dark: { background: '#121212', text: '#e0e0e0' }
+                                                        };
+                                                        onUpdateGlobalStyles({
+                                                            themeShades: {
+                                                                ...currentShades,
+                                                                light: { ...currentShades.light, text: color }
+                                                            }
+                                                        });
+                                                    }}
+                                                />
                                             </div>
                                         </div>
 
                                         <div className="pt-2 border-t border-gray-100">
                                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3">{t.toolbar.darkMode}</span>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <div>
-                                                    <span className="text-[9px] font-bold text-gray-400 uppercase block mb-1">{t.toolbar.background}</span>
-                                                    <ColorPicker
-                                                        value={globalStyles.themeShades?.dark.background || '#121212'}
-                                                        onChange={(color) => {
-                                                            const currentShades = globalStyles.themeShades || {
-                                                                light: { background: '#ffffff', text: '#1a1a1a' },
-                                                                dark: { background: '#121212', text: '#e0e0e0' }
-                                                            };
-                                                            onUpdateGlobalStyles({
-                                                                themeShades: {
-                                                                    ...currentShades,
-                                                                    dark: { ...currentShades.dark, background: color }
-                                                                }
-                                                            });
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <span className="text-[9px] font-bold text-gray-400 uppercase block mb-1">{t.toolbar.text}</span>
-                                                    <ColorPicker
-                                                        value={globalStyles.themeShades?.dark.text || '#e0e0e0'}
-                                                        onChange={(color) => {
-                                                            const currentShades = globalStyles.themeShades || {
-                                                                light: { background: '#ffffff', text: '#1a1a1a' },
-                                                                dark: { background: '#121212', text: '#e0e0e0' }
-                                                            };
-                                                            onUpdateGlobalStyles({
-                                                                themeShades: {
-                                                                    ...currentShades,
-                                                                    dark: { ...currentShades.dark, text: color }
-                                                                }
-                                                            });
-                                                        }}
-                                                    />
-                                                </div>
+                                            <div className="grid grid-cols-2 gap-x-3 gap-y-0">
+                                                <ColorPicker
+                                                    label={t.toolbar.background}
+                                                    isDark={isDark}
+                                                    value={globalStyles.themeShades?.dark.background || '#121212'}
+                                                    onChange={(color) => {
+                                                        const currentShades = globalStyles.themeShades || {
+                                                            light: { background: '#ffffff', text: '#1a1a1a' },
+                                                            dark: { background: '#121212', text: '#e0e0e0' }
+                                                        };
+                                                        onUpdateGlobalStyles({
+                                                            themeShades: {
+                                                                ...currentShades,
+                                                                dark: { ...currentShades.dark, background: color }
+                                                            }
+                                                        });
+                                                    }}
+                                                />
+                                                <ColorPicker
+                                                    label={t.toolbar.text}
+                                                    isDark={isDark}
+                                                    value={globalStyles.themeShades?.dark.text || '#e0e0e0'}
+                                                    onChange={(color) => {
+                                                        const currentShades = globalStyles.themeShades || {
+                                                            light: { background: '#ffffff', text: '#1a1a1a' },
+                                                            dark: { background: '#121212', text: '#e0e0e0' }
+                                                        };
+                                                        onUpdateGlobalStyles({
+                                                            themeShades: {
+                                                                ...currentShades,
+                                                                dark: { ...currentShades.dark, text: color }
+                                                            }
+                                                        });
+                                                    }}
+                                                />
                                             </div>
                                         </div>
                                     </div>
