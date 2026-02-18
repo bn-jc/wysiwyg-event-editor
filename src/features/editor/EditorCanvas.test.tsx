@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { EditorCanvas } from './EditorCanvas';
 
 // Mock ResizeObserver
-global.ResizeObserver = class ResizeObserver {
+(globalThis as any).ResizeObserver = class ResizeObserver {
     observe() { }
     unobserve() { }
     disconnect() { }

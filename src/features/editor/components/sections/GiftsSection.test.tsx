@@ -105,4 +105,45 @@ describe('GiftsSection', () => {
         expect(screen.queryByText('Presente 1')).toBeNull();
         expect(screen.queryByText('Dados Bancários')).toBeNull();
     });
+
+    it('renders gift items with images and links', () => {
+        const sectionWithMedia: SectionDefinition = {
+            ...mockSection,
+            content: {
+                ...mockSection.content,
+                giftItems: [
+                    {
+                        id: 'media-1',
+                        name: 'Item com Foto',
+                        description: 'Desc',
+                        icon: 'gift',
+                        imageUrl: 'https://example.com/item.jpg',
+                        linkUrl: 'https://example.com/buy'
+                    }
+                ]
+            }
+        };
+        render(
+            <GiftsSection
+                section={sectionWithMedia}
+                globalStyles={mockGlobalStyles}
+                onUpdate={vitest.fn()}
+                readOnly={true}
+                isActive={false}
+                onSelect={vitest.fn()}
+                index={0}
+                device="desktop"
+            />
+        );
+
+        // Verify image
+        const img = screen.getByAltText('Item com Foto') as HTMLImageElement;
+        expect(img).toBeDefined();
+        expect(img.src).toBe('https://example.com/item.jpg');
+
+        // Verify link button
+        const link = screen.getByRole('link', { name: /Ver Detalhes \/ Comprar/i });
+        expect(link).toBeDefined();
+        expect(link.getAttribute('href')).toBe('https://example.com/buy');
+    });
 });

@@ -6,6 +6,17 @@ export type ViewMode = 'edit' | 'preview' | 'split' | 'overview';
 
 export type EditorInteractionType = 'INVITATION_OPENED' | 'RSVP_SUBMIT' | 'GUESTBOOK_SUBMIT' | 'CLICK_ELEMENT';
 
+export interface ExternalFieldStatus {
+    readOnly?: boolean;
+    disabled?: boolean;
+    hidden?: boolean;
+}
+
+export interface ExternalInputState {
+    values: Record<string, Record<string, any>>; // sectionId -> fieldKey -> value
+    statuses: Record<string, Record<string, ExternalFieldStatus>>; // sectionId -> fieldKey -> status
+}
+
 export interface EditorInteraction {
     type: EditorInteractionType;
     payload: any;
@@ -51,6 +62,10 @@ export interface EventLayout {
         fontFamilyBody: string;
         backgroundColor?: string;
         layoutMode?: 'boxed' | 'full'; // 'boxed' = max-w-6xl mx-auto, 'full' = w-full
+        themeShades?: {
+            light: { background: string; text: string };
+            dark: { background: string; text: string };
+        };
     };
     sections: SectionDefinition[];
 }
@@ -70,10 +85,13 @@ export interface CanvasRendererProps {
     activeScrollSectionId?: string | null;
     onSectionUpdate?: (sectionId: string, newContent: Partial<SectionContent>) => void;
     onSectionSelect?: (sectionId: string) => void;
+    selectedElementKey?: string | null;
+    onElementSelect?: (key: string | null) => void;
     onOpen?: () => void;
     onInteraction?: (interaction: EditorInteraction) => void;
     onValidate?: (type: string, value: any, options?: any) => boolean;
     isDark?: boolean;
+    externalInputState?: ExternalInputState;
 }
 
 export interface SectionRendererProps {
@@ -87,8 +105,12 @@ export interface SectionRendererProps {
     device: DeviceType; // Added device prop
     activeScrollSectionId?: string | null;
     onNavigate?: (target: string) => void;
+    selectedElementKey?: string | null;
+    onElementSelect?: (key: string | null) => void;
     onInteraction?: (interaction: EditorInteraction) => void;
     onValidate?: (type: string, value: any, options?: any) => boolean;
     onOpen?: () => void;
     isDark?: boolean;
+    externalInputState?: ExternalInputState;
+    sections?: SectionDefinition[];
 }

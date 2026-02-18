@@ -108,11 +108,34 @@ describe('SplashSection', () => {
 
     it('calls onOpen when the button is clicked', () => {
         const onOpen = vi.fn();
-        render(<SplashSection {...defaultProps} onOpen={onOpen} />);
+        render(<SplashSection {...defaultProps} onOpen={onOpen} readOnly={true} />);
 
         const button = screen.getByText('Ver Convite');
         fireEvent.click(button);
 
         expect(onOpen).toHaveBeenCalled();
+    });
+
+    it('overrides recipientName with externalInputState', () => {
+        const propsWithExternal = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: {
+                    ...defaultProps.section.content,
+                    showRecipient: true,
+                    recipientName: 'Original Name'
+                }
+            },
+            externalInputState: {
+                values: {
+                    [defaultProps.section.id]: { recipientName: 'External Name' }
+                },
+                statuses: {}
+            }
+        };
+        render(<SplashSection {...propsWithExternal} />);
+        expect(screen.getByText('External Name')).toBeInTheDocument();
+        expect(screen.queryByText('Original Name')).not.toBeInTheDocument();
     });
 });

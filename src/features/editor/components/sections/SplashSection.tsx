@@ -27,16 +27,24 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
     onUpdate,
     readOnly,
     onOpen,
-    isDark
+    onElementSelect,
+    isDark,
+    externalInputState
 }) => {
     const { content } = section;
+    const externalValues = externalInputState?.values[section.id] || {};
+    const recipientName = externalValues.recipientName || content.recipientName || '[Nome]';
 
     return (
         <div
             className="relative h-[100vh] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden bg-transparent"
             style={{
-                backgroundColor: isDark ? '#121212' : (section.styles?.backgroundColor || globalStyles.primaryColor),
-                color: isDark ? '#E0E0E0' : (section.styles?.color || '#ffffff')
+                backgroundColor: isDark
+                    ? (globalStyles.themeShades?.dark.background || '#121212')
+                    : (section.styles?.backgroundColor || globalStyles.themeShades?.light.background || '#ffffff'),
+                color: isDark
+                    ? (globalStyles.themeShades?.dark.text || '#E0E0E0')
+                    : (section.styles?.color || globalStyles.themeShades?.light.text || '#1a1a1a')
             }}
         >
             {/* Background Image with Overlay */}
@@ -60,23 +68,42 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
                     tagName="p"
                     value={content.title || 'Bem-vindos ao nosso evento'}
                     onChange={(val) => onUpdate({ title: val })}
-                    className="text-sm md:text-md uppercase tracking-[0.3em] font-medium opacity-90"
+                    onSelectElement={() => onElementSelect?.('title')}
+                    className={cn(
+                        "uppercase tracking-[0.3em] font-medium opacity-90",
+                        content.titleSize && content.titleSize !== 'inherit' ? content.titleSize : "text-sm md:text-md"
+                    )}
                     readOnly={readOnly}
+                    style={{
+                        fontFamily: content.titleFont && content.titleFont !== 'inherit' ? content.titleFont : 'inherit',
+                        color: content.titleColor || 'inherit'
+                    }}
                 />
 
                 {content.showRecipient && (
-                    <div className="flex gap-2 items-baseline opacity-70 mt-2">
+                    <div
+                        className={cn(
+                            "flex gap-2 items-baseline opacity-70 mt-2",
+                            content.recipientSize && content.recipientSize !== 'inherit' ? content.recipientSize : ""
+                        )}
+                        style={{
+                            fontFamily: content.recipientFont && content.recipientFont !== 'inherit' ? content.recipientFont : 'inherit',
+                            color: content.recipientColor || 'inherit'
+                        }}
+                    >
                         <InlineText
                             tagName="span"
                             value={content.recipientPrefix || 'Para:'}
                             onChange={(val) => onUpdate({ recipientPrefix: val })}
+                            onSelectElement={() => onElementSelect?.('recipientPrefix')}
                             className="text-xs uppercase tracking-widest font-bold"
                             readOnly={readOnly}
                         />
                         <InlineText
                             tagName="span"
-                            value={content.recipientName || '[Nome]'}
+                            value={recipientName}
                             onChange={(val) => onUpdate({ recipientName: val })}
+                            onSelectElement={() => onElementSelect?.('recipientName')}
                             className="text-lg italic font-serif"
                             readOnly={readOnly}
                         />
@@ -96,9 +123,16 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
                     tagName="h1"
                     value={content.names || 'John & Jane'}
                     onChange={(val) => onUpdate({ names: val })}
-                    className="text-6xl md:text-8xl py-4"
+                    onSelectElement={() => onElementSelect?.('names')}
+                    className={cn(
+                        "py-4",
+                        content.namesSize && content.namesSize !== 'inherit' ? content.namesSize : "text-6xl md:text-8xl"
+                    )}
                     readOnly={readOnly}
-                    style={{ fontFamily: globalStyles.fontFamilyTitle }}
+                    style={{
+                        fontFamily: content.namesFont && content.namesFont !== 'inherit' ? content.namesFont : globalStyles.fontFamilyTitle,
+                        color: content.namesColor || 'inherit'
+                    }}
                 />
 
                 <div className="flex items-center justify-center w-full mb-4 h-12">
@@ -176,22 +210,62 @@ export const SplashSection: React.FC<SectionRendererProps> = ({
                     tagName="p"
                     value={content.date || '20 de Junho de 2026'}
                     onChange={(val) => onUpdate({ date: val })}
-                    className="text-lg md:text-xl font-light opacity-90 tracking-wide"
+                    onSelectElement={() => onElementSelect?.('date')}
+                    className={cn(
+                        "font-light opacity-90 tracking-wide",
+                        content.dateSize && content.dateSize !== 'inherit' ? content.dateSize : "text-lg md:text-xl"
+                    )}
                     readOnly={readOnly}
+                    style={{
+                        fontFamily: content.dateFont && content.dateFont !== 'inherit' ? content.dateFont : 'inherit',
+                        color: content.dateColor || 'inherit'
+                    }}
                 />
 
-                <button
-                    onClick={onOpen}
-                    className="mt-12 px-10 py-4 bg-white text-black rounded-full text-xs font-bold uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-2xl active:scale-95 whitespace-nowrap"
-                    style={{ fontFamily: globalStyles.fontFamilyBody }}
+                <div
+                    className={cn(
+                        "mt-12 w-full flex",
+                        content.buttonAlignment === 'left' ? "justify-start" :
+                            content.buttonAlignment === 'right' ? "justify-end" :
+                                content.buttonAlignment === 'full' ? "justify-center" : "justify-center"
+                    )}
                 >
-                    <InlineText
-                        tagName="span"
-                        value={content.buttonLabel || 'Abrir Convite'}
-                        onChange={(val) => onUpdate({ buttonLabel: val })}
-                        readOnly={readOnly}
-                    />
-                </button>
+                    <button
+                        onClick={readOnly ? onOpen : () => { }}
+                        onMouseDown={(e) => {
+                            if (!readOnly) {
+                                e.stopPropagation();
+                                onElementSelect?.('buttonLabel');
+                            }
+                        }}
+                        className={cn(
+                            "px-10 py-4 transition-all shadow-2xl active:scale-95 whitespace-nowrap",
+                            content.buttonSize && content.buttonSize !== 'inherit'
+                                ? content.buttonSize
+                                : "text-xs",
+                            content.buttonShape || "rounded-full",
+                            content.buttonAlignment === 'full' && "w-full",
+                            !content.buttonColor && "bg-white text-black hover:scale-105"
+                        )}
+                        style={{
+                            fontFamily: content.buttonFont && content.buttonFont !== 'inherit' ? content.buttonFont : globalStyles.fontFamilyBody,
+                            color: content.buttonColor || 'inherit',
+                            backgroundColor: content.buttonColor ? `${content.buttonColor}11` : undefined,
+                            border: content.buttonColor ? `1px solid ${content.buttonColor}` : undefined,
+                            fontWeight: 'bold',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.2em'
+                        }}
+                    >
+                        <InlineText
+                            tagName="span"
+                            value={content.buttonLabel || 'Abrir Convite'}
+                            onChange={(val) => onUpdate({ buttonLabel: val })}
+                            onSelectElement={() => onElementSelect?.('buttonLabel')}
+                            readOnly={readOnly}
+                        />
+                    </button>
+                </div>
             </div>
         </div>
     );

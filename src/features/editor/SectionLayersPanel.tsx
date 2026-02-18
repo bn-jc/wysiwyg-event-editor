@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import type { SectionDefinition, SectionType } from './types';
+import { getTranslation } from './utils/translations';
 
 interface SectionLayersPanelProps {
     sections: SectionDefinition[];
@@ -23,6 +24,7 @@ interface SectionLayersPanelProps {
     onSelect: (id: string) => void;
     onReorder: (startIndex: number, endIndex: number) => void;
     isDark?: boolean;
+    language?: string;
 }
 
 const SECTION_ICONS: Record<SectionType, React.FC<any>> = {
@@ -38,17 +40,20 @@ const SECTION_ICONS: Record<SectionType, React.FC<any>> = {
     CustomSection: Layers
 };
 
-const SECTION_NAMES: Record<SectionType, string> = {
-    SplashSection: 'Portão',
-    HeroSection: 'Início',
-    CountdownSection: 'Contagem',
-    SeparatorSection: 'Divisor',
-    AgendaSection: 'Agenda',
-    RSVPSection: 'RSVP',
-    GuestbookSection: 'Mural',
-    GiftsSection: 'Presentes',
-    NavSection: 'Menu de Navegação',
-    CustomSection: 'Seção Livre'
+const getSectionNames = (language: string): Record<SectionType, string> => {
+    const t = getTranslation(language);
+    return {
+        SplashSection: t.sections.splash,
+        HeroSection: t.sections.hero,
+        CountdownSection: t.sections.countdown,
+        SeparatorSection: t.sections.separator,
+        AgendaSection: t.sections.agenda,
+        RSVPSection: t.sections.rsvp,
+        GuestbookSection: t.sections.guestbook,
+        GiftsSection: t.sections.gifts,
+        NavSection: t.sections.nav,
+        CustomSection: t.sections.custom
+    };
 };
 
 export const SectionLayersPanel: React.FC<SectionLayersPanelProps> = ({
@@ -56,8 +61,11 @@ export const SectionLayersPanel: React.FC<SectionLayersPanelProps> = ({
     activeSectionId,
     onSelect,
     onReorder,
-    isDark = false
+    isDark = false,
+    language = 'pt-PT'
 }) => {
+    const t = getTranslation(language);
+    const SECTION_NAMES = getSectionNames(language);
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
@@ -110,7 +118,7 @@ export const SectionLayersPanel: React.FC<SectionLayersPanelProps> = ({
                 isDark ? "text-gray-400 border-[#2d333b]" : "text-gray-500 border-gray-100"
             )}>
                 <Layers size={14} className="text-blue-500" />
-                Estrutura do Convite
+                {t.sidebar.sections}
             </div>
 
             <div className="flex-1 overflow-y-auto py-2 no-scrollbar">

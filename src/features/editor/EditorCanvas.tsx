@@ -54,7 +54,14 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
         deleteSection,
         moveSection,
         updateGlobalStyles,
-        updateMusic
+        updateLanguage,
+        updateMusic,
+        selectedElementKey,
+        setSelectedElementKey,
+        activeCategory,
+        setActiveCategory,
+        setExternalFieldValue,
+        setExternalFieldStatus
     } = useEditorState(initialLayout);
 
     const handleSave = useCallback(() => {
@@ -75,7 +82,13 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
     const { emitInteraction } = useEditorApi({
         layout,
         setLayout,
+        addSection,
+        deleteSection,
         updateSectionContent,
+        moveSection,
+        setExternalFieldValue,
+        setExternalFieldStatus,
+        updateLanguage,
         onSave: handleSave
     });
 
@@ -153,6 +166,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                 onPlay={handlePlay}
                 isDark={editorIsDark}
                 onToggleDark={() => setEditorIsDark(!editorIsDark)}
+                language={layout.language}
             />
 
             <div className="flex flex-1 overflow-hidden relative">
@@ -164,6 +178,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                         mode={containerMode}
                         hasSplash={layout.sections.some(s => s.type === 'SplashSection')}
                         isDark={editorIsDark}
+                        language={layout.language}
                         onToggleNavbar={() => {
                             const navSection = layout.sections.find(s => s.type === 'NavSection');
                             if (navSection) {
@@ -181,6 +196,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                     />
                 )}
 
+
                 {showLayers && !isPreviewOnly && (
                     <SectionLayersPanel
                         sections={layout.sections}
@@ -188,6 +204,7 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                         onSelect={setActiveSectionId}
                         onReorder={reorderSections}
                         isDark={editorIsDark}
+                        language={layout.language}
                     />
                 )}
 
@@ -217,6 +234,8 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                             activeSectionId={activeSectionId}
                             onSectionUpdate={updateSectionContent}
                             onSectionSelect={setActiveSectionId}
+                            selectedElementKey={selectedElementKey}
+                            onElementSelect={setSelectedElementKey}
                             onInteraction={emitInteraction}
                             isDark={editorIsDark}
                         />
@@ -252,6 +271,10 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({ initialLayout, onSav
                             onUpdateStyles={(styles) => updateSectionStyles(activeSection.id, styles)}
                             onDelete={() => deleteSection(activeSection.id)}
                             onMove={(direction) => moveSection(activeSectionIndex, direction)}
+                            selectedElementKey={selectedElementKey}
+                            onElementSelect={setSelectedElementKey}
+                            activeCategory={activeCategory}
+                            onCategoryChange={setActiveCategory}
                             isDark={editorIsDark}
                         />
                     </div>

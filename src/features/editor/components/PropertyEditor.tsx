@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import type { SectionDefinition, SectionContent } from '../types';
 import { ColorPicker } from './common/ColorPicker';
-import { SECTION_TEMPLATES } from '../utils/SectionSchemaRegistry';
-import { Trash2, ChevronDown, ChevronUp, Plus, Image as ImageIcon, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
+import { PropertyNavigator, type PropertyCategory } from './PropertyNavigator';
+import { SECTION_TEMPLATES, AVAILABLE_FONTS, AVAILABLE_SIZES, AVAILABLE_BUTTON_SHAPES, AVAILABLE_BUTTON_ALIGNMENTS } from '../utils/SectionSchemaRegistry';
+import { Trash2, ChevronDown, ChevronUp, Plus, Image as ImageIcon, Type, Maximize, PenTool, Sparkles, XCircle } from 'lucide-react';
 import { cn } from '@/utils/cn';
 
 interface PropertyEditorProps {
@@ -11,6 +12,10 @@ interface PropertyEditorProps {
     onUpdateStyles: (styles: React.CSSProperties) => void;
     onDelete: () => void;
     onMove: (direction: 'up' | 'down') => void;
+    selectedElementKey?: string | null;
+    onElementSelect?: (key: string | null) => void;
+    activeCategory?: PropertyCategory;
+    onCategoryChange?: (category: PropertyCategory) => void;
     isDark?: boolean;
 }
 
@@ -20,38 +25,79 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
     onUpdateStyles,
     onDelete,
     onMove,
+    selectedElementKey,
+    onElementSelect,
+    activeCategory = 'section',
+    onCategoryChange,
     isDark = false
 }) => {
+    const [collapsedGroups, setCollapsedGroups] = React.useState<Record<string, boolean>>({});
+
+    const toggleGroup = (group: string) => {
+        setCollapsedGroups(prev => ({ ...prev, [group]: !prev[group] }));
+    };
+
+    const clearSelection = useCallback(() => {
+        onElementSelect?.(null);
+    }, [onElementSelect]);
     const template = SECTION_TEMPLATES[section.type as keyof typeof SECTION_TEMPLATES];
 
     const handleChange = (key: string, value: any) => {
         onUpdate({ [key]: value });
     };
 
+    const CategoryHeaders: Record<import('./PropertyNavigator').PropertyCategory, string> = {
+        section: 'Opções da Seção',
+        button: 'Estilos do Botão',
+        text: 'Personalização de Texto',
+        image: 'Configurações de Imagem',
+        form: 'Campos do Formulário',
+        items: 'Lista de Itens'
+    };
+
+    const getFieldCategory = (key: string): PropertyCategory => {
+        const k = key.toLowerCase();
+        if (k.includes('button')) return 'button';
+        if (k.includes('image') || k.includes('photo') || k.includes('mask') || k.includes('overlay') || k === 'imagedecoration') return 'image';
+        if (k.includes('decoration')) return 'section';
+        if (k.includes('label') || k.includes('placeholder') || k.includes('deadline') || k.includes('attendance') || k.includes('messagefield') || k.includes('contacttype')) return 'form';
+        if (k.includes('items') || k.includes('agenda')) return 'items';
+        if (k.includes('font') || k.includes('size') || k.includes('color') || k === 'title' || k === 'subtitle' || k === 'names' || k === 'date' || k === 'description' || k === 'address' || k === 'venue' || k === 'footertext') {
+            // Check if it's a specific element's font/color
+            if (k.includes('button')) return 'button';
+            if (k.includes('recipient')) return 'section';
+            return 'text';
+        }
+        return 'section';
+    };
+
     const renderField = (key: string, value: any) => {
-        const labelMap: Record<string, string> = {
+        const category = getFieldCategory(key);
+        if (category !== activeCategory) return null;
+
+        const isSelected = selectedElementKey && key.toLowerCase().includes(selectedElementKey.toLowerCase());
+        const FieldLabels: Record<string, string> = {
             title: 'Título',
             subtitle: 'Subtítulo',
             names: 'Nomes',
             date: 'Data',
             buttonLabel: 'Texto do Botão',
             backgroundImage: 'Imagem de Fundo',
-            imageUrl: 'URL da Imagem',
-            imageMask: 'Máscara da Imagem',
-            items: 'Itens da Agenda',
-            deadline: 'Prazo Limite',
-            variant: 'Estilo',
-            padding: 'Espaçamento',
-            color: 'Cor personalizada',
-            gradient: 'Gradiente',
-            elements: 'Elementos da Seção',
-            showRecipient: 'Personalizar p/ Convidado',
-            recipientPrefix: 'Rótulo (ex: Para:)',
             recipientName: 'Nome do Destinatário',
             description: 'Descrição / Convite',
             giftItems: 'Itens de Presente',
             bankDetails: 'Dados Bancários',
             showBankDetails: 'Mostrar Dados Bancários',
+            navPosition: 'Posição da Barra',
+            navVariant: 'Estilo Visual',
+            navShape: 'Formato dos Cantos',
+            isSticky: 'Fixar no Topo/Laterais',
+            isTransparent: 'Fundo Transparente',
+            opacity: 'Opacidade do Fundo',
+            blurAmount: 'Intensidade do Desfoque',
+            activeHighlight: 'Destaque de Seção Ativa',
+            activeColor: 'Cor do Destaque',
+            isScrollable: 'Permitir Scroll Lateral',
             showGifts: 'Mostrar Lista de Sugestões',
             imageScale: 'Tamanho da Foto',
             imageDecoration: 'Decoração da Foto',
@@ -76,18 +122,185 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
             footerText: 'Texto de Rodapé',
             contactType: 'Tipo de Contacto',
             phoneLabel: 'Rótulo do Telefone',
-            phonePlaceholder: 'Dica do Telefone'
+            phonePlaceholder: 'Dica do Telefone',
+            titleFont: 'Fonte do Título',
+            titleColor: 'Cor do Título',
+            titleSize: 'Tamanho do Título',
+            subtitleFont: 'Fonte do Subtítulo',
+            subtitleColor: 'Cor do Subtítulo',
+            subtitleSize: 'Tamanho do Subtítulo',
+            namesFont: 'Fonte dos Nomes',
+            namesColor: 'Cor dos Nomes',
+            namesSize: 'Tamanho dos Nomes',
+            dateFont: 'Fonte da Data',
+            dateColor: 'Cor da Data',
+            dateSize: 'Tamanho da Data',
+            descriptionFont: 'Fonte da Descrição',
+            descriptionColor: 'Cor da Descrição',
+            descriptionSize: 'Tamanho da Descrição',
+            buttonFont: 'Fonte do Botão',
+            buttonColor: 'Cor do Botão',
+            buttonSize: 'Tamanho do Botão',
+            recipientFont: 'Fonte do Destinatário',
+            recipientColor: 'Cor do Destinatário',
+            recipientSize: 'Tamanho do Destinatário',
+            deadlineFont: 'Fonte do Prazo',
+            deadlineColor: 'Cor do Prazo',
+            deadlineSize: 'Tamanho do Prazo',
+            deadlineLabelFont: 'Fonte do Rótulo do Prazo',
+            deadlineLabelColor: 'Cor do Rótulo do Prazo',
+            deadlineLabelSize: 'Tamanho do Rótulo do Prazo',
+            fieldLabelFont: 'Fonte dos Rótulos dos Campos',
+            fieldLabelColor: 'Cor dos Rótulos dos Campos',
+            fieldLabelSize: 'Tamanho dos Rótulos dos Campos',
+            fieldPlaceholderFont: 'Fonte das Dicas (Placeholders)',
+            fieldPlaceholderColor: 'Cor das Dicas (Placeholders)',
+            fieldPlaceholderSize: 'Tamanho das Dicas (Placeholders)',
+            footerFont: 'Fonte do Rodapé',
+            footerColor: 'Cor do Rodapé',
+            footerSize: 'Tamanho do Rodapé',
+            itemTimeFont: 'Fonte do Horário',
+            itemTimeColor: 'Cor do Horário',
+            itemTimeSize: 'Tamanho do Horário',
+            itemLabelFont: 'Fonte do Rótulo do Item',
+            itemLabelColor: 'Cor do Rótulo do Item',
+            itemLabelSize: 'Tamanho do Rótulo do Item',
+            itemLocationFont: 'Fonte da Localização',
+            itemLocationColor: 'Cor da Localização',
+            itemLocationSize: 'Tamanho da Localização',
+            emptyStateFont: 'Fonte do Texto Vazio',
+            emptyStateColor: 'Cor do Texto Vazio',
+            emptyStateSize: 'Tamanho do Texto Vazio',
+            timerFont: 'Fonte do Contador',
+            timerColor: 'Cor do Contador',
+            timerSize: 'Tamanho do Contador',
+            timerLabelFont: 'Fonte dos Rótulos (Dias/Horas)',
+            timerLabelColor: 'Cor dos Rótulos (Dias/Horas)',
+            timerLabelSize: 'Tamanho dos Rótulos (Dias/Horas)',
+            finishMessageFont: 'Fonte da Mensagem de Fim',
+            finishMessageColor: 'Cor da Mensagem de Fim',
+            finishMessageSize: 'Tamanho da Mensagem de Fim',
+            giftNameFont: 'Fonte do Nome do Item',
+            giftNameColor: 'Cor do Nome do Item',
+            giftNameSize: 'Tamanho do Nome do Item',
+            giftDescriptionFont: 'Fonte da Descrição do Item',
+            giftDescriptionColor: 'Cor da Descrição do Item',
+            giftDescriptionSize: 'Tamanho da Descrição do Item',
+            bankLabelFont: 'Fonte dos Rótulos Bancários',
+            bankLabelColor: 'Cor dos Rótulos Bancários',
+            bankLabelSize: 'Tamanho dos Rótulos Bancários',
+            bankValueFont: 'Fonte dos Dados Bancários',
+            bankValueColor: 'Cor dos Dados Bancários',
+            bankValueSize: 'Tamanho dos Dados Bancários',
+            linkFont: 'Fonte dos Links',
+            linkColor: 'Cor dos Links',
+            linkSize: 'Tamanho dos Links',
+            buttonShape: 'Forma do Botão',
+            buttonAlignment: 'Alinhamento do Botão',
+            imageUrl: 'URL da Imagem',
+            linkUrl: 'URL do Link',
+            imageOverlayText: 'Texto sobre a Imagem',
+            imageOverlayIcon: 'Ícone sobre a Imagem',
+            imageOverlayPosition: 'Posição do Texto',
+            imageOverlayVariant: 'Estilo do Texto',
+            imageOverlayColor: 'Cor do Texto',
+            overlayColor: 'Cor do Texto',
+            sectionDecoration: 'Decoração da Seção',
+            sectionDecorationColor: 'Cor da Decoração'
         };
 
         if (key === 'messageLabel' || key === 'messagePlaceholder') {
             if (section.content.showMessageField === false) return null;
         }
 
-        if (['backgroundEffectColor', 'backgroundParticlesColor', 'backgroundEffectDirection', 'backgroundEffectStart', 'backgroundEffectEnd'].includes(key)) {
+        if (['backgroundEffectColor', 'backgroundParticlesColor', 'backgroundEffectDirection', 'backgroundEffectStart', 'backgroundEffectEnd', 'sectionDecorationColor'].includes(key)) {
             return null;
         }
 
-        const label = labelMap[key] || key;
+        const label = FieldLabels[key] || key;
+
+        if (key.endsWith('Font')) {
+            return (
+                <div key={key} className={cn(
+                    "flex flex-col gap-2 mb-6 p-4 rounded-2xl transition-all duration-500",
+                    isSelected
+                        ? (isDark ? "bg-blue-500/10 ring-1 ring-blue-500/50" : "bg-blue-50 ring-1 ring-blue-200 shadow-md")
+                        : "bg-transparent ring-1 ring-transparent hover:ring-gray-200"
+                )}>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                        <Type size={12} /> {label}
+                    </label>
+                    <div className="relative">
+                        <select
+                            value={value || 'inherit'}
+                            onChange={(e) => handleChange(key, e.target.value)}
+                            className={cn(
+                                "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
+                            style={{ fontFamily: value !== 'inherit' ? value : 'inherit' }}
+                        >
+                            {AVAILABLE_FONTS.map(font => (
+                                <option key={font.value} value={font.value} style={{ fontFamily: font.value !== 'inherit' ? font.value : 'inherit' }}>
+                                    {font.name}
+                                </option>
+                            ))}
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                </div>
+            );
+        }
+
+        if (key.endsWith('Size')) {
+            return (
+                <div key={key} className={cn(
+                    "flex flex-col gap-2 mb-6 p-4 rounded-2xl transition-all duration-500",
+                    isSelected
+                        ? (isDark ? "bg-blue-500/10 ring-1 ring-blue-500/50" : "bg-blue-50 ring-1 ring-blue-200 shadow-md")
+                        : "bg-transparent ring-1 ring-transparent hover:ring-gray-200"
+                )}>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                        <Maximize size={12} /> {label}
+                    </label>
+                    <div className="relative">
+                        <select
+                            value={value || 'inherit'}
+                            onChange={(e) => handleChange(key, e.target.value)}
+                            className={cn(
+                                "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
+                        >
+                            {AVAILABLE_SIZES.map(size => (
+                                <option key={size.value} value={size.value}>
+                                    {size.name}
+                                </option>
+                            ))}
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                </div>
+            );
+        }
+
+        if (key.endsWith('Color')) {
+            return (
+                <div key={key} className={cn(
+                    "flex flex-col gap-2 mb-6 p-4 rounded-2xl transition-all duration-500",
+                    isSelected
+                        ? (isDark ? "bg-blue-500/10 ring-1 ring-blue-500/50" : "bg-blue-50 ring-1 ring-blue-200 shadow-md")
+                        : "bg-transparent ring-1 ring-transparent hover:ring-gray-200"
+                )}>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest cursor-default">{label}</label>
+                    <ColorPicker
+                        value={value || '#000000'}
+                        onChange={(val) => handleChange(key, val)}
+                        isDark={isDark}
+                    />
+                </div>
+            );
+        }
 
         if (key === 'imageMask') {
             return (
@@ -119,6 +332,48 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                         </select>
                         <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                     </div>
+                </div>
+            );
+        }
+
+        if (key === 'sectionDecoration') {
+            const isRestricted = ['NavSection', 'SplashSection', 'SeparatorSection'].includes(section.type);
+            if (isRestricted) return null;
+
+            const showColorPicker = value && value !== 'none';
+            return (
+                <div key={key} className="flex flex-col gap-0">
+                    <div className="flex flex-col gap-2 mb-6">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                        <div className="relative">
+                            <select
+                                value={value || 'none'}
+                                onChange={(e) => handleChange(key, e.target.value)}
+                                className={cn(
+                                    "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                    isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                                )}
+                            >
+                                <option value="none">Nenhuma</option>
+                                <option value="gold">Borda Dourada</option>
+                                <option value="floral">Arranjo Floral</option>
+                                <option value="leaf">Folhas Orgânicas</option>
+                                <option value="outline">Linha de Contorno</option>
+                                <option value="glow">Brilho (Aura)</option>
+                                <option value="dots">Pontilhado</option>
+                            </select>
+                            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                        </div>
+                    </div>
+                    {showColorPicker && (
+                        <div className="contents">
+                            <ColorPicker
+                                label={FieldLabels['sectionDecorationColor']}
+                                value={section.content['sectionDecorationColor'] || ''}
+                                onChange={(color) => handleChange('sectionDecorationColor', color)}
+                            />
+                        </div>
+                    )}
                 </div>
             );
         }
@@ -155,7 +410,10 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                         <select
                             value={value}
                             onChange={(e) => handleChange(key, e.target.value)}
-                            className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer hover:bg-white transition-all shadow-sm"
+                            className={cn(
+                                "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
                         >
                             <option value="line">Linha Simples</option>
                             <option value="flourish">Ornamento Clássico</option>
@@ -167,6 +425,201 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                         </select>
                         <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                     </div>
+                </div>
+            );
+        }
+
+        if (key === 'navPosition') {
+            return (
+                <div key={key} className="flex flex-col gap-2 mb-6">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                    <div className="relative">
+                        <select
+                            value={value || 'top'}
+                            onChange={(e) => handleChange(key, e.target.value)}
+                            className={cn(
+                                "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
+                        >
+                            <option value="top">Topo</option>
+                            <option value="bottom">Rodapé</option>
+                            <option value="left">Lateral Esquerda</option>
+                            <option value="right">Lateral Direita</option>
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                </div>
+            );
+        }
+
+        if (key === 'navVariant') {
+            return (
+                <div key={key} className="flex flex-col gap-2 mb-6">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                    <div className="relative">
+                        <select
+                            value={value || 'classic'}
+                            onChange={(e) => handleChange(key, e.target.value)}
+                            className={cn(
+                                "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
+                        >
+                            <option value="classic">Clássico</option>
+                            <option value="material">Material Design</option>
+                            <option value="liquid-glass">Liquid Glass</option>
+                            <option value="minimal">Minimalista</option>
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                </div>
+            );
+        }
+
+        if (key === 'activeHighlight') {
+            return (
+                <div key={key} className="flex flex-col gap-2 mb-6">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                    <div className="relative">
+                        <select
+                            value={value || 'underline'}
+                            onChange={(e) => handleChange(key, e.target.value)}
+                            className={cn(
+                                "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
+                        >
+                            <option value="none">Nenhum</option>
+                            <option value="underline">Sublinhado</option>
+                            <option value="color">Cor Relevante</option>
+                            <option value="pill">Fundo Pill</option>
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                </div>
+            );
+        }
+
+        if (key.includes('OverlayPosition') || key === 'overlayPosition') {
+            return (
+                <div key={key} className="flex flex-col gap-2 mb-6">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                    <div className="relative">
+                        <select
+                            value={value || 'center'}
+                            onChange={(e) => handleChange(key, e.target.value)}
+                            className={cn(
+                                "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
+                        >
+                            <option value="center">Centro</option>
+                            <option value="top-left">Canto Superior Esquerdo</option>
+                            <option value="top-right">Canto Superior Direito</option>
+                            <option value="bottom-left">Canto Inferior Esquerdo</option>
+                            <option value="bottom-right">Canto Inferior Direito</option>
+                            <option value="center-bottom">Centro Baixo</option>
+                            <option value="center-top">Centro Topo</option>
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                </div>
+            );
+        }
+
+        if (key.includes('OverlayVariant') || key === 'overlayVariant') {
+            return (
+                <div key={key} className="flex flex-col gap-2 mb-6">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                    <div className="relative">
+                        <select
+                            value={value || 'glass'}
+                            onChange={(e) => handleChange(key, e.target.value)}
+                            className={cn(
+                                "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
+                        >
+                            <option value="glass">Cristal (Glass)</option>
+                            <option value="solid">Sólido</option>
+                            <option value="outline">Apenas Contorno</option>
+                            <option value="minimal">Minimalista (Sombra)</option>
+                            <option value="gradient">Portal (Gradiente)</option>
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                </div>
+            );
+        }
+
+        if (key.includes('OverlayIcon') || key === 'overlayIcon') {
+            return (
+                <div key={key} className="flex flex-col gap-2 mb-6">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                    <div className="relative">
+                        <select
+                            value={value || 'none'}
+                            onChange={(e) => handleChange(key, e.target.value)}
+                            className={cn(
+                                "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
+                        >
+                            <option value="none">Nenhum</option>
+                            <option value="heart">Coração</option>
+                            <option value="star">Estrela</option>
+                            <option value="sparkles">Brilhos</option>
+                            <option value="camera">Câmara</option>
+                            <option value="map-pin">Localização</option>
+                            <option value="gift">Presente</option>
+                            <option value="plane">Avião</option>
+                            <option value="calendar">Calendário</option>
+                            <option value="info">Info</option>
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                </div>
+            );
+        }
+
+        if (['isSticky', 'isTransparent', 'isScrollable'].includes(key)) {
+            return (
+                <div key={key} className="flex items-center justify-between mb-6 p-4 rounded-2xl bg-gray-500/5 ring-1 ring-gray-500/10">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                    <button
+                        onClick={() => handleChange(key, !value)}
+                        className={cn(
+                            "w-12 h-6 rounded-full transition-all duration-300 relative",
+                            value ? "bg-blue-500" : (isDark ? "bg-white/10" : "bg-gray-200")
+                        )}
+                    >
+                        <div className={cn(
+                            "w-4 h-4 bg-white rounded-full absolute top-1 transition-all duration-300 shadow-sm",
+                            value ? "left-7" : "left-1"
+                        )} />
+                    </button>
+                </div>
+            );
+        }
+
+        if (key === 'opacity' || key === 'blurAmount') {
+            const min = 0;
+            const max = key === 'opacity' ? 100 : 20;
+            return (
+                <div key={key} className="flex flex-col gap-4 mb-6">
+                    <div className="flex justify-between items-center">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                        <span className="text-xs font-mono text-blue-500">{value}{key === 'opacity' ? '%' : 'px'}</span>
+                    </div>
+                    <input
+                        type="range"
+                        min={min}
+                        max={max}
+                        value={value}
+                        onChange={(e) => handleChange(key, parseInt(e.target.value))}
+                        className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                    />
                 </div>
             );
         }
@@ -248,6 +701,65 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
             );
         }
 
+        if (key === 'navShape' || key === 'buttonShape') {
+            return (
+                <div key={key} className={cn(
+                    "flex flex-col gap-2 mb-6 p-4 rounded-2xl transition-all duration-500",
+                    isSelected
+                        ? (isDark ? "bg-blue-500/10 ring-1 ring-blue-500/50" : "bg-blue-50 ring-1 ring-blue-200 shadow-md")
+                        : "bg-transparent ring-1 ring-transparent hover:ring-gray-200"
+                )}>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</label>
+                    <div className="grid grid-cols-2 gap-2">
+                        {AVAILABLE_BUTTON_SHAPES.map(shape => (
+                            <button
+                                key={shape.value}
+                                onClick={() => handleChange(key, shape.value)}
+                                className={cn(
+                                    "px-3 py-2 text-xs rounded-lg border transition-all flex flex-col items-center gap-1",
+                                    value === shape.value
+                                        ? "bg-blue-50 border-blue-200 text-blue-600 ring-2 ring-blue-100"
+                                        : (isDark ? "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600" : "bg-white border-gray-200 text-gray-600 hover:border-gray-300")
+                                )}
+                            >
+                                <span className="font-medium">{shape.name}</span>
+                                <div className={cn("w-8 h-3 bg-current opacity-20", shape.value)}></div>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        if (key === 'buttonAlignment') {
+            return (
+                <div key={key} className={cn(
+                    "flex flex-col gap-2 mb-6 p-4 rounded-2xl transition-all duration-500",
+                    isSelected
+                        ? (isDark ? "bg-blue-500/10 ring-1 ring-blue-500/50" : "bg-blue-50 ring-1 ring-blue-200 shadow-md")
+                        : "bg-transparent ring-1 ring-transparent hover:ring-gray-200"
+                )}>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                        {label}
+                    </label>
+                    <div className="flex bg-gray-100 p-1 rounded-xl gap-1">
+                        {AVAILABLE_BUTTON_ALIGNMENTS.map((align: any) => (
+                            <button
+                                key={align.value}
+                                onClick={() => handleChange(key, align.value)}
+                                className={cn(
+                                    "flex-1 py-2 px-1 rounded-lg text-[10px] font-bold transition-all uppercase tracking-tighter",
+                                    value === align.value ? "bg-white text-blue-600 shadow-sm scale-100" : "text-gray-400 hover:text-gray-600"
+                                )}
+                            >
+                                {align.name}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
         if (key === 'contactType' && section.type === 'RSVPSection') {
             return (
                 <div key={key} className="flex flex-col gap-2 mb-6">
@@ -312,7 +824,7 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                     {showColorPicker && (
                         <div className="contents">
                             <ColorPicker
-                                label={labelMap[colorKey]}
+                                label={FieldLabels[colorKey]}
                                 value={section.content[colorKey] || '#FFFFFF'}
                                 onChange={(color) => handleChange(colorKey, color)}
                             />
@@ -320,7 +832,7 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                 <>
                                     <div className="flex flex-col gap-2 mb-6">
                                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">
-                                            {labelMap['backgroundEffectDirection']}
+                                            {FieldLabels['backgroundEffectDirection']}
                                         </label>
                                         <div className="relative">
                                             <select
@@ -342,7 +854,7 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                     <div className="grid grid-cols-2 gap-4 mb-6">
                                         <div className="flex flex-col gap-2">
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">
-                                                {labelMap['backgroundEffectStart']}
+                                                {FieldLabels['backgroundEffectStart']}
                                             </label>
                                             <div className="flex items-center gap-2">
                                                 <input
@@ -357,7 +869,7 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                         </div>
                                         <div className="flex flex-col gap-2">
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">
-                                                {labelMap['backgroundEffectEnd']}
+                                                {FieldLabels['backgroundEffectEnd']}
                                             </label>
                                             <div className="flex items-center gap-2">
                                                 <input
@@ -402,7 +914,10 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                         <select
                             value={value}
                             onChange={(e) => handleChange(key, e.target.value)}
-                            className="w-full bg-gray-50 border border-gray-100 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer hover:bg-white transition-all shadow-sm"
+                            className={cn(
+                                "w-full border rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer transition-all shadow-sm",
+                                isDark ? "bg-[#2d333b] border-[#3d444d] text-gray-200 hover:bg-gray-700" : "bg-gray-50 border-gray-100 text-gray-700 hover:bg-white"
+                            )}
                         >
                             <option value="none">Nenhum (Cor Sólida)</option>
                             <option value="sunset">Sunset (Laranja/Rosa)</option>
@@ -494,8 +1009,28 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                             ) : (
                                 Object.entries(item).map(([iKey, iVal]) => (
                                     <div key={iKey} className="mb-2 last:mb-0">
-                                        <span className="text-[8px] font-black text-gray-300 uppercase tracking-tighter mb-1 block">{iKey}</span>
-                                        {iKey === 'icon' ? (
+                                        <span className="text-[8px] font-black text-gray-300 uppercase tracking-tighter mb-1 block">
+                                            {{
+                                                type: 'Tipo',
+                                                content: 'Conteúdo',
+                                                style: 'Estilo',
+                                                listType: 'Tipo de Lista',
+                                                format: 'Formato',
+                                                contentFont: 'Fonte',
+                                                contentColor: 'Cor',
+                                                contentSize: 'Tamanho',
+                                                itemFont: 'Fonte dos Itens',
+                                                itemColor: 'Cor dos Itens',
+                                                itemSize: 'Tamanho dos Itens',
+                                                url: 'URL da Imagem',
+                                                overlayText: 'Texto Overlay',
+                                                overlayIcon: 'Ícone Overlay',
+                                                overlayPosition: 'Posição',
+                                                overlayVariant: 'Estilo',
+                                                overlayColor: 'Cor'
+                                            }[iKey] || iKey}
+                                        </span>
+                                        {iKey === 'icon' || iKey === 'overlayIcon' ? (
                                             <div className="relative">
                                                 <select
                                                     value={iVal as string}
@@ -506,6 +1041,7 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                                     }}
                                                     className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
                                                 >
+                                                    <option value="none">Nenhum</option>
                                                     <option value="gift">Presente Default</option>
                                                     <option value="plane">Viagem / Avião</option>
                                                     <option value="utensils">Cozinha / Jantar</option>
@@ -514,6 +1050,46 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                                     <option value="bank">Banco / Transferência</option>
                                                     <option value="card">Cartão</option>
                                                     <option value="info">Informação</option>
+                                                    <option value="heart">Coração</option>
+                                                    <option value="star">Estrela</option>
+                                                    <option value="sparkles">Brilhos</option>
+                                                    <option value="map-pin">Pin</option>
+                                                </select>
+                                                <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
+                                            </div>
+                                        ) : iKey === 'overlayPosition' ? (
+                                            <div className="relative">
+                                                <select
+                                                    value={iVal as string}
+                                                    onChange={(e) => {
+                                                        const newList = [...value];
+                                                        newList[idx] = { ...item, [iKey]: e.target.value };
+                                                        handleChange(key, newList);
+                                                    }}
+                                                    className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
+                                                >
+                                                    <option value="center">Centro</option>
+                                                    <option value="top-left">Top Left</option>
+                                                    <option value="top-right">Top Right</option>
+                                                    <option value="bottom-left">Bottom Left</option>
+                                                    <option value="bottom-right">Bottom Right</option>
+                                                </select>
+                                                <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
+                                            </div>
+                                        ) : iKey === 'overlayVariant' ? (
+                                            <div className="relative">
+                                                <select
+                                                    value={iVal as string}
+                                                    onChange={(e) => {
+                                                        const newList = [...value];
+                                                        newList[idx] = { ...item, [iKey]: e.target.value };
+                                                        handleChange(key, newList);
+                                                    }}
+                                                    className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 appearance-none cursor-pointer"
+                                                >
+                                                    <option value="glass">Glass</option>
+                                                    <option value="solid">Sólido</option>
+                                                    <option value="outline">Outline</option>
                                                 </select>
                                                 <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
                                             </div>
@@ -611,6 +1187,59 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                                 </select>
                                                 <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
                                             </div>
+                                        ) : (iKey.endsWith('Font') || iKey.endsWith('Size') || iKey.endsWith('Color')) ? (
+                                            <div className="mt-1">
+                                                {iKey.endsWith('Font') ? (
+                                                    <div className="relative">
+                                                        <select
+                                                            value={iVal as string || 'inherit'}
+                                                            onChange={(e) => {
+                                                                const newList = [...value];
+                                                                newList[idx] = { ...item, [iKey]: e.target.value };
+                                                                handleChange(key, newList);
+                                                            }}
+                                                            className="w-full bg-transparent border-none p-0 text-[10px] focus:ring-0 font-medium text-gray-500 appearance-none cursor-pointer"
+                                                            style={{ fontFamily: iVal !== 'inherit' ? iVal as string : 'inherit' }}
+                                                        >
+                                                            {AVAILABLE_FONTS.map(font => (
+                                                                <option key={font.value} value={font.value} style={{ fontFamily: font.value !== 'inherit' ? font.value : 'inherit' }}>
+                                                                    {font.name.split(' (')[0]}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                        <ChevronDown size={10} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
+                                                    </div>
+                                                ) : iKey.endsWith('Size') ? (
+                                                    <div className="relative">
+                                                        <select
+                                                            value={iVal as string || 'inherit'}
+                                                            onChange={(e) => {
+                                                                const newList = [...value];
+                                                                newList[idx] = { ...item, [iKey]: e.target.value };
+                                                                handleChange(key, newList);
+                                                            }}
+                                                            className="w-full bg-transparent border-none p-0 text-[10px] focus:ring-0 font-medium text-gray-500 appearance-none cursor-pointer"
+                                                        >
+                                                            {AVAILABLE_SIZES.map(size => (
+                                                                <option key={size.value} value={size.value}>
+                                                                    {size.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                        <ChevronDown size={10} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
+                                                    </div>
+                                                ) : (
+                                                    <ColorPicker
+                                                        value={iVal as string || '#000000'}
+                                                        onChange={(val) => {
+                                                            const newList = [...value];
+                                                            newList[idx] = { ...item, [iKey]: val };
+                                                            handleChange(key, newList);
+                                                        }}
+                                                        isDark={isDark}
+                                                    />
+                                                )}
+                                            </div>
                                         ) : iKey === 'items' ? (
                                             <div className="flex flex-col gap-2">
                                                 {(iVal as string[]).map((listItem, lIdx) => (
@@ -655,13 +1284,18 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                         ) : (
                                             <input
                                                 type="text"
+                                                readOnly={iKey === 'targetId'}
                                                 value={iVal as string}
                                                 onChange={(e) => {
+                                                    if (iKey === 'targetId') return;
                                                     const newList = [...value];
                                                     newList[idx] = { ...item, [iKey]: e.target.value };
                                                     handleChange(key, newList);
                                                 }}
-                                                className="w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold text-gray-700 placeholder:text-gray-300"
+                                                className={cn(
+                                                    "w-full bg-transparent border-none p-0 text-xs focus:ring-0 font-bold placeholder:text-gray-300",
+                                                    iKey === 'targetId' ? "text-gray-400 cursor-not-allowed" : "text-gray-700"
+                                                )}
                                                 placeholder={`Digitar ${iKey}...`}
                                             />
                                         )}
@@ -874,128 +1508,184 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
 
             <div className="relative flex-1 overflow-y-auto no-scrollbar pr-1">
                 <div className="grid grid-cols-1">
-                    {Object.entries(section.content).map(([key, value]) => renderField(key, value))}
-                </div>
-
-                {/* Section Styles */}
-                <div className={cn("mt-8 pt-6 border-t", isDark ? "border-gray-800" : "border-gray-100")}>
-                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-4 block leading-none">Aparência da Seção</span>
-
-                    <div className="flex flex-col gap-2 mb-6">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left flex justify-between">
-                            Espaçamento Vertical
-                            <span className="text-blue-500">{section.styles?.paddingTop || '80'}px</span>
-                        </label>
-                        <input
-                            type="range"
-                            min="0"
-                            max="200"
-                            step="8"
-                            value={parseInt(String(section.styles?.paddingTop || '80'))}
-                            onChange={(e) => {
-                                const val = `${e.target.value}px`;
-                                onUpdateStyles({ paddingTop: val, paddingBottom: val });
-                            }}
-                            className={cn(
-                                "w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-blue-600",
-                                isDark ? "bg-gray-800" : "bg-gray-100"
-                            )}
+                    <div className={cn(
+                        "mb-8 p-5 rounded-[2rem] transition-all duration-500",
+                        isDark
+                            ? "bg-[#1e2329]/50 border border-white/5 backdrop-blur-md shadow-2xl"
+                            : "bg-gray-50/80 border border-gray-100 backdrop-blur-md shadow-xl"
+                    )}>
+                        <PropertyNavigator
+                            activeCategory={activeCategory}
+                            onCategoryChange={onCategoryChange || (() => { })}
+                            availableCategories={['section', 'button', 'text', 'image', 'form', 'items'].filter(cat => {
+                                if (cat === 'form') return section.type === 'RSVPSection' || section.type === 'GuestbookSection';
+                                if (cat === 'items') return section.type === 'AgendaSection' || section.type === 'GiftsSection';
+                                if (cat === 'button') return ['SplashSection', 'HeroSection', 'RSVPSection', 'GuestbookSection'].includes(section.type);
+                                if (cat === 'image') return ['SplashSection', 'HeroSection'].includes(section.type);
+                                return true;
+                            }) as PropertyCategory[]}
+                            isDark={isDark}
                         />
                     </div>
 
-                    <div className="flex flex-col gap-2 mb-6">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left flex justify-between">
-                            Espaçamento Interno (Gap)
-                            <span className="text-blue-500">{section.styles?.gap || '24'}px</span>
-                        </label>
-                        <input
-                            type="range"
-                            min="0"
-                            max="64"
-                            step="4"
-                            value={parseInt(String(section.styles?.gap || '24'))}
-                            onChange={(e) => onUpdateStyles({ gap: `${e.target.value}px` })}
-                            className={cn(
-                                "w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-blue-600",
-                                isDark ? "bg-gray-800" : "bg-gray-100"
-                            )}
-                        />
-                    </div>
+                    <div className="space-y-6">
+                        {/* Grouped Properties */}
+                        <div className={cn(
+                            "rounded-3xl border transition-all duration-300 overflow-hidden",
+                            isDark ? "bg-[#1a1d23] border-[#2d333b]" : "bg-white border-gray-100 shadow-sm"
+                        )}>
+                            <button
+                                onClick={() => toggleGroup('main')}
+                                className={cn(
+                                    "w-full flex items-center justify-between p-5 text-left transition-colors",
+                                    isDark ? "hover:bg-white/5" : "hover:bg-gray-50"
+                                )}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className={cn(
+                                        "w-8 h-8 rounded-xl flex items-center justify-center",
+                                        isDark ? "bg-blue-500/10 text-blue-400" : "bg-blue-50 text-blue-600"
+                                    )}>
+                                        <PenTool size={16} />
+                                    </div>
+                                    <h2 className={cn(
+                                        "text-sm font-black uppercase tracking-widest",
+                                        isDark ? "text-white" : "text-black"
+                                    )}>
+                                        {CategoryHeaders[activeCategory]}
+                                    </h2>
+                                    {selectedElementKey && (
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); clearSelection(); }}
+                                            className="text-[10px] text-blue-500 font-bold hover:underline flex items-center gap-1"
+                                        >
+                                            <XCircle size={10} /> LIMPAR
+                                        </button>
+                                    )}
+                                </div>
+                                <ChevronDown
+                                    size={18}
+                                    className={cn(
+                                        "transition-transform duration-300 opacity-30",
+                                        collapsedGroups['main'] && "rotate-180"
+                                    )}
+                                />
+                            </button>
 
-                    <ColorPicker
-                        label="Cor de Fundo"
-                        value={(section.styles?.backgroundColor as string) || '#ffffff'}
-                        onChange={(color) => onUpdateStyles({ backgroundColor: color })}
-                        isDark={isDark}
-                    />
-
-                    <ColorPicker
-                        label="Cor do Texto"
-                        value={(section.styles?.color as string) || '#000000'}
-                        onChange={(color) => onUpdateStyles({ color: color })}
-                        isDark={isDark}
-                    />
-
-                    {section.type === 'AgendaSection' && (
-                        <div className="flex flex-col gap-2 mb-6">
-                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">
-                                Alinhamento do Texto
-                            </label>
                             <div className={cn(
-                                "flex gap-2 p-1 rounded-xl border",
-                                isDark ? "bg-[#2d333b] border-[#3d444d]" : "bg-gray-50 border-gray-100"
+                                "transition-all duration-500 ease-in-out",
+                                collapsedGroups['main'] ? "max-h-0 opacity-0" : "max-h-[2000px] opacity-100 p-5 pt-0"
                             )}>
-                                <button
-                                    onClick={() => onUpdateStyles({ textAlign: 'left' })}
-                                    className={cn(
-                                        "flex-1 flex justify-center p-2 rounded-lg transition-all",
-                                        section.styles?.textAlign === 'left'
-                                            ? (isDark ? 'bg-gray-800 text-blue-400 shadow-lg' : 'bg-white text-blue-500 shadow-sm')
-                                            : (isDark ? 'text-gray-500 hover:bg-gray-800' : 'text-gray-400 hover:bg-white')
-                                    )}
-                                >
-                                    <AlignLeft size={16} />
-                                </button>
-                                <button
-                                    onClick={() => onUpdateStyles({ textAlign: 'center' })}
-                                    className={cn(
-                                        "flex-1 flex justify-center p-2 rounded-lg transition-all",
-                                        section.styles?.textAlign === 'center' || !section.styles?.textAlign
-                                            ? (isDark ? 'bg-gray-800 text-blue-400 shadow-lg' : 'bg-white text-blue-500 shadow-sm')
-                                            : (isDark ? 'text-gray-500 hover:bg-gray-800' : 'text-gray-400 hover:bg-white')
-                                    )}
-                                >
-                                    <AlignCenter size={16} />
-                                </button>
-                                <button
-                                    onClick={() => onUpdateStyles({ textAlign: 'right' })}
-                                    className={cn(
-                                        "flex-1 flex justify-center p-2 rounded-lg transition-all",
-                                        section.styles?.textAlign === 'right'
-                                            ? (isDark ? 'bg-gray-800 text-blue-400 shadow-lg' : 'bg-white text-blue-500 shadow-sm')
-                                            : (isDark ? 'text-gray-500 hover:bg-gray-800' : 'text-gray-400 hover:bg-white')
-                                    )}
-                                >
-                                    <AlignRight size={16} />
-                                </button>
+                                <div className="grid grid-cols-1 gap-6 pt-4 border-t border-dashed border-gray-500/20">
+                                    {Array.from(new Set([
+                                        ...Object.keys(template?.defaultData || {}),
+                                        ...Object.keys(section.content || {})
+                                    ])).map(key => renderField(key, section.content[key] ?? template?.defaultData?.[key]))}
+                                </div>
                             </div>
                         </div>
-                    )}
 
-                    <div className="mt-8">
-                        <button
-                            onClick={onDelete}
-                            className={cn(
-                                "w-full flex items-center justify-center gap-2 p-4 text-xs font-bold transition-all border border-transparent group rounded-2xl",
-                                isDark
-                                    ? "text-red-400 hover:bg-red-950/30 hover:border-red-900/50"
-                                    : "text-red-500 hover:bg-red-50 hover:border-red-100"
-                            )}
-                        >
-                            <Trash2 size={16} className="group-hover:scale-110 transition-transform" />
-                            ELIMINAR ESTA SEÇÃO
-                        </button>
+                        {/* Section Styles (Always in its own beautiful group) */}
+                        <div className={cn(
+                            "rounded-3xl border transition-all duration-300 overflow-hidden",
+                            isDark ? "bg-[#1a1d23] border-[#2d333b]" : "bg-white border-gray-100 shadow-sm"
+                        )}>
+                            <button
+                                onClick={() => toggleGroup('styles')}
+                                className={cn(
+                                    "w-full flex items-center justify-between p-5 text-left transition-colors",
+                                    isDark ? "hover:bg-white/5" : "hover:bg-gray-50"
+                                )}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className={cn(
+                                        "w-8 h-8 rounded-xl flex items-center justify-center",
+                                        isDark ? "bg-purple-500/10 text-purple-400" : "bg-purple-50 text-purple-600"
+                                    )}>
+                                        <Sparkles size={16} />
+                                    </div>
+                                    <h2 className={cn(
+                                        "text-sm font-black uppercase tracking-widest",
+                                        isDark ? "text-white" : "text-black"
+                                    )}>
+                                        Aparência & Fundo
+                                    </h2>
+                                </div>
+                                <ChevronDown
+                                    size={18}
+                                    className={cn(
+                                        "transition-transform duration-300 opacity-30",
+                                        collapsedGroups['styles'] && "rotate-180"
+                                    )}
+                                />
+                            </button>
+
+                            <div className={cn(
+                                "transition-all duration-500 ease-in-out",
+                                collapsedGroups['styles'] ? "max-h-0 opacity-0" : "max-h-[1000px] opacity-100 p-5 pt-0"
+                            )}>
+                                <div className="grid grid-cols-1 gap-8 pt-4 border-t border-dashed border-gray-500/20">
+                                    {/* Vertical Padding */}
+                                    <div className="flex flex-col gap-3">
+                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] flex justify-between items-center">
+                                            Espaçamento Vertical
+                                            <span className="bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded-full text-[9px] font-bold">
+                                                {section.styles?.paddingTop || '80'}px
+                                            </span>
+                                        </label>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="200"
+                                            step="8"
+                                            value={parseInt(String(section.styles?.paddingTop || '80'))}
+                                            onChange={(e) => {
+                                                const val = `${e.target.value}px`;
+                                                onUpdateStyles({ paddingTop: val, paddingBottom: val });
+                                            }}
+                                            className={cn(
+                                                "w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-blue-600",
+                                                isDark ? "bg-gray-800" : "bg-gray-100 outline-none"
+                                            )}
+                                        />
+                                    </div>
+
+                                    {/* Color Pickers in a Row */}
+                                    <div className="grid grid-cols-1 gap-4">
+                                        <ColorPicker
+                                            label="Cor de Fundo"
+                                            value={(section.styles?.backgroundColor as string) || '#ffffff'}
+                                            onChange={(color) => onUpdateStyles({ backgroundColor: color })}
+                                            isDark={isDark}
+                                        />
+
+                                        <ColorPicker
+                                            label="Cor do Texto"
+                                            value={(section.styles?.color as string) || '#000000'}
+                                            onChange={(color) => onUpdateStyles({ color: color })}
+                                            isDark={isDark}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                {/* Bottom Actions */}
+                <div className="mt-12 space-y-3 pb-8 px-2">
+                    <button
+                        onClick={onDelete}
+                        className={cn(
+                            "w-full flex items-center justify-center gap-3 p-5 text-[10px] font-black tracking-[0.3em] transition-all border group rounded-[2rem] active:scale-95",
+                            isDark
+                                ? "text-red-400 hover:bg-red-950/20 border-red-900/30 hover:border-red-500/50"
+                                : "text-red-500 hover:bg-red-50 border-red-100 hover:border-red-200"
+                        )}
+                    >
+                        <Trash2 size={16} className="group-hover:scale-110 group-hover:rotate-12 transition-transform" />
+                        ELIMINAR SEÇÃO
+                    </button>
                 </div>
             </div>
         </div>

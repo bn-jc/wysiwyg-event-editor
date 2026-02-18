@@ -1,18 +1,1 @@
-8. Change the name of the app to "Event Page Builder".
-9. Add local storage to save the page data.
-10. Add API to export the page data.
-11. Add API to import the page data.
-12. Add locales [en-US, pt-PT].
-13. Add possibility to add text over the images.
-17. Add possibility to add custom fonts per text element.
-18. Add possibility to add custom colors per text element.
-19. Add possibility to have a pair of colors for the event, one for the light mode and one for the dark mode.
-20. Add possibiliity to have a pair of fonts for the event, one for the light mode and one for the dark mode.
-21. Add possibility to have a pair of background images for the event, one for the light mode and one for the dark mode.
-22. Add possibility to have a pair of fonts for titles and for other texts - Suggest.
-23. Implement design to the NavSection (Material, Liquid Glass, etc).
-24. Via the API I want to be able to add a section to the page, remove a section from the page, update a section and move a section up or down.
-25. Via the API I want to be able to set readonly/disabled for input fields.
-26. Via the API I want to be able to set the value for input fields.
-27. Via the API I want to be able to get the value of input fields.
-28. Via the API I want to interact with all elements/objects on the page.
+13. The section will have border style (floral, gold, etc), etc.

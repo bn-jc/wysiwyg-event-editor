@@ -6,13 +6,18 @@ import { useEditorApi } from '@/features/editor/hooks/useEditorApi';
 
 function App() {
   const [viewMode, setViewMode] = useState<'editor' | 'public' | 'embedded'>('editor');
-  const { layout, setLayout, updateSectionContent } = useEditorState();
+  const { layout, setLayout, updateSectionContent, addSection, deleteSection, moveSection, setExternalFieldValue, setExternalFieldStatus } = useEditorState();
 
   // Initialize Editor API (Global Listener)
   useEditorApi({
     layout,
     setLayout,
+    addSection,
+    deleteSection,
     updateSectionContent,
+    moveSection,
+    setExternalFieldValue,
+    setExternalFieldStatus,
     onSave: () => console.log('Save triggered via API'),
     enabled: viewMode === 'public'
   });

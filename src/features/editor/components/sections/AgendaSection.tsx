@@ -9,6 +9,7 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
     globalStyles,
     onUpdate,
     readOnly,
+    onElementSelect,
     isDark
 }) => {
     const { content } = section;
@@ -27,7 +28,9 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
             style={{
                 paddingTop: section.styles?.paddingTop || '80px',
                 paddingBottom: section.styles?.paddingBottom || '80px',
-                backgroundColor: section.styles?.backgroundColor
+                color: isDark
+                    ? (globalStyles.themeShades?.dark.text || '#E0E0E0')
+                    : (section.styles?.color || globalStyles.themeShades?.light.text || '#1a1a1a')
             }}
         >
             <div
@@ -38,11 +41,14 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
                     tagName="h2"
                     value={content.title || 'Programação'}
                     onChange={(val) => onUpdate({ title: val })}
-                    className="text-4xl md:text-5xl"
+                    onSelectElement={() => onElementSelect?.('title')}
+                    className={cn(
+                        content.titleSize && content.titleSize !== 'inherit' ? content.titleSize : "text-4xl md:text-5xl"
+                    )}
                     readOnly={readOnly}
                     style={{
-                        fontFamily: globalStyles.fontFamilyTitle,
-                        color: section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor),
+                        fontFamily: content.titleFont && content.titleFont !== 'inherit' ? content.titleFont : globalStyles.fontFamilyTitle,
+                        color: content.titleColor || section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor),
                         textAlign: section.styles?.textAlign || 'center'
                     }}
                 />
@@ -67,27 +73,48 @@ export const AgendaSection: React.FC<SectionRendererProps> = ({
                                     tagName="span"
                                     value={item.time}
                                     onChange={(val) => updateItem(idx, 'time', val)}
-                                    className={`text-sm font-bold tracking-widest uppercase mb-2 block ${section.styles?.textAlign === 'right' ? 'ml-auto' :
-                                        section.styles?.textAlign === 'left' ? 'mr-auto' : 'mx-auto'
-                                        } w-fit`}
+                                    onSelectElement={() => onElementSelect?.('items')}
+                                    className={cn(
+                                        "font-bold tracking-widest uppercase mb-2 block w-fit",
+                                        section.styles?.textAlign === 'right' ? 'ml-auto' :
+                                            section.styles?.textAlign === 'left' ? 'mr-auto' : 'mx-auto',
+                                        content.itemTimeSize && content.itemTimeSize !== 'inherit' ? content.itemTimeSize : "text-sm"
+                                    )}
                                     readOnly={readOnly}
-                                    style={{ color: section.styles?.color || globalStyles.secondaryColor }}
+                                    style={{
+                                        fontFamily: content.itemTimeFont && content.itemTimeFont !== 'inherit' ? content.itemTimeFont : 'inherit',
+                                        color: content.itemTimeColor || section.styles?.color || globalStyles.secondaryColor
+                                    }}
                                 />
                                 <InlineText
                                     tagName="h4"
                                     value={item.label}
                                     onChange={(val) => updateItem(idx, 'label', val)}
-                                    className="text-xl font-medium mb-1 block w-full"
+                                    onSelectElement={() => onElementSelect?.('items')}
+                                    className={cn(
+                                        "font-medium mb-1 block w-full",
+                                        content.itemLabelSize && content.itemLabelSize !== 'inherit' ? content.itemLabelSize : "text-xl"
+                                    )}
                                     readOnly={readOnly}
-                                    style={{ color: 'inherit' }}
+                                    style={{
+                                        fontFamily: content.itemLabelFont && content.itemLabelFont !== 'inherit' ? content.itemLabelFont : 'inherit',
+                                        color: content.itemLabelColor || 'inherit'
+                                    }}
                                 />
                                 <InlineText
                                     tagName="p"
                                     value={item.location}
                                     onChange={(val) => updateItem(idx, 'location', val)}
-                                    className="opacity-50 font-light block w-full"
+                                    onSelectElement={() => onElementSelect?.('items')}
+                                    className={cn(
+                                        "opacity-50 font-light block w-full",
+                                        content.itemLocationSize && content.itemLocationSize !== 'inherit' ? content.itemLocationSize : ""
+                                    )}
                                     readOnly={readOnly}
-                                    style={{ color: section.styles?.color || 'rgb(107 114 128)' }}
+                                    style={{
+                                        fontFamily: content.itemLocationFont && content.itemLocationFont !== 'inherit' ? content.itemLocationFont : 'inherit',
+                                        color: content.itemLocationColor || section.styles?.color || 'rgb(107 114 128)'
+                                    }}
                                 />
                             </div>
                         </div>

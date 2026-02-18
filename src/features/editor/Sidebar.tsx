@@ -1,9 +1,10 @@
 import React from 'react';
-import { Layers, Sparkles, Image as ImageIcon, Calendar, MessageSquare, PenTool, Clock, Minus, Menu } from 'lucide-react';
+import { Layers, Sparkles, Image as ImageIcon, Calendar, MessageSquare, PenTool, Clock, Minus, Menu, Gift } from 'lucide-react';
 
 import type { SectionType } from './types';
 import type { ContainerMode } from './hooks/useContainerSize';
 import { cn } from '@/utils/cn';
+import { getTranslation } from './utils/translations';
 
 interface SidebarItem {
     id: SectionType;
@@ -27,6 +28,7 @@ interface SidebarProps {
     isDark?: boolean;
     onToggleNavbar?: () => void;
     isNavHidden?: boolean;
+    language?: string;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -38,8 +40,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
     hasSplash = false,
     isDark = false,
     onToggleNavbar,
-    isNavHidden = false
+    isNavHidden = false,
+    language = 'pt-PT'
 }) => {
+    const t = getTranslation(language);
     if (readOnly) return null;
     const [collapsed, setCollapsed] = React.useState(mode !== 'wide');
 
@@ -55,28 +59,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
     const categories: SidebarCategory[] = [
         {
             id: 'essentials',
-            name: 'Essenciais',
+            name: t.sidebar.essentials,
             items: [
-                { id: 'SplashSection', name: 'Portão', icon: Sparkles },
-                { id: 'HeroSection', name: 'Início', icon: ImageIcon },
-                { id: 'CountdownSection', name: 'Contagem', icon: Clock },
-                { id: 'SeparatorSection', name: 'Divisor', icon: Minus },
+                { id: 'SplashSection', name: t.sections.splash, icon: Sparkles },
+                { id: 'HeroSection', name: t.sections.hero, icon: ImageIcon },
+                { id: 'CountdownSection', name: t.sections.countdown, icon: Clock },
+                { id: 'SeparatorSection', name: t.sections.separator, icon: Minus },
             ]
         },
         {
             id: 'details',
-            name: 'Detalhes',
+            name: t.sidebar.details,
             items: [
-                { id: 'AgendaSection', name: 'Agenda', icon: Calendar },
-                { id: 'RSVPSection', name: 'RSVP', icon: MessageSquare },
-                { id: 'GuestbookSection', name: 'Mural', icon: PenTool },
+                { id: 'AgendaSection', name: t.sections.agenda, icon: Calendar },
+                { id: 'GiftsSection', name: t.sections.gifts, icon: Gift },
+                { id: 'RSVPSection', name: t.sections.rsvp, icon: MessageSquare },
+                { id: 'GuestbookSection', name: t.sections.guestbook, icon: PenTool },
             ]
         },
         {
             id: 'custom',
-            name: 'Personalizado',
+            name: t.sections.custom,
             items: [
-                { id: 'CustomSection', name: 'Seção Livre', icon: Layers },
+                { id: 'CustomSection', name: t.sections.custom, icon: Layers },
             ]
         }
     ];
@@ -121,7 +126,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     >
                         < Sparkles size={isMobile ? 20 : 24} />
                     </button>
-                    {!collapsed && !isMobile && <span className="text-[10px] font-medium text-gray-500 uppercase tracking-tighter text-center leading-tight">Barra de<br />Navegação</span>}
+                    {!collapsed && !isMobile && (
+                        <span className="text-[10px] font-medium text-gray-500 uppercase tracking-tighter text-center leading-tight">
+                            {t.sidebar.navbar.split('\n').map((line, i) => (
+                                <React.Fragment key={i}>
+                                    {i > 0 && <br />}
+                                    {line}
+                                </React.Fragment>
+                            ))}
+                        </span>
+                    )}
                 </div>
             )}
 
@@ -139,7 +153,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 >
                     <Layers size={isMobile ? 20 : 24} />
                 </button>
-                {!collapsed && !isMobile && <span className="text-[10px] font-medium text-gray-500 uppercase tracking-tighter">Camadas</span>}
+                {!collapsed && !isMobile && <span className="text-[10px] font-medium text-gray-500 uppercase tracking-tighter">{t.sidebar.layers}</span>}
             </div>
 
             {!isMobile && <div className={cn("w-8 h-[1px] mb-6", isDark ? "bg-gray-800" : "bg-gray-100")} />}
@@ -166,7 +180,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                             isMobile && "p-2",
                                             isDisabled && "opacity-40 cursor-not-allowed grayscale"
                                         )}
-                                        title={isDisabled ? "Apenas uma Portão é permitida" : `Adicionar ${item.name}`}
+                                        title={isDisabled ? t.sections.splash : `Add ${item.name}`}
                                     >
                                         <item.icon size={isMobile ? 18 : 22} />
                                     </button>

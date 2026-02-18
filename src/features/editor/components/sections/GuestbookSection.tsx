@@ -11,14 +11,27 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
     onUpdate,
     onInteraction,
     readOnly,
-    isDark
+    onElementSelect,
+    isDark,
+    externalInputState
 }) => {
     const { content } = section;
+    const externalValues = externalInputState?.values[section.id] || {};
+    const externalStatuses = externalInputState?.statuses[section.id] || {};
     const messages = content.messages || [];
 
     // Local state for the form
-    const [name, setName] = useState('');
-    const [message, setMessage] = useState('');
+    const [name, setName] = useState(externalValues.name || '');
+    const [message, setMessage] = useState(externalValues.message || '');
+
+    // Sync external values
+    React.useEffect(() => {
+        if (externalValues.name !== undefined) setName(externalValues.name);
+        if (externalValues.message !== undefined) setMessage(externalValues.message);
+    }, [externalValues]);
+
+    const isFieldHidden = (key: string) => externalStatuses[key]?.hidden;
+    const isFieldDisabled = (key: string) => externalStatuses[key]?.disabled;
 
     const handleSubmit = () => {
         if (!name || !message) return;
@@ -49,7 +62,9 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
             style={{
                 paddingTop: section.styles?.paddingTop || '96px',
                 paddingBottom: section.styles?.paddingBottom || '96px',
-                backgroundColor: section.styles?.backgroundColor
+                color: isDark
+                    ? (globalStyles.themeShades?.dark.text || '#E0E0E0')
+                    : (section.styles?.color || globalStyles.themeShades?.light.text || '#1a1a1a')
             }}
         >
             <div
@@ -62,10 +77,13 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                         tagName="h2"
                         value={content.title || 'Deixe uma Mensagem'}
                         onChange={(val) => onUpdate({ title: val })}
-                        className="text-4xl md:text-5xl"
+                        onSelectElement={() => onElementSelect?.('title')}
+                        className={cn(
+                            content.titleSize && content.titleSize !== 'inherit' ? content.titleSize : "text-4xl md:text-5xl"
+                        )}
                         style={{
-                            fontFamily: globalStyles.fontFamilyTitle,
-                            color: section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor)
+                            fontFamily: content.titleFont && content.titleFont !== 'inherit' ? content.titleFont : globalStyles.fontFamilyTitle,
+                            color: content.titleColor || section.styles?.color || 'inherit'
                         }}
                         readOnly={readOnly}
                     />
@@ -73,9 +91,16 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                         tagName="p"
                         value={content.subtitle || 'Partilhe o seu amor e desejos para os noivos.'}
                         onChange={(val) => onUpdate({ subtitle: val })}
-                        className="font-light opacity-80"
+                        onSelectElement={() => onElementSelect?.('subtitle')}
+                        className={cn(
+                            "font-light opacity-80",
+                            content.subtitleSize && content.subtitleSize !== 'inherit' ? content.subtitleSize : ""
+                        )}
                         readOnly={readOnly}
-                        style={{ color: section.styles?.color || 'rgb(107 114 128)' }}
+                        style={{
+                            fontFamily: content.subtitleFont && content.subtitleFont !== 'inherit' ? content.subtitleFont : 'inherit',
+                            color: content.subtitleColor || section.styles?.color || 'rgb(107 114 128)'
+                        }}
                     />
                 </div>
 
@@ -87,74 +112,123 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                     <div className={cn("absolute top-0 left-0 w-full h-2 opacity-50", isDark ? "bg-gradient-to-r from-blue-900/40 via-purple-900/40 to-pink-900/40" : "bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100")} />
 
                     <div className="space-y-6">
-                        <div>
-                            <label
-                                className="text-[10px] font-bold uppercase tracking-widest mb-2 block ml-1 opacity-70"
-                                style={{ color: section.styles?.color || (isDark ? '#9CA3AF' : 'rgb(156 163 175)') }}
-                            >
-                                <InlineText
-                                    tagName="span"
-                                    value={content.nameLabel || 'Seu Nome'}
-                                    onChange={(val) => onUpdate({ nameLabel: val })}
-                                    readOnly={readOnly}
-                                />
-                            </label>
-                            <div className="relative group">
-                                <input
-                                    type="text"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    placeholder="Ex: Tio Manel"
+                        {!isFieldHidden('name') && (
+                            <div>
+                                <label
                                     className={cn(
-                                        "w-full border border-transparent rounded-xl p-4 pl-12 text-sm transition-all outline-none",
-                                        isDark ? "bg-black/40 text-gray-200 focus:bg-black/60 focus:ring-2 focus:ring-blue-900/30" : "bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-200"
+                                        "uppercase tracking-widest mb-2 block ml-1 opacity-70",
+                                        content.fieldLabelSize && content.fieldLabelSize !== 'inherit' ? content.fieldLabelSize : "text-[10px] font-bold"
                                     )}
-                                />
-                                <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
+                                    style={{
+                                        fontFamily: content.fieldLabelFont && content.fieldLabelFont !== 'inherit' ? content.fieldLabelFont : 'inherit',
+                                        color: content.fieldLabelColor || section.styles?.color || (isDark ? '#9CA3AF' : 'rgb(156 163 175)')
+                                    }}
+                                >
+                                    <InlineText
+                                        tagName="span"
+                                        value={content.nameLabel || 'Seu Nome'}
+                                        onChange={(val) => onUpdate({ nameLabel: val })}
+                                        onSelectElement={() => onElementSelect?.('nameLabel')}
+                                        readOnly={readOnly}
+                                    />
+                                </label>
+                                <div className="relative group">
+                                    <input
+                                        type="text"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        placeholder="Ex: Tio Manel"
+                                        readOnly={!readOnly || externalStatuses.name?.readOnly}
+                                        disabled={isFieldDisabled('name')}
+                                        className={cn(
+                                            "w-full border border-transparent rounded-xl p-4 pl-12 text-sm transition-all outline-none",
+                                            isDark ? "bg-black/40 text-gray-200 focus:bg-black/60 focus:ring-2 focus:ring-blue-900/30" : "bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-200"
+                                        )}
+                                    />
+                                    <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
+                                </div>
                             </div>
-                        </div>
+                        )}
 
-                        <div>
-                            <label
-                                className="text-[10px] font-bold uppercase tracking-widest mb-2 block ml-1 opacity-70"
-                                style={{ color: section.styles?.color || (isDark ? '#9CA3AF' : 'rgb(156 163 175)') }}
-                            >
-                                <InlineText
-                                    tagName="span"
-                                    value={content.messageLabel || 'Sua Mensagem'}
-                                    onChange={(val) => onUpdate({ messageLabel: val })}
-                                    readOnly={readOnly}
-                                />
-                            </label>
-                            <div className="relative group">
-                                <textarea
-                                    rows={3}
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                    placeholder="Escreva algo bonito..."
+                        {!isFieldHidden('message') && (
+                            <div>
+                                <label
                                     className={cn(
-                                        "w-full border border-transparent rounded-xl p-4 pl-12 text-sm transition-all outline-none resize-none",
-                                        isDark ? "bg-black/40 text-gray-200 focus:bg-black/60 focus:ring-2 focus:ring-blue-900/30" : "bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-200"
+                                        "uppercase tracking-widest mb-2 block ml-1 opacity-70",
+                                        content.fieldLabelSize && content.fieldLabelSize !== 'inherit' ? content.fieldLabelSize : "text-[10px] font-bold"
                                     )}
-                                />
-                                <MessageCircle size={18} className="absolute left-4 top-4 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
+                                    style={{
+                                        fontFamily: content.fieldLabelFont && content.fieldLabelFont !== 'inherit' ? content.fieldLabelFont : 'inherit',
+                                        color: content.fieldLabelColor || section.styles?.color || (isDark ? '#9CA3AF' : 'rgb(156 163 175)')
+                                    }}
+                                >
+                                    <InlineText
+                                        tagName="span"
+                                        value={content.messageLabel || 'Sua Mensagem'}
+                                        onChange={(val) => onUpdate({ messageLabel: val })}
+                                        onSelectElement={() => onElementSelect?.('messageLabel')}
+                                        readOnly={readOnly}
+                                    />
+                                </label>
+                                <div className="relative group">
+                                    <textarea
+                                        rows={3}
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
+                                        placeholder="Escreva algo bonito..."
+                                        readOnly={!readOnly || externalStatuses.message?.readOnly}
+                                        disabled={isFieldDisabled('message')}
+                                        className={cn(
+                                            "w-full border border-transparent rounded-xl p-4 pl-12 text-sm transition-all outline-none resize-none",
+                                            isDark ? "bg-black/40 text-gray-200 focus:bg-black/60 focus:ring-2 focus:ring-blue-900/30" : "bg-gray-50 text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-200"
+                                        )}
+                                    />
+                                    <MessageCircle size={18} className="absolute left-4 top-4 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
+                                </div>
                             </div>
-                        </div>
+                        )}
 
-                        <button
-                            onClick={handleSubmit}
-                            disabled={!name || !message}
-                            className="w-full py-4 rounded-xl font-bold text-xs uppercase tracking-widest text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                            style={{ backgroundColor: globalStyles.primaryColor }}
+                        <div
+                            className={cn(
+                                "w-full flex",
+                                content.buttonAlignment === 'left' ? "justify-start" :
+                                    content.buttonAlignment === 'right' ? "justify-end" :
+                                        content.buttonAlignment === 'full' ? "justify-center" : "justify-center"
+                            )}
                         >
-                            <Send size={16} />
-                            <InlineText
-                                tagName="span"
-                                value={content.buttonLabel || 'Publicar Mensagem'}
-                                onChange={(val) => onUpdate({ buttonLabel: val })}
-                                readOnly={readOnly}
-                            />
-                        </button>
+                            <button
+                                onClick={handleSubmit}
+                                onMouseDown={(e) => {
+                                    if (!readOnly) {
+                                        e.stopPropagation();
+                                        onElementSelect?.('buttonLabel');
+                                    }
+                                }}
+                                disabled={!name || !message || isFieldDisabled('submit')}
+                                className={cn(
+                                    "py-4 font-bold uppercase tracking-widest transition-all shadow-lg active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2",
+                                    content.buttonSize && content.buttonSize !== 'inherit' ? content.buttonSize : "text-xs",
+                                    content.buttonShape || "rounded-xl",
+                                    content.buttonAlignment === 'full' ? "w-full" : "px-10",
+                                    !content.buttonColor && "bg-blue-500 text-white hover:shadow-xl hover:-translate-y-0.5"
+                                )}
+                                style={{
+                                    backgroundColor: isFieldDisabled('submit') ? '#ccc' : (content.buttonColor ? `${content.buttonColor}11` : globalStyles.primaryColor),
+                                    fontFamily: content.buttonFont && content.buttonFont !== 'inherit' ? content.buttonFont : 'inherit',
+                                    color: content.buttonColor || 'white',
+                                    border: content.buttonColor ? `1px solid ${content.buttonColor}` : undefined
+                                }}
+                            >
+                                <Send size={16} />
+                                <InlineText
+                                    tagName="span"
+                                    value={content.buttonLabel || 'Publicar Mensagem'}
+                                    onChange={(val) => onUpdate({ buttonLabel: val })}
+                                    onSelectElement={() => onElementSelect?.('buttonLabel')}
+                                    readOnly={readOnly}
+                                />
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -167,9 +241,16 @@ export const GuestbookSection: React.FC<SectionRendererProps> = ({
                                 tagName="p"
                                 value={content.emptyStateText || 'Seja o primeiro a deixar uma mensagem!'}
                                 onChange={(val) => onUpdate({ emptyStateText: val })}
-                                className="font-light opacity-50"
+                                onSelectElement={() => onElementSelect?.('emptyStateText')}
+                                className={cn(
+                                    "font-light opacity-50",
+                                    content.emptyStateSize && content.emptyStateSize !== 'inherit' ? content.emptyStateSize : ""
+                                )}
                                 readOnly={readOnly}
-                                style={{ color: section.styles?.color || 'rgb(156 163 175)' }}
+                                style={{
+                                    fontFamily: content.emptyStateFont && content.emptyStateFont !== 'inherit' ? content.emptyStateFont : 'inherit',
+                                    color: content.emptyStateColor || section.styles?.color || 'rgb(156 163 175)'
+                                }}
                             />
                         </div>
                     ) : (

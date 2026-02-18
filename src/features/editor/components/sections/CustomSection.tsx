@@ -1,11 +1,14 @@
 import React from 'react';
 import type { SectionRendererProps } from '../../types';
 import { InlineText } from '../common/InlineText';
+import { cn } from '@/utils/cn';
 
 export const CustomSection: React.FC<SectionRendererProps> = ({
     section,
     onUpdate,
-    readOnly
+    readOnly,
+    isDark,
+    globalStyles
 }) => {
     const { elements = [] } = section.content;
 
@@ -31,7 +34,9 @@ export const CustomSection: React.FC<SectionRendererProps> = ({
             style={{
                 paddingTop: section.styles?.paddingTop || '80px',
                 paddingBottom: section.styles?.paddingBottom || '80px',
-                backgroundColor: section.styles?.backgroundColor
+                color: isDark
+                    ? (globalStyles.themeShades?.dark.text || '#E0E0E0')
+                    : (section.styles?.color || globalStyles.themeShades?.light.text || '#1a1a1a')
             }}
         >
             <div
@@ -69,7 +74,10 @@ export const CustomSection: React.FC<SectionRendererProps> = ({
                         return (
                             <ListTag
                                 key={index}
-                                className={`space-y-4 pl-6 ${listStyleClass}`}
+                                className={cn(
+                                    "space-y-4 pl-6",
+                                    listStyleClass
+                                )}
                             >
                                 {element.items.map((item: string, iIdx: number) => (
                                     <li key={iIdx} className="relative group">
@@ -82,9 +90,15 @@ export const CustomSection: React.FC<SectionRendererProps> = ({
                                             tagName="span"
                                             value={item}
                                             onChange={(val) => handleUpdateListItem(index, iIdx, val)}
-                                            className="text-lg leading-relaxed block opacity-80"
+                                            className={cn(
+                                                "leading-relaxed block opacity-80",
+                                                element.itemSize && element.itemSize !== 'inherit' ? element.itemSize : "text-lg"
+                                            )}
                                             readOnly={readOnly}
-                                            style={{ color: section.styles?.color }}
+                                            style={{
+                                                fontFamily: element.itemFont && element.itemFont !== 'inherit' ? element.itemFont : 'inherit',
+                                                color: element.itemColor || section.styles?.color || 'inherit'
+                                            }}
                                         />
                                     </li>
                                 ))}
@@ -98,13 +112,18 @@ export const CustomSection: React.FC<SectionRendererProps> = ({
                             tagName={element.style === 'heading' ? 'h2' : 'p'}
                             value={element.content}
                             onChange={(val) => handleUpdateElement(index, { content: val })}
-                            className={
+                            multiline={element.style !== 'heading'}
+                            className={cn(
+                                "text-center",
                                 element.style === 'heading'
-                                    ? "text-4xl font-bold text-center mb-2"
-                                    : "text-lg leading-relaxed text-center opacity-80"
-                            }
+                                    ? cn("font-bold mb-2", element.contentSize && element.contentSize !== 'inherit' ? element.contentSize : "text-4xl")
+                                    : cn("leading-relaxed opacity-80", element.contentSize && element.contentSize !== 'inherit' ? element.contentSize : "text-lg")
+                            )}
                             readOnly={readOnly}
-                            style={{ color: section.styles?.color }}
+                            style={{
+                                fontFamily: element.contentFont && element.contentFont !== 'inherit' ? element.contentFont : 'inherit',
+                                color: element.contentColor || section.styles?.color || 'inherit'
+                            }}
                         />
                     );
                 })}

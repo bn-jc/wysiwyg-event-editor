@@ -4,6 +4,7 @@ import { cn } from '@/utils/cn';
 import type { DeviceType, ViewMode, EventLayout } from '../types';
 import type { ContainerMode } from '../hooks/useContainerSize';
 import { ColorPicker } from './common/ColorPicker';
+import { getTranslation } from '../utils/translations';
 
 interface EditorToolbarProps {
     viewMode: ViewMode;
@@ -19,6 +20,7 @@ interface EditorToolbarProps {
     onPlay: () => void;
     isDark?: boolean;
     onToggleDark?: () => void;
+    language?: string;
 }
 
 export const EditorToolbar: React.FC<EditorToolbarProps> = ({
@@ -33,8 +35,10 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
     containerMode = 'wide',
     onPlay,
     isDark,
-    onToggleDark
+    onToggleDark,
+    language = 'pt-PT'
 }) => {
+    const t = getTranslation(language);
     const [showColorPicker, setShowColorPicker] = React.useState(false);
     const pickerRef = React.useRef<HTMLDivElement>(null);
 
@@ -88,7 +92,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                                 : (isDark ? "text-gray-400 hover:text-gray-200" : "text-gray-500 hover:text-gray-700"),
                             isMobile && "px-2"
                         )}>
-                        <Type size={14} /> {!isMobile && "EDITAR"}
+                        <Type size={14} /> {!isMobile && t.toolbar.edit}
                     </button>
                     <button
                         onClick={() => setViewMode('preview')}
@@ -99,7 +103,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                                 : (isDark ? "text-gray-400 hover:text-gray-200" : "text-gray-500 hover:text-gray-700"),
                             isMobile && "px-2"
                         )}>
-                        <Eye size={14} /> {!isMobile && "PREVER"}
+                        <Eye size={14} /> {!isMobile && t.toolbar.preview}
                     </button>
                 </div>
 
@@ -133,18 +137,104 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                                     className="w-4 h-4 rounded-full border border-gray-200"
                                     style={{ backgroundColor: globalStyles.primaryColor }}
                                 />
-                                <span className="text-[10px] font-bold text-gray-400 uppercase">Tema</span>
+                                <span className="text-[10px] font-bold text-gray-400 uppercase">{t.toolbar.theme}</span>
                             </button>
 
                             {showColorPicker && (
                                 <div className="absolute top-full left-0 mt-2 p-4 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 w-64 animate-in fade-in zoom-in-95">
-                                    <div className="mb-2">
-                                        <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Cor do Tema</span>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest block mb-2">{t.toolbar.themeColor}</span>
+                                            <ColorPicker
+                                                value={globalStyles.primaryColor}
+                                                onChange={(color) => onUpdateGlobalStyles({ primaryColor: color })}
+                                            />
+                                        </div>
+
+                                        <div className="pt-2 border-t border-gray-100">
+                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3">{t.toolbar.lightMode}</span>
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <span className="text-[9px] font-bold text-gray-400 uppercase block mb-1">{t.toolbar.background}</span>
+                                                    <ColorPicker
+                                                        value={globalStyles.themeShades?.light.background || '#ffffff'}
+                                                        onChange={(color) => {
+                                                            const currentShades = globalStyles.themeShades || {
+                                                                light: { background: '#ffffff', text: '#1a1a1a' },
+                                                                dark: { background: '#121212', text: '#e0e0e0' }
+                                                            };
+                                                            onUpdateGlobalStyles({
+                                                                themeShades: {
+                                                                    ...currentShades,
+                                                                    light: { ...currentShades.light, background: color }
+                                                                }
+                                                            });
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <span className="text-[9px] font-bold text-gray-400 uppercase block mb-1">{t.toolbar.text}</span>
+                                                    <ColorPicker
+                                                        value={globalStyles.themeShades?.light.text || '#1a1a1a'}
+                                                        onChange={(color) => {
+                                                            const currentShades = globalStyles.themeShades || {
+                                                                light: { background: '#ffffff', text: '#1a1a1a' },
+                                                                dark: { background: '#121212', text: '#e0e0e0' }
+                                                            };
+                                                            onUpdateGlobalStyles({
+                                                                themeShades: {
+                                                                    ...currentShades,
+                                                                    light: { ...currentShades.light, text: color }
+                                                                }
+                                                            });
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="pt-2 border-t border-gray-100">
+                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3">{t.toolbar.darkMode}</span>
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <span className="text-[9px] font-bold text-gray-400 uppercase block mb-1">{t.toolbar.background}</span>
+                                                    <ColorPicker
+                                                        value={globalStyles.themeShades?.dark.background || '#121212'}
+                                                        onChange={(color) => {
+                                                            const currentShades = globalStyles.themeShades || {
+                                                                light: { background: '#ffffff', text: '#1a1a1a' },
+                                                                dark: { background: '#121212', text: '#e0e0e0' }
+                                                            };
+                                                            onUpdateGlobalStyles({
+                                                                themeShades: {
+                                                                    ...currentShades,
+                                                                    dark: { ...currentShades.dark, background: color }
+                                                                }
+                                                            });
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <span className="text-[9px] font-bold text-gray-400 uppercase block mb-1">{t.toolbar.text}</span>
+                                                    <ColorPicker
+                                                        value={globalStyles.themeShades?.dark.text || '#e0e0e0'}
+                                                        onChange={(color) => {
+                                                            const currentShades = globalStyles.themeShades || {
+                                                                light: { background: '#ffffff', text: '#1a1a1a' },
+                                                                dark: { background: '#121212', text: '#e0e0e0' }
+                                                            };
+                                                            onUpdateGlobalStyles({
+                                                                themeShades: {
+                                                                    ...currentShades,
+                                                                    dark: { ...currentShades.dark, text: color }
+                                                                }
+                                                            });
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <ColorPicker
-                                        value={globalStyles.primaryColor}
-                                        onChange={(color) => onUpdateGlobalStyles({ primaryColor: color })}
-                                    />
                                 </div>
                             )}
                         </div>
@@ -161,7 +251,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                                             ? "bg-white text-blue-600 shadow-sm"
                                             : "text-gray-400 hover:text-gray-600"
                                     )}
-                                    title="Boxed Layout"
+                                    title={t.toolbar.boxed}
                                 >
                                     <div className="w-3 h-3 border-2 border-current rounded-sm" />
                                 </button>
@@ -173,7 +263,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                                             ? "bg-white text-blue-600 shadow-sm"
                                             : "text-gray-400 hover:text-gray-600"
                                     )}
-                                    title="Full Width Layout"
+                                    title={t.toolbar.full}
                                 >
                                     <div className="w-4 h-3 bg-current rounded-sm opacity-50" />
                                 </button>
@@ -187,9 +277,9 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                                 onChange={(e) => onUpdateMusic(e.target.value || undefined)}
                                 className="bg-transparent text-[10px] font-bold text-gray-500 border-none p-0 focus:ring-0 cursor-pointer w-20"
                             >
-                                <option value="">Sem Música</option>
-                                <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">Piano</option>
-                                <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">Marcha</option>
+                                <option value="">{t.toolbar.noMusic}</option>
+                                <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">{t.toolbar.piano}</option>
+                                <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">{t.toolbar.march}</option>
                             </select>
                         </div>
 
@@ -207,7 +297,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                                 "p-2 rounded-lg transition-all",
                                 device === 'desktop' ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
                             )}
-                            title="Desktop"
+                            title={t.toolbar.desktop}
                         >
                             <Monitor size={18} />
                         </button>
@@ -217,7 +307,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                                 "p-2 rounded-lg transition-all",
                                 device === 'tablet' ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
                             )}
-                            title="Tablet"
+                            title={t.toolbar.tablet}
                         >
                             <Tablet size={18} />
                         </button>
@@ -227,7 +317,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                                 "p-2 rounded-lg transition-all",
                                 device === 'mobile' ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
                             )}
-                            title="Smartphone"
+                            title={t.toolbar.mobile}
                         >
                             <Smartphone size={18} />
                         </button>
@@ -244,7 +334,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                     )}
                 >
                     <LayoutGrid size={16} className="fill-current" />
-                    {!isMobile && <span>PLAY</span>}
+                    {!isMobile && <span>{t.toolbar.play}</span>}
                 </button>
             </div>
         </div>

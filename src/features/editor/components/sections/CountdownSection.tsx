@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { SectionRendererProps } from '../../types';
 import { InlineText } from '../common/InlineText';
+import { cn } from '@/utils/cn';
 
 export const CountdownSection: React.FC<SectionRendererProps> = ({
     section,
@@ -56,7 +57,9 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
             style={{
                 paddingTop: section.styles?.paddingTop || '80px',
                 paddingBottom: section.styles?.paddingBottom || '80px',
-                backgroundColor: section.styles?.backgroundColor
+                color: isDark
+                    ? (globalStyles.themeShades?.dark.text || '#E0E0E0')
+                    : (section.styles?.color || globalStyles.themeShades?.light.text || '#1a1a1a')
             }}
         >
             <div
@@ -67,10 +70,12 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
                     tagName="h2"
                     value={content.title || 'Contagem Decrescente'}
                     onChange={(val) => onUpdate({ title: val })}
-                    className="text-4xl md:text-5xl"
+                    className={cn(
+                        content.titleSize && content.titleSize !== 'inherit' ? content.titleSize : "text-4xl md:text-5xl"
+                    )}
                     style={{
-                        fontFamily: globalStyles.fontFamilyTitle,
-                        color: section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor)
+                        fontFamily: content.titleFont && content.titleFont !== 'inherit' ? content.titleFont : globalStyles.fontFamilyTitle,
+                        color: content.titleColor || section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor)
                     }}
                     readOnly={readOnly}
                 />
@@ -80,14 +85,26 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
                         {timerItems.map((item, idx) => (
                             <div key={idx} className="flex flex-col items-center min-w-[80px] md:min-w-[120px]">
                                 <div
-                                    className="text-4xl md:text-6xl font-bold mb-2 tabular-nums transition-all duration-300"
-                                    style={{ color: section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor) }}
+                                    className={cn(
+                                        "mb-2 tabular-nums transition-all duration-300 font-bold",
+                                        content.timerSize && content.timerSize !== 'inherit' ? content.timerSize : "text-4xl md:text-6xl"
+                                    )}
+                                    style={{
+                                        fontFamily: content.timerFont && content.timerFont !== 'inherit' ? content.timerFont : globalStyles.fontFamilyBody,
+                                        color: content.timerColor || section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor)
+                                    }}
                                 >
                                     {String(item.value).padStart(2, '0')}
                                 </div>
                                 <div
-                                    className="text-xs md:text-sm uppercase tracking-widest font-medium opacity-60"
-                                    style={{ color: section.styles?.color || globalStyles.secondaryColor }}
+                                    className={cn(
+                                        "uppercase tracking-widest font-medium opacity-60",
+                                        content.timerLabelSize && content.timerLabelSize !== 'inherit' ? content.timerLabelSize : "text-xs md:text-sm"
+                                    )}
+                                    style={{
+                                        fontFamily: content.timerLabelFont && content.timerLabelFont !== 'inherit' ? content.timerLabelFont : 'inherit',
+                                        color: content.timerLabelColor || section.styles?.color || globalStyles.secondaryColor
+                                    }}
                                 >
                                     {item.label}
                                 </div>
@@ -96,8 +113,14 @@ export const CountdownSection: React.FC<SectionRendererProps> = ({
                     </div>
                 ) : (
                     <div
-                        className="text-3xl md:text-4xl font-light italic opacity-80"
-                        style={{ color: isDark ? '#FFFFFF' : globalStyles.primaryColor }}
+                        className={cn(
+                            "font-light italic opacity-80",
+                            content.finishMessageSize && content.finishMessageSize !== 'inherit' ? content.finishMessageSize : "text-3xl md:text-4xl"
+                        )}
+                        style={{
+                            fontFamily: content.finishMessageFont && content.finishMessageFont !== 'inherit' ? content.finishMessageFont : 'inherit',
+                            color: content.finishMessageColor || (isDark ? '#FFFFFF' : globalStyles.primaryColor)
+                        }}
                     >
                         {content.finishMessage || 'O Grande Dia Chegou!'}
                     </div>

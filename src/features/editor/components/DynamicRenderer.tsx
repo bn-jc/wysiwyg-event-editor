@@ -18,7 +18,10 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
     onInteraction,
     onValidate: propOnValidate,
     device: propDevice,
-    isDark: isDarkProp
+    selectedElementKey,
+    onElementSelect,
+    isDark: isDarkProp,
+    externalInputState
 }) => {
     const containerRef = React.useRef<HTMLDivElement>(null);
     const { mode } = useContainerSize(containerRef);
@@ -41,7 +44,11 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
         if (isDarkProp !== undefined) {
             setIsDark(isDarkProp);
         }
-    }, [isDarkProp]);
+        // Reset hasOpened when entering readOnly mode (Preview)
+        if (readOnly) {
+            setHasOpened(false);
+        }
+    }, [isDarkProp, readOnly]);
 
     // Initialize from system if no prop provided
     React.useEffect(() => {
@@ -128,6 +135,7 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
 
     // Check for splash screen anywhere in the sections
     const splashSection = layout.sections.find(s => s.type === 'SplashSection');
+    const navSection = layout.sections.find(s => s.type === 'NavSection');
     const hasSplash = !!splashSection;
     const showOnlySplash = readOnly && hasSplash && !hasOpened;
 
@@ -174,11 +182,20 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
         }
     }, [activeSectionId, showOnlySplash]);
 
+    const isBoxed = layout.globalStyles.layoutMode === 'boxed';
+
     return (
-        <div className="relative w-full h-full">
+        <div className={cn(
+            "relative w-full h-full overflow-hidden flex flex-col items-center",
+            isBoxed && !showOnlySplash ? (isDark ? "bg-[#0a0a0a]" : "bg-gray-50/50") : ""
+        )}>
             <div
                 ref={containerRef}
-                className={`flex flex-col w-full h-full overflow-y-auto no-scrollbar scroll-smooth transition-colors duration-500 ${showOnlySplash ? 'overflow-hidden' : ''}`}
+                className={cn(
+                    "flex flex-col w-full h-full overflow-y-auto no-scrollbar scroll-smooth transition-all duration-500",
+                    showOnlySplash ? 'overflow-hidden' : '',
+                    isBoxed && !showOnlySplash && "max-w-[1200px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] my-4 md:my-8 rounded-[2rem] border border-gray-100/10 relative"
+                )}
                 style={{
                     backgroundColor: themeColors.background,
                     fontFamily: layout.globalStyles.fontFamilyBody,
@@ -193,10 +210,14 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
                             isActive={false}
                             onSelect={() => { }}
                             onUpdate={() => { }}
+                            selectedElementKey={selectedElementKey}
+                            onElementSelect={onElementSelect}
                             readOnly={true}
                             index={layout.sections.indexOf(splashSection)}
                             device={device}
                             isDark={isDark}
+                            externalInputState={externalInputState}
+                            sections={layout.sections}
                             onOpen={() => {
                                 setHasOpened(true);
                                 onOpen?.(); // Call the prop
@@ -214,6 +235,9 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
                         // (Detect by ID to be safe across reorders)
                         if (readOnly && hasSplash && section.id === splashSection?.id) return null;
 
+                        // NAV SECTION IS RENDERED SEPARATELY AT THE TOP LEVEL OF DynamicRenderer
+                        if (section.type === 'NavSection') return null;
+
                         if (section.isHidden) return null;
 
                         return (
@@ -228,10 +252,14 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
                                     onValidate={handleValidate}
                                     onSelect={() => onSectionSelect?.(section.id)}
                                     onUpdate={(newContent) => onSectionUpdate?.(section.id, newContent)}
+                                    selectedElementKey={selectedElementKey}
+                                    onElementSelect={onElementSelect}
                                     readOnly={readOnly}
                                     index={index}
                                     device={device}
                                     isDark={isDark}
+                                    externalInputState={externalInputState}
+                                    sections={layout.sections}
                                     onOpen={() => {
                                         setHasOpened(true);
                                         onOpen?.(); // Call the prop
@@ -249,6 +277,42 @@ export const DynamicRenderer: React.FC<CanvasRendererProps> = ({
                 {/* Hidden debug info for verification if needed */}
                 <div className="hidden" data-testid="detected-device">{device}</div>
             </div>
+
+            {/* Floating NavSection */}
+            {navSection && !navSection.isHidden && !showOnlySplash && (
+                <div
+                    data-section-id={navSection.id}
+                    className={cn(
+                        "absolute z-40 transition-all duration-300 pointer-events-none",
+                        "flex justify-center w-full"
+                    )}
+                    style={{
+                        top: navSection.content.navPosition === 'bottom' ? 'auto' : 0,
+                        bottom: navSection.content.navPosition === 'bottom' ? 0 : 'auto'
+                    }}
+                >
+                    <div className="pointer-events-auto max-w-full">
+                        <SectionRenderer
+                            section={navSection}
+                            globalStyles={layout.globalStyles}
+                            isActive={activeSectionId === navSection.id}
+                            activeScrollSectionId={activeScrollSectionId}
+                            onNavigate={handleNavigate}
+                            onInteraction={onInteraction}
+                            onValidate={handleValidate}
+                            onSelect={() => onSectionSelect?.(navSection.id)}
+                            onUpdate={(newContent) => onSectionUpdate?.(navSection.id, newContent)}
+                            selectedElementKey={selectedElementKey}
+                            onElementSelect={onElementSelect}
+                            readOnly={readOnly}
+                            index={layout.sections.indexOf(navSection)}
+                            device={device}
+                            isDark={isDark}
+                            externalInputState={externalInputState}
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* Background Music */}
             {readOnly && layout.musicUrl && !showOnlySplash && (

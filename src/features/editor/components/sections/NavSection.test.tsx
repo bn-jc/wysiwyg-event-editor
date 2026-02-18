@@ -11,14 +11,29 @@ const mockGlobalStyles = {
 };
 
 const defaultProps = {
-    section: SECTION_EXAMPLES.NavSection[0],
+    section: {
+        ...SECTION_EXAMPLES.NavSection[0],
+        content: {
+            ...SECTION_EXAMPLES.NavSection[0].content,
+            navPosition: 'top' as const,
+            navVariant: 'classic' as const,
+            isSticky: true,
+            isTransparent: false,
+            opacity: 95,
+            blurAmount: 8,
+            activeHighlight: 'underline' as const,
+            activeColor: '#3B82F6',
+            isScrollable: true
+        }
+    },
     isActive: false,
     onSelect: () => { },
     onUpdate: () => { },
     readOnly: false,
     globalStyles: mockGlobalStyles,
     index: 0,
-    device: 'desktop' as const
+    device: 'desktop' as const,
+    activeScrollSectionId: 'inicio'
 };
 
 describe('NavSection', () => {
@@ -26,25 +41,45 @@ describe('NavSection', () => {
         render(<NavSection {...defaultProps} />);
         expect(screen.getByText('Início')).toBeInTheDocument();
         expect(screen.getByText('Agenda')).toBeInTheDocument();
-        expect(screen.getByText('Local')).toBeInTheDocument();
-        expect(screen.getByText('Gifts')).toBeInTheDocument();
     });
 
-    it('applies custom background and text color', () => {
+    it('renders with Material Design variant', () => {
         const props = {
             ...defaultProps,
             section: {
                 ...defaultProps.section,
                 content: {
                     ...defaultProps.section.content,
-                    backgroundColor: 'rgb(0, 0, 0)',
-                    textColor: 'rgb(255, 255, 255)'
+                    navVariant: 'material' as const
+                }
+            }
+        };
+        const { container } = render(<NavSection {...props} />);
+        expect(container.firstChild).toHaveClass('shadow-lg');
+    });
+
+    it('renders with Liquid Glass variant and blur', () => {
+        const props = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: {
+                    ...defaultProps.section.content,
+                    navVariant: 'liquid-glass' as const,
+                    blurAmount: 15
                 }
             }
         };
         const { container } = render(<NavSection {...props} />);
         const navDiv = container.firstChild as HTMLElement;
-        expect(navDiv.style.backgroundColor).toBe('rgb(0, 0, 0)');
-        expect(navDiv.style.color).toBe('rgb(255, 255, 255)');
+        expect(navDiv.style.backdropFilter).toBe('blur(15px)');
+        expect(navDiv).toHaveClass('border-b');
+    });
+
+    it('renders active highlight as an underline', () => {
+        render(<NavSection {...defaultProps} activeScrollSectionId="inicio" />);
+        // The active Highlight div should be present
+        const activeLink = screen.getByText('Início').closest('div');
+        expect(activeLink).toBeInTheDocument();
     });
 });

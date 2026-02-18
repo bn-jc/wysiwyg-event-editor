@@ -21,11 +21,17 @@ export const GiftsSection: React.FC<SectionRendererProps> = ({
     globalStyles,
     onUpdate,
     readOnly,
-    isDark
+    onElementSelect,
+    isDark,
+    externalInputState
 }) => {
     const { content } = section;
+    const externalValues = externalInputState?.values[section.id] || {};
     const giftItems = content.giftItems || [];
-    const bankDetails = content.bankDetails || {};
+    const bankDetails = {
+        ...content.bankDetails,
+        ...externalValues
+    };
 
     const updateGiftItem = (index: number, field: string, value: string) => {
         if (readOnly) return;
@@ -50,8 +56,9 @@ export const GiftsSection: React.FC<SectionRendererProps> = ({
             style={{
                 paddingTop: section.styles?.paddingTop || '80px',
                 paddingBottom: section.styles?.paddingBottom || '80px',
-                backgroundColor: section.styles?.backgroundColor,
-                color: section.styles?.color || 'inherit'
+                color: isDark
+                    ? (globalStyles.themeShades?.dark.text || '#E0E0E0')
+                    : (section.styles?.color || globalStyles.themeShades?.light.text || '#1a1a1a')
             }}
         >
             <div className="max-w-4xl mx-auto flex flex-col items-center gap-12">
@@ -60,19 +67,30 @@ export const GiftsSection: React.FC<SectionRendererProps> = ({
                         tagName="h2"
                         value={content.title || 'Lista de Presentes'}
                         onChange={(val) => onUpdate({ title: val })}
-                        className="text-4xl md:text-5xl"
+                        onSelectElement={() => onElementSelect?.('title')}
+                        className={cn(
+                            content.titleSize && content.titleSize !== 'inherit' ? content.titleSize : "text-4xl md:text-5xl"
+                        )}
                         readOnly={readOnly}
                         style={{
-                            fontFamily: globalStyles.fontFamilyTitle,
-                            color: section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor)
+                            fontFamily: content.titleFont && content.titleFont !== 'inherit' ? content.titleFont : globalStyles.fontFamilyTitle,
+                            color: content.titleColor || section.styles?.color || 'inherit'
                         }}
                     />
                     <InlineText
                         tagName="p"
                         value={content.description || 'A sua presença é o nosso maior presente...'}
                         onChange={(val) => onUpdate({ description: val })}
-                        className="text-lg opacity-80 max-w-2xl mx-auto"
+                        onSelectElement={() => onElementSelect?.('description')}
+                        className={cn(
+                            "opacity-80 max-w-2xl mx-auto",
+                            content.descriptionSize && content.descriptionSize !== 'inherit' ? content.descriptionSize : "text-lg"
+                        )}
                         readOnly={readOnly}
+                        style={{
+                            fontFamily: content.descriptionFont && content.descriptionFont !== 'inherit' ? content.descriptionFont : 'inherit',
+                            color: content.descriptionColor || 'inherit'
+                        }}
                     />
                 </div>
 
@@ -89,27 +107,71 @@ export const GiftsSection: React.FC<SectionRendererProps> = ({
                                     )}
                                     style={{ borderColor: !isDark ? `${globalStyles.primaryColor}22` : undefined }}
                                 >
-                                    <div
-                                        className="p-3 rounded-full shrink-0"
-                                        style={{ backgroundColor: `${globalStyles.primaryColor}11`, color: globalStyles.primaryColor }}
-                                    >
-                                        <Icon size={24} />
-                                    </div>
-                                    <div className="flex flex-col gap-1 w-full">
-                                        <InlineText
-                                            tagName="h4"
-                                            value={item.name}
-                                            onChange={(val) => updateGiftItem(idx, 'name', val)}
-                                            className="text-xl font-medium"
-                                            readOnly={readOnly}
-                                        />
-                                        <InlineText
-                                            tagName="p"
-                                            value={item.description}
-                                            onChange={(val) => updateGiftItem(idx, 'description', val)}
-                                            className="text-sm opacity-60"
-                                            readOnly={readOnly}
-                                        />
+                                    <div className="flex flex-col gap-1 w-full relative">
+                                        {item.imageUrl && (
+                                            <div className="w-full aspect-video rounded-xl overflow-hidden mb-3 bg-gray-100 ring-1 ring-black/5">
+                                                <img
+                                                    src={item.imageUrl}
+                                                    alt={item.name}
+                                                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                                />
+                                            </div>
+                                        )}
+                                        <div className="flex items-center gap-3">
+                                            <div
+                                                className="p-3 rounded-full shrink-0"
+                                                style={{ backgroundColor: `${globalStyles.primaryColor}11`, color: globalStyles.primaryColor }}
+                                            >
+                                                <Icon size={24} />
+                                            </div>
+                                            <div className="flex flex-col gap-0.5 w-full">
+                                                <InlineText
+                                                    tagName="h4"
+                                                    value={item.name}
+                                                    onChange={(val) => updateGiftItem(idx, 'name', val)}
+                                                    onSelectElement={() => onElementSelect?.('giftItems')}
+                                                    className={cn(
+                                                        "font-medium leading-tight",
+                                                        content.giftNameSize && content.giftNameSize !== 'inherit' ? content.giftNameSize : "text-xl"
+                                                    )}
+                                                    readOnly={readOnly}
+                                                    style={{
+                                                        fontFamily: content.giftNameFont && content.giftNameFont !== 'inherit' ? content.giftNameFont : 'inherit',
+                                                        color: content.giftNameColor || 'inherit'
+                                                    }}
+                                                />
+                                                <InlineText
+                                                    tagName="p"
+                                                    value={item.description}
+                                                    onChange={(val) => updateGiftItem(idx, 'description', val)}
+                                                    onSelectElement={() => onElementSelect?.('giftItems')}
+                                                    className={cn(
+                                                        "opacity-60 leading-relaxed",
+                                                        content.giftDescriptionSize && content.giftDescriptionSize !== 'inherit' ? content.giftDescriptionSize : "text-sm"
+                                                    )}
+                                                    readOnly={readOnly}
+                                                    style={{
+                                                        fontFamily: content.giftDescriptionFont && content.giftDescriptionFont !== 'inherit' ? content.giftDescriptionFont : 'inherit',
+                                                        color: content.giftDescriptionColor || 'inherit'
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        {item.linkUrl && (
+                                            <a
+                                                href={item.linkUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="mt-4 py-2.5 px-6 rounded-xl text-center text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm flex items-center justify-center gap-2 group/btn w-full"
+                                                style={{
+                                                    backgroundColor: globalStyles.primaryColor,
+                                                    color: '#FFFFFF'
+                                                }}
+                                            >
+                                                Ver Detalhes / Comprar
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover/btn:translate-x-1"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
                             );
@@ -141,13 +203,32 @@ export const GiftsSection: React.FC<SectionRendererProps> = ({
                                 { label: 'IBAN', field: 'iban' }
                             ].map((detail) => (
                                 <div key={detail.field} className="flex flex-col gap-1">
-                                    <span className="text-xs uppercase tracking-wider opacity-50 font-bold">{detail.label}</span>
+                                    <span
+                                        className={cn(
+                                            "uppercase tracking-wider opacity-50 font-bold",
+                                            content.bankLabelSize && content.bankLabelSize !== 'inherit' ? content.bankLabelSize : "text-xs"
+                                        )}
+                                        style={{
+                                            fontFamily: content.bankLabelFont && content.bankLabelFont !== 'inherit' ? content.bankLabelFont : 'inherit',
+                                            color: content.bankLabelColor || 'inherit'
+                                        }}
+                                    >
+                                        {detail.label}
+                                    </span>
                                     <InlineText
                                         tagName="p"
                                         value={bankDetails[detail.field]}
                                         onChange={(val) => updateBankDetail(detail.field, val)}
-                                        className="text-md font-medium"
+                                        onSelectElement={() => onElementSelect?.('bankDetails')}
+                                        className={cn(
+                                            "font-medium",
+                                            content.bankValueSize && content.bankValueSize !== 'inherit' ? content.bankValueSize : "text-md"
+                                        )}
                                         readOnly={readOnly}
+                                        style={{
+                                            fontFamily: content.bankValueFont && content.bankValueFont !== 'inherit' ? content.bankValueFont : 'inherit',
+                                            color: content.bankValueColor || 'inherit'
+                                        }}
                                     />
                                 </div>
                             ))}

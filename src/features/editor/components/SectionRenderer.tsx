@@ -3,6 +3,7 @@ import type { SectionRendererProps } from '../types';
 import { cn } from '@/utils/cn';
 import { SplashSection, HeroSection, AgendaSection, RSVPSection, GuestbookSection, CountdownSection, SeparatorSection, NavSection, CustomSection, GiftsSection } from './sections';
 import { ParticlesBackground } from './common/ParticlesBackground';
+import { SectionDecoration } from './common/SectionDecoration';
 
 export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
     const { section, isActive, onSelect, readOnly, isDark } = props;
@@ -11,7 +12,7 @@ export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
     const renderContent = () => {
         switch (section.type) {
             case 'SplashSection':
-                return <SplashSection {...props} />;
+                return <SplashSection {...props} sections={props.sections} />;
             case 'HeroSection':
                 return <HeroSection {...props} />;
             case 'AgendaSection':
@@ -25,7 +26,7 @@ export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
             case 'SeparatorSection':
                 return <SeparatorSection {...props} />;
             case 'NavSection':
-                return <NavSection {...props} activeScrollSectionId={props.activeScrollSectionId} onNavigate={props.onNavigate} />;
+                return <NavSection {...props} activeScrollSectionId={props.activeScrollSectionId} onNavigate={props.onNavigate} sections={props.sections} />;
             case 'CustomSection':
                 return <CustomSection {...props} />;
             case 'GiftsSection':
@@ -48,7 +49,12 @@ export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
                 section.type !== 'NavSection' && "overflow-hidden",
                 isActive && !readOnly ? 'ring-2 ring-blue-500 ring-inset shadow-lg z-10' : ''
             )}
-            style={section.styles}
+            style={{
+                ...section.styles,
+                backgroundColor: section.styles?.backgroundColor || (isDark
+                    ? (props.globalStyles.themeShades?.dark.background || '#121212')
+                    : (props.globalStyles.themeShades?.light.background || '#ffffff'))
+            }}
         >
             {section.type !== 'SplashSection' && (
                 <>
@@ -65,9 +71,32 @@ export const SectionRenderer: React.FC<SectionRendererProps> = (props) => {
                         animated={false}
                         color={content.backgroundParticlesColor}
                     />
+                    <SectionDecoration
+                        type={content.sectionDecoration || 'none'}
+                        color={content.sectionDecorationColor}
+                        isDark={isDark}
+                    />
                 </>
             )}
             {renderContent()}
+
+            {/* In-section tools */}
+            {!readOnly && section.type !== 'SplashSection' && (
+                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (window.confirm('Deseja realmente excluir esta seção?')) {
+                                (props as any).onDelete && (props as any).onDelete(section.id);
+                            }
+                        }}
+                        className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-all transform hover:scale-110"
+                        title="Excluir Seção"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6" /></svg>
+                    </button>
+                </div>
+            )}
 
             {/* Hover Indicator */}
             {!readOnly && !isActive && (

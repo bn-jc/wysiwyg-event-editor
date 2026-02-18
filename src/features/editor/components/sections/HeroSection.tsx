@@ -26,11 +26,15 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
     onUpdate,
     device,
     readOnly,
-    isDark
+    onElementSelect,
+    isDark,
+    externalInputState
 }) => {
     const { content } = section;
     const isMobile = device === 'mobile';
     const activeMaskPath = content.imageMask && MASK_PATHS[content.imageMask];
+    const externalValues = externalInputState?.values[section.id] || {};
+    const recipientName = externalValues.recipientName || content.recipientName || '[Nome]';
 
     return (
         <section
@@ -38,7 +42,9 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
             style={{
                 paddingTop: section.styles?.paddingTop || '80px',
                 paddingBottom: section.styles?.paddingBottom || '80px',
-                backgroundColor: section.styles?.backgroundColor
+                color: isDark
+                    ? (globalStyles.themeShades?.dark.text || '#E0E0E0')
+                    : (section.styles?.color || globalStyles.themeShades?.light.text || '#1a1a1a')
             }}
         >
             <div
@@ -49,11 +55,14 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
                     tagName="h2"
                     value={content.title}
                     onChange={(val) => onUpdate({ title: val })}
-                    className={isMobile ? "text-3xl" : "text-5xl"}
+                    onSelectElement={() => onElementSelect?.('title')}
+                    className={cn(
+                        content.titleSize && content.titleSize !== 'inherit' ? content.titleSize : (isMobile ? "text-3xl" : "text-5xl")
+                    )}
                     readOnly={readOnly}
                     style={{
-                        fontFamily: globalStyles.fontFamilyTitle,
-                        color: section.styles?.color || (isDark ? '#FFFFFF' : globalStyles.primaryColor)
+                        fontFamily: content.titleFont && content.titleFont !== 'inherit' ? content.titleFont : globalStyles.fontFamilyTitle,
+                        color: content.titleColor || section.styles?.color || 'inherit'
                     }}
                 />
 
@@ -127,8 +136,9 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
                         )}
 
                         <div
+                            onClick={() => onElementSelect?.('imageUrl')}
                             className={cn(
-                                "relative overflow-hidden group transition-all duration-300",
+                                "relative overflow-hidden group transition-all duration-300 cursor-pointer",
                                 content.imageDecoration === 'gold' && content.imageMask === 'none'
                                     ? 'border-[3px] outline outline-1 outline-offset-4 outline-[#D4AF37] shadow-xl'
                                     : content.imageMask === 'none'
@@ -167,7 +177,16 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
                 )}
 
                 {content.showRecipient && (
-                    <div className="flex gap-2 items-baseline opacity-60 mb-2">
+                    <div
+                        className={cn(
+                            "flex gap-2 items-baseline opacity-60 mb-2",
+                            content.recipientSize && content.recipientSize !== 'inherit' ? content.recipientSize : ""
+                        )}
+                        style={{
+                            fontFamily: content.recipientFont && content.recipientFont !== 'inherit' ? content.recipientFont : 'inherit',
+                            color: content.recipientColor || 'inherit'
+                        }}
+                    >
                         <InlineText
                             tagName="span"
                             value={content.recipientPrefix || 'Convidado:'}
@@ -177,7 +196,7 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
                         />
                         <InlineText
                             tagName="span"
-                            value={content.recipientName || '[Nome]'}
+                            value={recipientName}
                             onChange={(val) => onUpdate({ recipientName: val })}
                             className="text-md italic"
                             readOnly={readOnly}
@@ -189,10 +208,58 @@ export const HeroSection: React.FC<SectionRendererProps> = ({
                     tagName="p"
                     value={content.subtitle}
                     onChange={(val) => onUpdate({ subtitle: val })}
-                    className="text-lg leading-relaxed opacity-80"
+                    onSelectElement={() => onElementSelect?.('subtitle')}
+                    className={cn(
+                        "leading-relaxed opacity-80",
+                        content.subtitleSize && content.subtitleSize !== 'inherit' ? content.subtitleSize : "text-lg"
+                    )}
                     readOnly={readOnly}
-                    style={{ color: section.styles?.color || (isDark ? '#B0B0B0' : globalStyles.secondaryColor) }}
+                    style={{
+                        fontFamily: content.subtitleFont && content.subtitleFont !== 'inherit' ? content.subtitleFont : globalStyles.fontFamilyBody,
+                        color: content.subtitleColor || section.styles?.color || 'inherit'
+                    }}
                 />
+
+                {content.buttonLabel && (
+                    <div
+                        className={cn(
+                            "flex mt-4",
+                            content.buttonAlignment === 'left' ? "justify-start" :
+                                content.buttonAlignment === 'right' ? "justify-end" :
+                                    content.buttonAlignment === 'full' ? "justify-center" : "justify-center"
+                        )}
+                    >
+                        <button
+                            onMouseDown={(e) => {
+                                if (!readOnly) {
+                                    e.stopPropagation();
+                                    onElementSelect?.('buttonLabel');
+                                }
+                            }}
+                            className={cn(
+                                "py-4 font-bold uppercase tracking-widest transition-all shadow-lg active:translate-y-0",
+                                content.buttonSize && content.buttonSize !== 'inherit' ? content.buttonSize : "text-xs",
+                                content.buttonShape || "rounded-full",
+                                content.buttonAlignment === 'full' ? "w-full" : "px-10",
+                                !content.buttonColor && "bg-blue-500 text-white hover:shadow-xl hover:-translate-y-0.5"
+                            )}
+                            style={{
+                                backgroundColor: content.buttonColor ? `${content.buttonColor}11` : globalStyles.primaryColor,
+                                fontFamily: content.buttonFont && content.buttonFont !== 'inherit' ? content.buttonFont : 'inherit',
+                                color: content.buttonColor || 'white',
+                                border: content.buttonColor ? `1px solid ${content.buttonColor}` : undefined
+                            }}
+                        >
+                            <InlineText
+                                tagName="span"
+                                value={content.buttonLabel}
+                                onChange={(val) => onUpdate({ buttonLabel: val })}
+                                onSelectElement={() => onElementSelect?.('buttonLabel')}
+                                readOnly={readOnly}
+                            />
+                        </button>
+                    </div>
+                )}
             </div>
         </section >
     );
