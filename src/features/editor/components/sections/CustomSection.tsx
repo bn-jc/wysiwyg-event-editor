@@ -19,6 +19,25 @@ export const CustomSection: React.FC<SectionRendererProps> = ({
         onUpdate({ elements: newElements });
     };
 
+    const getEmbedUrl = (url: string) => {
+        if (!url) return '';
+
+        // YouTube
+        const ytMatch = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)/);
+        if (ytMatch) {
+            const id = ytMatch[1].split('&')[0];
+            return `https://www.youtube.com/embed/${id}`;
+        }
+
+        // Vimeo
+        const vimeoMatch = url.match(/(?:https?:\/\/)?(?:www\.)?vimeo\.com\/(.+)/);
+        if (vimeoMatch) {
+            return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+        }
+
+        return url;
+    };
+
     const handleUpdateListItem = (elementIndex: number, itemIndex: number, newValue: string) => {
         if (readOnly) return;
         const newElements = [...elements];
@@ -44,6 +63,65 @@ export const CustomSection: React.FC<SectionRendererProps> = ({
                 style={{ gap: section.styles?.gap || '2.5rem' }}
             >
                 {elements.map((element: any, index: number) => {
+                    if (element.type === 'video') {
+                        const embedUrl = getEmbedUrl(element.url);
+                        const isEmbed = embedUrl.includes('youtube.com') || embedUrl.includes('vimeo.com');
+
+                        return (
+                            <div key={index} className="w-full rounded-3xl overflow-hidden shadow-xl bg-black aspect-video">
+                                {isEmbed ? (
+                                    <iframe
+                                        src={embedUrl}
+                                        className="w-full h-full"
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        title="Embedded video"
+                                    />
+                                ) : (
+                                    <video
+                                        src={element.url}
+                                        controls
+                                        className="w-full h-full object-contain"
+                                        poster={element.posterUrl}
+                                    />
+                                )}
+                            </div>
+                        );
+                    }
+
+                    if (element.type === 'gallery') {
+                        const columns = element.columns || 2;
+                        const gap = element.gap || '1rem';
+                        const imageItems = element.galleryImages || [];
+
+                        return (
+                            <div
+                                key={index}
+                                className="grid w-full"
+                                style={{
+                                    gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+                                    gap: gap
+                                }}
+                            >
+                                {imageItems.map((img: any, iIdx: number) => (
+                                    <div key={iIdx} className="aspect-square rounded-2xl overflow-hidden shadow-md group relative">
+                                        <img
+                                            src={img.url}
+                                            alt={`Gallery ${iIdx}`}
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                        />
+                                        {img.caption && (
+                                            <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <p className="text-white text-xs font-medium truncate">{img.caption}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        );
+                    }
+
                     if (element.type === 'image') {
                         return (
                             <div key={index} className="w-full rounded-3xl overflow-hidden shadow-xl">

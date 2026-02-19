@@ -112,4 +112,50 @@ describe('CustomSection', () => {
             ]
         });
     });
+
+    it('renders video element correctly', () => {
+        const videoProps = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: {
+                    elements: [
+                        { type: 'video', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }
+                    ]
+                }
+            }
+        };
+        render(<CustomSection {...videoProps} globalStyles={mockGlobalStyles} index={0} />);
+
+        const iframe = screen.getByTitle('Embedded video');
+        expect(iframe).toBeInTheDocument();
+        expect(iframe).toHaveAttribute('src', 'https://www.youtube.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('renders gallery element correctly', () => {
+        const galleryProps = {
+            ...defaultProps,
+            section: {
+                ...defaultProps.section,
+                content: {
+                    elements: [
+                        {
+                            type: 'gallery',
+                            columns: 3,
+                            galleryImages: [
+                                { url: 'https://example.com/1.jpg', caption: 'Photo 1' },
+                                { url: 'https://example.com/2.jpg', caption: 'Photo 2' }
+                            ]
+                        }
+                    ]
+                }
+            }
+        };
+        render(<CustomSection {...galleryProps} globalStyles={mockGlobalStyles} index={0} />);
+
+        expect(screen.getByAltText('Gallery 0')).toBeInTheDocument();
+        expect(screen.getByAltText('Gallery 1')).toBeInTheDocument();
+        expect(screen.getByText('Photo 1')).toBeInTheDocument();
+        expect(screen.getByText('Photo 2')).toBeInTheDocument();
+    });
 });

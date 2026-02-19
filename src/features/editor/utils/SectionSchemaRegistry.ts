@@ -324,6 +324,19 @@ export const SECTION_TEMPLATES: Record<SectionType, { name: string; defaultData:
                     itemFont: 'inherit',
                     itemColor: '',
                     itemSize: 'inherit'
+                },
+                {
+                    type: 'video',
+                    url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+                },
+                {
+                    type: 'gallery',
+                    columns: 2,
+                    gap: '1rem',
+                    galleryImages: [
+                        { url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800', caption: 'Love' },
+                        { url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800', caption: 'Together' }
+                    ]
                 }
             ],
             backgroundEffect: 'none',

@@ -1064,7 +1064,11 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                                 itemFont: 'Fonte dos Itens',
                                                 itemColor: 'Cor dos Itens',
                                                 itemSize: 'Tamanho dos Itens',
-                                                url: 'URL da Imagem',
+                                                url: 'URL',
+                                                posterUrl: 'URL da Capa (Opcional)',
+                                                columns: 'Colunas',
+                                                gap: 'Espaçamento',
+                                                caption: 'Legenda',
                                                 overlayText: 'Texto Overlay',
                                                 overlayIcon: 'Ícone Overlay',
                                                 overlayPosition: 'Posição',
@@ -1152,6 +1156,15 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                                             };
                                                         } else if (newType === 'image') {
                                                             newList[idx] = { type: 'image', url: 'https://images.unsplash.com/photo-1522673607200-164883eeba4c?w=800' };
+                                                        } else if (newType === 'video') {
+                                                            newList[idx] = { type: 'video', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' };
+                                                        } else if (newType === 'gallery') {
+                                                            newList[idx] = {
+                                                                type: 'gallery',
+                                                                columns: 2,
+                                                                gap: '1rem',
+                                                                galleryImages: [{ url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800', caption: 'Legenda' }]
+                                                            };
                                                         } else {
                                                             newList[idx] = { type: 'text', content: 'Novo texto', style: 'paragraph' };
                                                         }
@@ -1161,6 +1174,8 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                                 >
                                                     <option value="text">Texto</option>
                                                     <option value="image">Imagem</option>
+                                                    <option value="video">Vídeo</option>
+                                                    <option value="gallery">Galeria</option>
                                                     <option value="list">Lista</option>
                                                 </select>
                                                 <ChevronDown size={12} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
@@ -1341,6 +1356,21 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                                                 placeholder={`Digitar ${iKey}...`}
                                             />
                                         )}
+                                        {iKey === 'galleryImages' && (
+                                            <div className="flex flex-col gap-2 mt-2">
+                                                <button
+                                                    onClick={() => {
+                                                        const newList = [...value];
+                                                        const newGalleryImages = [...(newList[idx].galleryImages || []), { url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800', caption: 'Legenda' }];
+                                                        newList[idx] = { ...item, galleryImages: newGalleryImages };
+                                                        handleChange(key, newList);
+                                                    }}
+                                                    className="w-full flex items-center justify-center gap-2 p-2 border-2 border-dashed border-gray-100 rounded-xl text-[8px] text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-all font-black tracking-widest leading-tight"
+                                                >
+                                                    <Plus size={10} /> ADD IMAGEM À GALERIA
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 ))
                             )}
@@ -1391,31 +1421,56 @@ export const PropertyEditor: React.FC<PropertyEditorProps> = ({
                     )}
 
                     {section.type === 'CustomSection' && key === 'elements' && (
-                        <div className="grid grid-cols-3 gap-2 mt-2">
-                            <button
-                                onClick={() => {
-                                    handleChange(key, [...value, { type: 'text', content: 'Novo parágrafo', style: 'paragraph' }]);
-                                }}
-                                className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-100 rounded-2xl text-[8px] text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-all font-black tracking-widest leading-tight"
-                            >
-                                <Plus size={12} /> ADD TEXTO
-                            </button>
-                            <button
-                                onClick={() => {
-                                    handleChange(key, [...value, { type: 'image', url: 'https://images.unsplash.com/photo-1522673607200-164883eeba4c?w=800' }]);
-                                }}
-                                className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-100 rounded-2xl text-[8px] text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-all font-black tracking-widest leading-tight"
-                            >
-                                <Plus size={12} /> ADD IMAGEM
-                            </button>
-                            <button
-                                onClick={() => {
-                                    handleChange(key, [...value, { type: 'list', listType: 'unordered', format: 'disc', items: ['Novo item'] }]);
-                                }}
-                                className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-100 rounded-2xl text-[8px] text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-all font-black tracking-widest leading-tight"
-                            >
-                                <Plus size={12} /> ADD LISTA
-                            </button>
+                        <div className="flex flex-col gap-2 mt-2">
+                            <div className="grid grid-cols-3 gap-2">
+                                <button
+                                    onClick={() => {
+                                        handleChange(key, [...value, { type: 'text', content: 'Novo parágrafo', style: 'paragraph' }]);
+                                    }}
+                                    className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-100 rounded-2xl text-[8px] text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-all font-black tracking-widest leading-tight"
+                                >
+                                    <Plus size={12} /> ADD TEXTO
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        handleChange(key, [...value, { type: 'image', url: 'https://images.unsplash.com/photo-1522673607200-164883eeba4c?w=800' }]);
+                                    }}
+                                    className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-100 rounded-2xl text-[8px] text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-all font-black tracking-widest leading-tight"
+                                >
+                                    <Plus size={12} /> ADD IMAGEM
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        handleChange(key, [...value, { type: 'list', listType: 'unordered', format: 'disc', items: ['Novo item'] }]);
+                                    }}
+                                    className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-100 rounded-2xl text-[8px] text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-all font-black tracking-widest leading-tight"
+                                >
+                                    <Plus size={12} /> ADD LISTA
+                                </button>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                                <button
+                                    onClick={() => {
+                                        handleChange(key, [...value, { type: 'video', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }]);
+                                    }}
+                                    className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-100 rounded-2xl text-[8px] text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-all font-black tracking-widest leading-tight"
+                                >
+                                    <Plus size={12} /> ADD VÍDEO
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        handleChange(key, [...value, {
+                                            type: 'gallery',
+                                            columns: 2,
+                                            gap: '1rem',
+                                            galleryImages: [{ url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800', caption: 'Legenda' }]
+                                        }]);
+                                    }}
+                                    className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-100 rounded-2xl text-[8px] text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-all font-black tracking-widest leading-tight"
+                                >
+                                    <Plus size={12} /> ADD GALERIA
+                                </button>
+                            </div>
                         </div>
                     )}
                     {section.type === 'GiftsSection' && key === 'giftItems' && (
